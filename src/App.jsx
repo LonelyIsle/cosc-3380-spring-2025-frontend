@@ -1,7 +1,21 @@
-import Login from "./pages/Login.jsx";
+import { Navbar, Footer } from "./components";
+import { Route, Routes } from "react-router-dom";
+import { LandingPage, Login, Register } from "./pages";
 
 function App() {
-  return <Login />;
+  return (
+    <div className="flex flex-col justify-between min-h-screen">
+      <Navbar />
+      <div className="grow">
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+      </div>
+      <Footer />
+    </div>
+  );
 }
 
 export default App;
