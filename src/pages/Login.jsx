@@ -5,7 +5,7 @@ function Login() {
   const navigate = useNavigate();
 
   return (
-    <div className="center-container bg-flamingo">
+    <div className="center-container">
       <div className="p-6 bg-mantle text-text rounded-xl shadow-lg">
         <h1 className="text-lg font-bold mb-4 text-subtext1">Please sign in</h1>
         <form>
