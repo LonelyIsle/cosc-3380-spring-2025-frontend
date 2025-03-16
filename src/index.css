@@ -53,3 +53,9 @@ body {
     @apply text-mantle py-1 px-3 border-2 border-transparent rounded-xl transition-all duration-200 shadow-sm hover:shadow-white hover:border-text;
   }
 }
+
+@layer components {
+  .center-container {
+    @apply flex justify-center items-center h-screen;
+  }
+}
