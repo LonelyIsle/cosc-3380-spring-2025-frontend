@@ -1,6 +1,15 @@
 import { Navbar, Footer } from "./components";
 import { Route, Routes } from "react-router-dom";
-import { LandingPage, Login, Register } from "./pages";
+import {
+  Cart,
+  Checkout,
+  LandingPage,
+  Login,
+  Product,
+  Profile,
+  Register,
+  Shop,
+} from "./pages";
 
 function App() {
   return (
@@ -9,8 +18,14 @@ function App() {
       <div className="grow">
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/product" element={<Product />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/shop" element={<Shop />} />
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>
       <Footer />
