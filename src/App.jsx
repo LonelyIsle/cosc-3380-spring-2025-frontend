@@ -28,7 +28,6 @@ function App() {
   return (
     <div className="flex flex-col justify-between min-h-screen">
       <Navbar />
-      <div className="grow">
         <Routes>
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
@@ -40,7 +39,6 @@ function App() {
           <Route path="/shop" element={<Shop />} />
           {<Route path="*" element={<RedirectToHome />} />}
         </Routes>
-      </div>
       <Footer />
     </div>
   );
