@@ -1,7 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/bag-full-logo.svg"; // Adjust path based on the location of the logo
-
+import logo from "../assets/bag-full-logo.svg";
 function Login() {
   const navigate = useNavigate();
 
