@@ -124,6 +124,56 @@ const products = [
     size: 2.5,
     color: "green",
   },
+  {
+    id: 13,
+    name: "Product 13",
+    price: 29.99,
+    image: "",
+    description: "This is a description for Product 13.",
+    category: ["Anime"],
+    size: 3.2,
+    color: "Blue",
+  },
+  {
+    id: 14,
+    name: "Product 14",
+    price: 9.99,
+    image: "",
+    description: "This is a description for Product 14.",
+    category: ["Movies & TV Shows"],
+    size: 4.0,
+    color: "Green",
+  },
+  {
+    id: 15,
+    name: "Product 15",
+    price: 49.99,
+    image: "",
+    description: "This is a description for Product 15.",
+    category: ["Animals"],
+    size: 2.5,
+    color: "Black",
+  },
+  {
+    id: 16,
+    name: "Product 16",
+    price: 15.99,
+    image: "",
+    description: "This is a description for Product 16.",
+    category: ["Anime"],
+    size: 1.0,
+    color: "Yellow",
+  },
+  {
+    id: 17,
+    name: "Product 17",
+    price: 39.99,
+    image: "",
+    description: "This is a description for Product 17.",
+    category: ["Movies & TV Shows"],
+    size: 5.0,
+    color: "Orange",
+  },
 ];
 
 function Shop() {
@@ -132,7 +182,6 @@ function Shop() {
   const [searchTerm, setSearchTerm] = useState("");
 
   // Filter states
-  // Add more categories later?
   const [selectedCategories, setSelectedCategories] = useState({
     Animals: true,
     "Movies & TV Shows": true,
@@ -148,7 +197,9 @@ function Shop() {
 
   // Apply filters when any filter changes
   useEffect(() => {
-    let result = products;
+    // Make sure we're starting with the complete products array
+    // If products is being limited elsewhere, this ensures we get the full list
+    let result = [...products];
 
     // Filter by search term
     if (searchTerm) {
@@ -189,6 +240,7 @@ function Shop() {
       sortOrder === "asc" ? a.price - b.price : b.price - a.price,
     );
 
+    // Set the filtered products without any limitation
     setFilteredProducts(sorted);
   }, [
     searchTerm,
@@ -220,6 +272,9 @@ function Shop() {
     setSortOrder(order);
   };
 
+  // For debugging - log the number of products
+  console.log(`Total products in filteredProducts: ${filteredProducts.length}`);
+
   return (
     <div className="min-h-screen bg-pink-200">
       {/* Main Container */}
@@ -227,7 +282,7 @@ function Shop() {
         {/* Filter and Search Section */}
         <div className="flex flex-col md:flex-row gap-6">
           {/* Filter Panel */}
-          <div className="w-full md:w-72 lg:w-100 bg-white rounded-lg p-4 shadow-sm min-h-300">
+          <div className="w-full md:w-72 lg:w-100 bg-white rounded-lg p-4 shadow-sm sticky top-25 self-start">
             <div className="mb-6">
               <h2 className="font-medium mb-3">Search and Filter</h2>
             </div>
@@ -352,7 +407,7 @@ function Shop() {
           <div className="flex-1">
             {/* Search and Sort Controls*/}
             <div className="flex flex-col md:flex-row gap-2 justify-between mb-4">
-              <div className="relative w-full md:w-64 lg:w-200">
+              <div className="relative w-full md:w-64 lg:w-200 shadow-sm transition-transform duration-300 hover:scale-102">
                 <input
                   type="text"
                   placeholder="Search"
@@ -398,12 +453,13 @@ function Shop() {
               Showing {filteredProducts.length} products
             </div>
 
-            {/* Product Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 gap-4">
+            {/* Product Grid - ensure no height limitation */}
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 mb-8">
+              {/* Render ALL filtered products without any limit */}
               {filteredProducts.map((product) => (
                 <div
                   key={product.id}
-                  className="bg-white rounded-lg overflow-hidden shadow-sm"
+                  className="bg-white rounded-lg overflow-hidden shadow-sm transition-transform duration-300 hover:scale-105"
                 >
                   <div className="bg-gray-200 h-40 flex items-center justify-center">
                     <img
