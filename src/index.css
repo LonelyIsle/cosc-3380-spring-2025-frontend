@@ -45,12 +45,16 @@
 }
 
 body {
-  @apply bg-flamingo;
+  @apply bg-mantle;
 }
 
 @layer components {
   .header-box {
-    @apply text-mantle py-1 px-3 border-2 border-transparent rounded-xl transition-all duration-200 shadow-sm hover:shadow-white hover:border-text;
+    @apply text-mantle py-1 px-3 border-2 border-transparent rounded-xl shadow-sm hover:shadow-white hover:border-text;
+  }
+
+  .header-box:hover {
+    @apply transition-all duration-200;
   }
 }
 
