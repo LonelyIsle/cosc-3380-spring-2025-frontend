@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import products from "../products.js";
+import products from "../Products.jsx";
 
 function Shop() {
   const navigate = useNavigate();
