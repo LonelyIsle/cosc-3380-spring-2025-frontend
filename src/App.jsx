@@ -26,7 +26,7 @@ function RedirectToHome() {
 
 function App() {
   return (
-    <div className="flex flex-col justify-between min-h-screen">
+    <div className="bg-flamingo flex flex-col justify-between min-h-screen">
       <Navbar />
       <Routes>
         <Route path="/cart" element={<Cart />} />

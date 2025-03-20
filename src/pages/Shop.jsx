@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import products from "../Products.jsx";
+import { ProductGrid } from "../components";
+
+
 
 function Shop() {
   const navigate = useNavigate();
@@ -10,16 +13,16 @@ function Shop() {
 
   // Filter states
   const [selectedCategories, setSelectedCategories] = useState({
-    Animals: true,
-    "Movies & TV Shows": true,
-    Anime: true,
+    Animals: false,
+    "Movies & TV Shows": false,
+    Anime: false,
   });
   const [priceRange, setPriceRange] = useState(150);
   const [sizeRange, setSizeRange] = useState(10);
   const [selectedColors, setSelectedColors] = useState({
-    Red: true,
-    Blue: true,
-    Green: true,
+    Red: false,
+    Blue: false,
+    Green: false,
   });
 
   // Apply filters when any filter changes
@@ -31,18 +34,18 @@ function Shop() {
       result = result.filter(
         (product) =>
           product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          product.description.toLowerCase().includes(searchTerm.toLowerCase())
+          product.description.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
 
     // Filter by categories
     const activeCategories = Object.keys(selectedCategories).filter(
-      (cat) => selectedCategories[cat]
+      (cat) => selectedCategories[cat],
     );
 
     if (activeCategories.length > 0) {
       result = result.filter((product) =>
-        product.category.some((cat) => activeCategories.includes(cat))
+        product.category.some((cat) => activeCategories.includes(cat)),
       );
     }
 
@@ -54,7 +57,7 @@ function Shop() {
 
     // Filter by colors
     const activeColors = Object.keys(selectedColors).filter(
-      (color) => selectedColors[color]
+      (color) => selectedColors[color],
     );
     if (activeColors.length > 0) {
       result = result.filter((product) => activeColors.includes(product.color));
@@ -62,7 +65,7 @@ function Shop() {
 
     // Apply sort
     const sorted = [...result].sort((a, b) =>
-      sortOrder === "asc" ? a.price - b.price : b.price - a.price
+      sortOrder === "asc" ? a.price - b.price : b.price - a.price,
     );
 
     setFilteredProducts(sorted);
@@ -104,7 +107,7 @@ function Shop() {
   console.log(`Total products in filteredProducts: ${filteredProducts.length}`);
 
   return (
-    <div className="min-h-screen bg-pink-200">
+    <>
       {/* Main Container */}
       <div className="w-full px-4 py-6">
         {/* Filter and Search Section */}
@@ -280,7 +283,6 @@ function Shop() {
             <div className="mb-4 text-sm">
               Showing {filteredProducts.length} products
             </div>
-
             {/* Product Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 mb-8">
               {filteredProducts.map((product) => (
@@ -338,7 +340,7 @@ function Shop() {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
