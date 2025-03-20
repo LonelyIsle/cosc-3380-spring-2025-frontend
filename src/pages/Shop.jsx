@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { ProductGrid } from "../components";
 
 // Mock data for products () (replace with API call later)
 // Remove Color section add string array for category read
@@ -183,16 +184,16 @@ function Shop() {
 
   // Filter states
   const [selectedCategories, setSelectedCategories] = useState({
-    Animals: true,
-    "Movies & TV Shows": true,
-    Anime: true,
+    Animals: false,
+    "Movies & TV Shows": false,
+    Anime: false,
   });
   const [priceRange, setPriceRange] = useState(150);
   const [sizeRange, setSizeRange] = useState(10);
   const [selectedColors, setSelectedColors] = useState({
-    Red: true,
-    Blue: true,
-    Green: true,
+    Red: false,
+    Blue: false,
+    Green: false,
   });
 
   // Apply filters when any filter changes
@@ -276,7 +277,7 @@ function Shop() {
   console.log(`Total products in filteredProducts: ${filteredProducts.length}`);
 
   return (
-    <div className="min-h-screen bg-pink-200">
+    <>
       {/* Main Container */}
       <div className="w-full px-4 py-6">
         {/* Filter and Search Section */}
@@ -454,35 +455,7 @@ function Shop() {
             </div>
 
             {/* Product Grid - ensure no height limitation */}
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 mb-8">
-              {/* Render ALL filtered products without any limit */}
-              {filteredProducts.map((product) => (
-                <div
-                  key={product.id}
-                  className="bg-white rounded-lg overflow-hidden shadow-sm transition-transform duration-300 hover:scale-105"
-                >
-                  <div className="bg-gray-200 h-40 flex items-center justify-center">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="p-2 bg-pink-100">
-                    <h3 className="font-medium text-sm">{product.name}</h3>
-                    <p className="text-xs text-gray-600">
-                      {product.category.join(", ")}
-                    </p>
-                    <div className="flex justify-between items-center mt-1">
-                      <p className="font-bold text-sm">${product.price}</p>
-                      <span className="text-xs bg-pink-200 px-2 py-0.5 rounded">
-                        {product.category.join(", ")}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <ProductGrid products={filteredProducts} />
 
             {/* Empty state */}
             {filteredProducts.length === 0 && (
@@ -510,7 +483,7 @@ function Shop() {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
