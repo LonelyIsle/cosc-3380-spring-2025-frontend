@@ -1,5 +1,3 @@
-function LandingPage() {
-  
-}
+function product() {}
 
-export default LandingPage;
+export default product;
