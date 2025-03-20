@@ -1,8 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/bag-full-logo.svg";
+import Validation from "../components/LoginValidation";
 function Login() {
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
+
+  const handleSubmit = (event) => {
+    event.preventDefault;
+    setErrors(Validation(email, password));
+  };
 
   return (
     <div className="center-container">
@@ -11,7 +20,7 @@ function Login() {
           <img src={logo} alt="Logo" className="w-64 h-64" />
         </div>
         <h1 className="text-lg font-bold mb-4 text-subtext1">Please sign in</h1>
-        <form>
+        <form action="" onSubmit={handleSubmit}>
           <div className="mb-2">
             <label htmlFor="email" className="block text-subtext0">
               Email:
@@ -21,6 +30,8 @@ function Login() {
               id="email"
               className="border p-2 w-full rounded bg-surface2 text-text"
               placeholder="Enter Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="mb-2">
@@ -32,6 +43,8 @@ function Login() {
               id="password"
               className="border p-2 w-full rounded bg-surface2 text-text"
               placeholder="Enter Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <div className="mt-6 text-center">

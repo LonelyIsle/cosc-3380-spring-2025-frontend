@@ -1,5 +1,3 @@
-function LandingPage() {
-  
-}
+function Checkout() {}
 
-export default LandingPage;
+export default Checkout;

@@ -51,6 +51,14 @@ function Navbar() {
             Register
           </Link>
         </li>
+        <li>
+          <Link
+            to="/profile"
+            className="header-box text-mantle bg-gradient-to-r from-green to-teal"
+          >
+            Profile Page
+          </Link>
+        </li>
       </ul>
     </nav>
   );
