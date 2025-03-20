@@ -1,183 +1,12 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import products from "../Products.jsx";
 import { ProductGrid } from "../components";
 
-// Mock data for products () (replace with API call later)
-// Remove Color section add string array for category read
-const products = [
-  {
-    id: 1,
-    name: "product 1",
-    price: 19.99,
-    image: "",
-    description: "this is a description for product 1.",
-    category: ["animals", "anime"],
-    size: 1.5,
-    color: "red",
-  },
-  {
-    id: 2,
-    name: "product 2",
-    price: 29.99,
-    image: "",
-    description: "this is a description for product 2.",
-    category: ["movies & tv shows"],
-    size: 2.5,
-    color: "blue",
-  },
-  {
-    id: 3,
-    name: "product 3",
-    price: 39.99,
-    image: "",
-    description: "this is a description for product 3.",
-    category: ["anime"],
-    size: 3.5,
-    color: "green",
-  },
-  {
-    id: 4,
-    name: "product 4",
-    price: 49.99,
-    image: "",
-    description: "this is a description for product 4.",
-    category: ["animals"],
-    size: 4.5,
-    color: "blue",
-  },
-  {
-    id: 5,
-    name: "product 5",
-    price: 59.99,
-    image: "",
-    description: "this is a description for product 5.",
-    category: ["anime"],
-    size: 5.5,
-    color: "red",
-  },
-  {
-    id: 6,
-    name: "product 6",
-    price: 69.99,
-    image: "",
-    description: "this is a description for product 6.",
-    category: ["anime"],
-    size: 6.5,
-    color: "green",
-  },
-  {
-    id: 7,
-    name: "product 7",
-    price: 79.99,
-    image: "",
-    description: "this is a description for product 7.",
-    category: ["animals"],
-    size: 7.5,
-    color: "red",
-  },
-  {
-    id: 8,
-    name: "product 8",
-    price: 89.99,
-    image: "",
-    description: "this is a description for product 8.",
-    category: ["anime"],
-    size: 8.5,
-    color: "blue",
-  },
-  {
-    id: 9,
-    name: "product 9",
-    price: 99.99,
-    image: "",
-    description: "this is a description for product 9.",
-    category: ["anime"],
-    size: 9.5,
-    color: "green",
-  },
-  {
-    id: 10,
-    name: "product 10",
-    price: 109.99,
-    image: "",
-    description: "this is a description for product 10.",
-    category: ["animals"],
-    size: 0.5,
-    color: "red",
-  },
-  {
-    id: 11,
-    name: "product 11",
-    price: 119.99,
-    image: "",
-    description: "this is a description for product 11.",
-    category: ["anime"],
-    size: 1.5,
-    color: "blue",
-  },
-  {
-    id: 12,
-    name: "product 12",
-    price: 129.99,
-    image: "",
-    description: "this is a description for product 12.",
-    category: ["anime"],
-    size: 2.5,
-    color: "green",
-  },
-  {
-    id: 13,
-    name: "Product 13",
-    price: 29.99,
-    image: "",
-    description: "This is a description for Product 13.",
-    category: ["Anime"],
-    size: 3.2,
-    color: "Blue",
-  },
-  {
-    id: 14,
-    name: "Product 14",
-    price: 9.99,
-    image: "",
-    description: "This is a description for Product 14.",
-    category: ["Movies & TV Shows"],
-    size: 4.0,
-    color: "Green",
-  },
-  {
-    id: 15,
-    name: "Product 15",
-    price: 49.99,
-    image: "",
-    description: "This is a description for Product 15.",
-    category: ["Animals"],
-    size: 2.5,
-    color: "Black",
-  },
-  {
-    id: 16,
-    name: "Product 16",
-    price: 15.99,
-    image: "",
-    description: "This is a description for Product 16.",
-    category: ["Anime"],
-    size: 1.0,
-    color: "Yellow",
-  },
-  {
-    id: 17,
-    name: "Product 17",
-    price: 39.99,
-    image: "",
-    description: "This is a description for Product 17.",
-    category: ["Movies & TV Shows"],
-    size: 5.0,
-    color: "Orange",
-  },
-];
+
 
 function Shop() {
+  const navigate = useNavigate();
   const [filteredProducts, setFilteredProducts] = useState(products);
   const [sortOrder, setSortOrder] = useState("asc");
   const [searchTerm, setSearchTerm] = useState("");
@@ -198,8 +27,6 @@ function Shop() {
 
   // Apply filters when any filter changes
   useEffect(() => {
-    // Make sure we're starting with the complete products array
-    // If products is being limited elsewhere, this ensures we get the full list
     let result = [...products];
 
     // Filter by search term
@@ -241,7 +68,6 @@ function Shop() {
       sortOrder === "asc" ? a.price - b.price : b.price - a.price,
     );
 
-    // Set the filtered products without any limitation
     setFilteredProducts(sorted);
   }, [
     searchTerm,
@@ -271,6 +97,10 @@ function Shop() {
   // Sort products function
   const handleSort = (order) => {
     setSortOrder(order);
+  };
+
+  const handleProductClick = (productId) => {
+    navigate(`/product/${productId}`);
   };
 
   // For debugging - log the number of products
@@ -453,9 +283,36 @@ function Shop() {
             <div className="mb-4 text-sm">
               Showing {filteredProducts.length} products
             </div>
-
-            {/* Product Grid - ensure no height limitation */}
-            <ProductGrid products={filteredProducts} />
+            {/* Product Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 mb-8">
+              {filteredProducts.map((product) => (
+                <div
+                  key={product.id}
+                  className="bg-white rounded-lg overflow-hidden shadow-sm transition-transform duration-300 hover:scale-105 cursor-pointer"
+                  onClick={() => handleProductClick(product.id)}
+                >
+                  <div className="bg-gray-200 h-40 flex items-center justify-center">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="p-2 bg-pink-100">
+                    <h3 className="font-medium text-sm">{product.name}</h3>
+                    <p className="text-xs text-gray-600">
+                      {product.category.join(", ")}
+                    </p>
+                    <div className="flex justify-between items-center mt-1">
+                      <p className="font-bold text-sm">${product.price}</p>
+                      <span className="text-xs bg-pink-200 px-2 py-0.5 rounded">
+                        {product.category.join(", ")}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
 
             {/* Empty state */}
             {filteredProducts.length === 0 && (
