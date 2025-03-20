@@ -1,182 +1,9 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-
-// Mock data for products () (replace with API call later)
-// Remove Color section add string array for category read
-const products = [
-  {
-    id: 1,
-    name: "Product 1",
-    price: 19.99,
-    image: "",
-    description: "This is a description for Product 1.",
-    category: ["Animals", "Anime"],
-    size: 1.5,
-    color: "Red",
-  },
-  {
-    id: 2,
-    name: "Product 2",
-    price: 29.99,
-    image: "",
-    description: "This is a description for Product 2.",
-    category: ["Movies & TV Shows"],
-    size: 2.5,
-    color: "Blue",
-  },
-  {
-    id: 3,
-    name: "Product 3",
-    price: 39.99,
-    image: "",
-    description: "This is a description for Product 3.",
-    category: ["Anime"],
-    size: 3.5,
-    color: "Green",
-  },
-  {
-    id: 4,
-    name: "Product 4",
-    price: 49.99,
-    image: "",
-    description: "This is a description for Product 4.",
-    category: ["Animals"],
-    size: 4.5,
-    color: "Blue",
-  },
-  {
-    id: 5,
-    name: "Product 5",
-    price: 59.99,
-    image: "",
-    description: "This is a description for Product 5.",
-    category: ["Anime"],
-    size: 5.5,
-    color: "Red",
-  },
-  {
-    id: 6,
-    name: "Product 6",
-    price: 69.99,
-    image: "",
-    description: "This is a description for Product 6.",
-    category: ["Anime"],
-    size: 6.5,
-    color: "Green",
-  },
-  {
-    id: 7,
-    name: "Product 7",
-    price: 79.99,
-    image: "",
-    description: "This is a description for Product 7.",
-    category: ["Animals"],
-    size: 7.5,
-    color: "Red",
-  },
-  {
-    id: 8,
-    name: "Product 8",
-    price: 89.99,
-    image: "",
-    description: "This is a description for Product 8.",
-    category: ["Anime"],
-    size: 8.5,
-    color: "Blue",
-  },
-  {
-    id: 9,
-    name: "Product 9",
-    price: 99.99,
-    image: "",
-    description: "This is a description for Product 9.",
-    category: ["Anime"],
-    size: 9.5,
-    color: "Green",
-  },
-  {
-    id: 10,
-    name: "Product 10",
-    price: 109.99,
-    image: "",
-    description: "This is a description for Product 10.",
-    category: ["Animals"],
-    size: 0.5,
-    color: "Red",
-  },
-  {
-    id: 11,
-    name: "Product 11",
-    price: 119.99,
-    image: "",
-    description: "This is a description for Product 11.",
-    category: ["Anime"],
-    size: 1.5,
-    color: "Blue",
-  },
-  {
-    id: 12,
-    name: "Product 12",
-    price: 129.99,
-    image: "",
-    description: "This is a description for Product 12.",
-    category: ["Anime"],
-    size: 2.5,
-    color: "Green",
-  },
-  {
-    id: 13,
-    name: "Product 13",
-    price: 29.99,
-    image: "",
-    description: "This is a description for Product 13.",
-    category: ["Anime"],
-    size: 3.2,
-    color: "Blue",
-  },
-  {
-    id: 14,
-    name: "Product 14",
-    price: 9.99,
-    image: "",
-    description: "This is a description for Product 14.",
-    category: ["Movies & TV Shows"],
-    size: 4.0,
-    color: "Green",
-  },
-  {
-    id: 15,
-    name: "Product 15",
-    price: 49.99,
-    image: "",
-    description: "This is a description for Product 15.",
-    category: ["Animals"],
-    size: 2.5,
-    color: "Black",
-  },
-  {
-    id: 16,
-    name: "Product 16",
-    price: 15.99,
-    image: "",
-    description: "This is a description for Product 16.",
-    category: ["Anime"],
-    size: 1.0,
-    color: "Yellow",
-  },
-  {
-    id: 17,
-    name: "Product 17",
-    price: 39.99,
-    image: "",
-    description: "This is a description for Product 17.",
-    category: ["Movies & TV Shows"],
-    size: 5.0,
-    color: "Orange",
-  },
-];
+import { Link, useNavigate } from "react-router-dom";
+import products from "../products.js";
 
 function Shop() {
+  const navigate = useNavigate();
   const [filteredProducts, setFilteredProducts] = useState(products);
   const [sortOrder, setSortOrder] = useState("asc");
   const [searchTerm, setSearchTerm] = useState("");
@@ -197,8 +24,6 @@ function Shop() {
 
   // Apply filters when any filter changes
   useEffect(() => {
-    // Make sure we're starting with the complete products array
-    // If products is being limited elsewhere, this ensures we get the full list
     let result = [...products];
 
     // Filter by search term
@@ -240,7 +65,6 @@ function Shop() {
       sortOrder === "asc" ? a.price - b.price : b.price - a.price
     );
 
-    // Set the filtered products without any limitation
     setFilteredProducts(sorted);
   }, [
     searchTerm,
@@ -270,6 +94,10 @@ function Shop() {
   // Sort products function
   const handleSort = (order) => {
     setSortOrder(order);
+  };
+
+  const handleProductClick = (productId) => {
+    navigate(`/product/${productId}`);
   };
 
   // For debugging - log the number of products
@@ -453,13 +281,13 @@ function Shop() {
               Showing {filteredProducts.length} products
             </div>
 
-            {/* Product Grid - ensure no height limitation */}
+            {/* Product Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 mb-8">
-              {/* Render ALL filtered products without any limit */}
               {filteredProducts.map((product) => (
                 <div
                   key={product.id}
-                  className="bg-white rounded-lg overflow-hidden shadow-sm transition-transform duration-300 hover:scale-105"
+                  className="bg-white rounded-lg overflow-hidden shadow-sm transition-transform duration-300 hover:scale-105 cursor-pointer"
+                  onClick={() => handleProductClick(product.id)}
                 >
                   <div className="bg-gray-200 h-40 flex items-center justify-center">
                     <img
