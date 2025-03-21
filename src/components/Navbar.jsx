@@ -9,6 +9,8 @@ const cartSvgs = Object.entries(svgs).reduce((acc, [path, module]) => {
   return acc;
 }, {});
 
+const isLoggedIn = false;
+
 function Navbar() {
   const [opacity, setOpacity] = useState(100);
   const [cartAmount, setCartAmount] = useState(0);
@@ -43,30 +45,35 @@ function Navbar() {
         <img src={logo} alt="Navbar Logo" className="header-box h-20" />
       </Link>
       <ul className="flex gap-4 justify-center items-center">
-        <li>
-          <Link
-            to="/login"
-            className="header-box text-mantle bg-gradient-to-r from-maroon to-peach"
-          >
-            Sign In
-          </Link>
-        </li>
-        <li>
-          <Link
-            to="/register"
-            className="header-box text-mantle bg-gradient-to-r from-green to-teal"
-          >
-            Register
-          </Link>
-        </li>
-        <li>
-          <Link
-            to="/profile"
-            className="header-box text-mantle bg-gradient-to-r from-green to-teal"
-          >
-            Profile Page
-          </Link>
-        </li>
+        {!isLoggedIn ? (
+          <>
+            <li>
+              <Link
+                to="/login"
+                className="header-box text-mantle bg-gradient-to-r from-maroon to-peach"
+              >
+                Sign In
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/register"
+                className="header-box text-mantle bg-gradient-to-r from-green to-teal"
+              >
+                Register
+              </Link>
+            </li>
+          </>
+        ) : (
+          <li>
+            <Link
+              to="/profile"
+              className="header-box text-mantle bg-gradient-to-r from-green to-teal"
+            >
+              Profile Page
+            </Link>
+          </li>
+        )}
         <li>
           <Link to="/cart">
             <img
