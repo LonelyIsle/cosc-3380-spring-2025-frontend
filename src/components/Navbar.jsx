@@ -9,11 +9,11 @@ const cartSvgs = Object.entries(svgs).reduce((acc, [path, module]) => {
   return acc;
 }, {});
 
-const isLoggedIn = false;
+const isLoggedIn = false; // temporary 
 
 function Navbar() {
   const [opacity, setOpacity] = useState(100);
-  const [cartAmount, setCartAmount] = useState(0);
+  const [cartAmount, setCartAmount] = useState(0); // not implemented
 
   useEffect(() => {
     const handleScroll = () => {
