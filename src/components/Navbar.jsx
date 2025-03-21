@@ -9,7 +9,7 @@ const cartSvgs = Object.entries(svgs).reduce((acc, [path, module]) => {
   return acc;
 }, {});
 
-const isLoggedIn = false; // temporary 
+const isLoggedIn = false; // temporary
 
 function Navbar() {
   const [opacity, setOpacity] = useState(100);
@@ -38,8 +38,8 @@ function Navbar() {
 
   return (
     <nav
-      className="h-20 bg-mantle flex justify-between items-center px-28 sticky top-0 z-10 transition-opacity duration-300"
-      style={{ opacity: `${opacity}%` }}
+      className="h-20 bg-mantle flex justify-between items-center px-28 sticky top-0 z-10 transition-all duration-300"
+      style={{ backgroundColor: `rgba(24, 24, 37, ${opacity / 100})` }}
     >
       <Link to="/" className="text-3xl text-text">
         <img src={logo} alt="Navbar Logo" className="header-box h-20" />
