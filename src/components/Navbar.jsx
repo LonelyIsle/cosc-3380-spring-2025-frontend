@@ -2,8 +2,18 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import logo from "../assets/navbar-logo.svg";
 
+const svgs = import.meta.glob("../assets/cart-assets/*.svg", { eager: true });
+const cartSvgs = Object.entries(svgs).reduce((acc, [path, module]) => {
+  const key = path.split("/").pop().replace(".svg", "");
+  acc[key] = module.default;
+  return acc;
+}, {});
+
 function Navbar() {
   const [opacity, setOpacity] = useState(100);
+  const [cartAmount, setCartAmount] = useState(0);
+
+  useEffect(() => {}, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,9 +42,9 @@ function Navbar() {
       style={{ opacity: `${opacity}%` }}
     >
       <Link to="/" className="text-3xl text-text">
-        <img src={logo} alt="Navbar Logo" className="h-20" />
+        <img src={logo} alt="Navbar Logo" className="header-box h-20" />
       </Link>
-      <ul className="flex gap-4">
+      <ul className="flex gap-4 justify-center items-center">
         <li>
           <Link
             to="/login"
@@ -57,6 +67,15 @@ function Navbar() {
             className="header-box text-mantle bg-gradient-to-r from-green to-teal"
           >
             Profile Page
+          </Link>
+        </li>
+        <li>
+          <Link to="/cart">
+            <img
+              src={cartSvgs[`cart-${cartAmount}`]}
+              alt="Cart"
+              className="header-box h-20"
+            />
           </Link>
         </li>
       </ul>
