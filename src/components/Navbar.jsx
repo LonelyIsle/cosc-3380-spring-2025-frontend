@@ -13,8 +13,6 @@ function Navbar() {
   const [opacity, setOpacity] = useState(100);
   const [cartAmount, setCartAmount] = useState(0);
 
-  useEffect(() => {}, []);
-
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
