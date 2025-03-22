@@ -1,41 +1,12 @@
-import { useEffect, useState } from "react";
+import { useCart } from "../context/CartContext";
 import products from "../Products.jsx";
 
 function Cart() {
-  const [cartItems, setCartItems] = useState([]);
-
-  useEffect(() => {
-    // finds old cart items saved in local storage on render
-    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-    setCartItems(storedCart);
-  }, []);
-
-  useEffect(() => {
-    // updates local storage with new items under "cart"
-    localStorage.setItem("cart", JSON.stringify(cartItems));
-  }, [cartItems]);
-
-  const updateQuantity = (id, delta) => {
-    // select corresponding id, and increase/decrease by delta
-    setCartItems((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + delta) }
-          : item,
-      ),
-    );
-  };
-
-  const removeItem = (id) => {
-    // filters out items that matches the id
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
-  };
+  const { cartItems, updateQuantity, removeItem } = useCart();
 
   const productMap = new Map(products.map((p) => [p.id, p]));
-  // converts products array to map for O(1) lookup time
 
   const getTotal = () => {
-    // returns total price of all items in cart
     return cartItems
       .reduce((total, cartItem) => {
         const product = productMap.get(cartItem.id);
@@ -54,7 +25,7 @@ function Cart() {
         <>
           <div className="space-y-4">
             {cartItems.map(({ id, quantity }) => {
-              const product = products.find((p) => p.id === id);
+              const product = productMap.get(id);
               if (!product) return null;
 
               return (
