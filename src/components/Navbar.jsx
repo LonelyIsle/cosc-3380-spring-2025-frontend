@@ -9,11 +9,21 @@ const cartSvgs = Object.entries(svgs).reduce((acc, [path, module]) => {
   return acc;
 }, {});
 
-const isLoggedIn = false; // temporary
+// dummy data
+const isLoggedIn = false; 
+const dummyCartAmount = 0;
 
 function Navbar() {
   const [opacity, setOpacity] = useState(100);
   const [cartAmount, setCartAmount] = useState(0); // not implemented
+
+  useEffect(() => {
+    if (dummyCartAmount > 10) {
+      setCartAmount("overflow");
+    } else {
+      setCartAmount(dummyCartAmount);
+    }
+  }, [dummyCartAmount]);
 
   useEffect(() => {
     const handleScroll = () => {
