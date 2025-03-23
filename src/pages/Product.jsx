@@ -2,7 +2,10 @@ import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import products from "../Products.jsx";
 
+import { useCart } from "../context/CartContext";
+
 function Product() {
+  const { addToCart } = useCart();
   const { id } = useParams();
   const [quantity, setQuantity] = useState(1);
 
@@ -29,7 +32,7 @@ function Product() {
 
   // implement your cart functionality
   const handleAddToCart = () => {
-    console.log(`Added ${quantity} of ${product.name} to cart`);
+    addToCart(product.id, quantity);
     alert(`${quantity} × ${product.name} added to your cart!`);
   };
 
