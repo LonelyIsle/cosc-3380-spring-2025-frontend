@@ -1,4 +1,3 @@
-export { default as AddToCartButton } from "./AddToCartButton";
 export { default as Footer } from "./Footer";
 export { default as LoginValidation } from "./LoginValidation";
 export { default as Navbar } from "./Navbar";
