@@ -43,7 +43,6 @@ function Register() {
     }
   };
 
-
   return (
     <div className="center-container">
       <div className="p-6 bg-mantle text-text rounded-xl shadow-lg min-w-[200px] min-h-[150px] sm:min-w-[300px] sm:min-h-[200px] md:min-w-[400px] md:min-h-[250px] lg:min-w-[500px] lg:min-h-[300px] xl:min-w-[600px] xl:min-h-[350px] mx-auto my-4">

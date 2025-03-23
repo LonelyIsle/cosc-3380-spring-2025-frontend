@@ -1,15 +1,14 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import products from "../Products.jsx";
 
-import { useCart } from "../context/CartContext";
+import { useShop } from "../context/ShopContext";
 
 function Product() {
-  const { addToCart } = useCart();
+  const { addToCart, getProduct } = useShop();
   const { id } = useParams();
   const [quantity, setQuantity] = useState(1);
 
-  const product = products.find((p) => p.id === parseInt(id, 10));
+  const product = getProduct(id);
 
   if (!product) {
     return (

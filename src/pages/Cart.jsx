@@ -1,9 +1,15 @@
-import { useCart } from "../context/CartContext";
+import { useShop } from "../context/ShopContext";
 import { Link } from "react-router-dom";
-import products from "../Products.jsx";
 
 function Cart() {
-  const { cartItems, cartLoaded, updateQuantity, removeItem } = useCart();
+  const {
+    cartItems,
+    cartLoaded,
+    updateQuantity,
+    removeItem,
+    getCartAmount,
+    getProduct,
+  } = useShop();
 
   if (!cartLoaded) {
     return (
@@ -15,16 +21,7 @@ function Cart() {
     );
   }
 
-  const productMap = new Map(products.map((p) => [p.id, p]));
-
-  const getTotal = () => {
-    return cartItems
-      .reduce((total, cartItem) => {
-        const product = productMap.get(cartItem.id);
-        return product ? total + product.price * cartItem.quantity : total;
-      }, 0)
-      .toFixed(2);
-  };
+  const totalCartAmount = getCartAmount();
 
   return (
     <div className="w-full max-w-5xl mx-auto bg-white rounded-lg shadow-md p-6 mt-10">
@@ -36,7 +33,7 @@ function Cart() {
         <>
           <div className="space-y-4">
             {cartItems.map(({ id, quantity }) => {
-              const product = productMap.get(id);
+              const product = getProduct(id);
               if (!product) return null;
 
               return (
@@ -87,8 +84,13 @@ function Cart() {
           </div>
 
           <div className="mt-6 flex justify-between items-center">
-            <Link to="/checkout" className="text-xl font-bold text-red-500 hover:text-red-700">Proceed to Checkout</Link>
-            <h3 className="text-xl font-bold">Total: ${getTotal()}</h3>
+            <Link
+              to="/checkout"
+              className="text-xl font-bold text-red-500 hover:text-red-700"
+            >
+              Proceed to Checkout
+            </Link>
+            <h3 className="text-xl font-bold">Total: ${totalCartAmount}</h3>
           </div>
         </>
       )}

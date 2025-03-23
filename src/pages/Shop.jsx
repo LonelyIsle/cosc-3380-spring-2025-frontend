@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import products from "../Products.jsx";
-import { ProductGrid } from "../components";
-
-
+import { useNavigate } from "react-router-dom";
+import { useShop } from "../context/ShopContext";
 
 function Shop() {
   const navigate = useNavigate();
+  const { getProductArray } = useShop();
+  const products = getProductArray();
   const [filteredProducts, setFilteredProducts] = useState(products);
   const [sortOrder, setSortOrder] = useState("asc");
   const [searchTerm, setSearchTerm] = useState("");
