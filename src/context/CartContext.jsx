@@ -6,51 +6,60 @@ export const useCart = () => useContext(CartContext);
 
 export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState([]);
+  const [cartLoaded, setCartLoaded] = useState(false);
 
-  // Load from localStorage on first render
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
     setCartItems(storedCart);
+    setCartLoaded(true); // mark as loaded to allow dependent components to now load
   }, []);
 
-  // Save to localStorage on changes
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cartItems));
-  }, [cartItems]);
+    if (cartLoaded) {
+      localStorage.setItem("cart", JSON.stringify(cartItems));
+    }
+  }, [cartItems, cartLoaded]);
 
-  const addToCart = (productId) => {
-    setCartItems(prev => {
-      const existing = prev.find(item => item.id === productId);
+  const addToCart = (productId, quantity = 1) => {
+    setCartItems((prev) => {
+      const existing = prev.find((item) => item.id === productId);
       if (existing) {
-        return prev.map(item =>
+        return prev.map((item) =>
           item.id === productId
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
+            ? { ...item, quantity: item.quantity + quantity }
+            : item,
         );
       }
-      return [...prev, { id: productId, quantity: 1 }];
+      return [...prev, { id: productId, quantity }];
     });
   };
 
   const updateQuantity = (id, delta) => {
-    setCartItems(prev =>
-      prev.map(item =>
+    setCartItems((prev) =>
+      prev.map((item) =>
         item.id === id
           ? { ...item, quantity: Math.max(1, item.quantity + delta) }
-          : item
-      )
+          : item,
+      ),
     );
   };
 
   const removeItem = (id) => {
-    setCartItems(prev => prev.filter(item => item.id !== id));
+    setCartItems((prev) => prev.filter((item) => item.id !== id));
   };
 
   const clearCart = () => setCartItems([]);
 
   return (
     <CartContext.Provider
-      value={{ cartItems, addToCart, updateQuantity, removeItem, clearCart }}
+      value={{
+        cartItems,
+        cartLoaded,
+        addToCart,
+        updateQuantity,
+        removeItem,
+        clearCart,
+      }}
     >
       {children}
     </CartContext.Provider>
