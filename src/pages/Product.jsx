@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import products from "../Products.jsx";
+
+import { useShop } from "../context/ShopContext";
 
 function Product() {
+  const { addToCart, getProduct } = useShop();
   const { id } = useParams();
   const [quantity, setQuantity] = useState(1);
 
-  const product = products.find((p) => p.id === parseInt(id, 10));
+  const product = getProduct(id);
 
   if (!product) {
     return (
@@ -29,7 +31,7 @@ function Product() {
 
   // implement your cart functionality
   const handleAddToCart = () => {
-    console.log(`Added ${quantity} of ${product.name} to cart`);
+    addToCart(product.id, quantity);
     alert(`${quantity} × ${product.name} added to your cart!`);
   };
 
