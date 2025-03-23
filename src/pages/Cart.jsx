@@ -1,4 +1,5 @@
 import { useCart } from "../context/CartContext";
+import { Link } from "react-router-dom";
 import products from "../Products.jsx";
 
 function Cart() {
@@ -86,8 +87,8 @@ function Cart() {
           </div>
 
           <div className="mt-6 flex justify-between items-center">
-            <h3 className="text-xl font-bold">Total:</h3>
-            <p className="text-xl font-semibold">${getTotal()}</p>
+            <Link to="/checkout" className="text-xl font-bold text-red-500 hover:text-red-700">Proceed to Checkout</Link>
+            <h3 className="text-xl font-bold">Total: ${getTotal()}</h3>
           </div>
         </>
       )}
