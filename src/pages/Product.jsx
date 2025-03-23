@@ -34,7 +34,9 @@ function Product() {
   };
 
   const increaseQuantity = () => {
-    setQuantity((prev) => prev + 1);
+    if (quantity < product.quantity) {
+      setQuantity((prev) => prev + 1);
+    }
   };
 
   const decreaseQuantity = () => {
@@ -44,7 +46,7 @@ function Product() {
   };
 
   return (
-    <div className="min-h-screen bg-pink-200 py-8">
+    <div className="min-h-screen py-8">
       <div className="container mx-auto px-4">
         {/* Breadcrumb */}
         <div className="mb-6">
@@ -96,7 +98,7 @@ function Product() {
               </div>
 
               {/* Quantity Selector */}
-              <div className="flex items-center mb-6">
+              <div className="flex items-center mb-3">
                 <span className="mr-3 font-medium">Quantity:</span>
                 <div className="flex items-center border rounded">
                   <button
@@ -113,6 +115,16 @@ function Product() {
                     +
                   </button>
                 </div>
+              </div>
+
+              {/*Quantity Remainng */}
+              <div className="flex items-center mb-8 text-right">
+                <span className="mr-1 text-gray-700 text-sm/1 font-style: italic">
+                  Items in Stock:
+                </span>
+                <span className="text-gray-700 text-sm/1 font-style: italic">
+                  {product.quantity}
+                </span>
               </div>
 
               {/* Add to Cart Button */}

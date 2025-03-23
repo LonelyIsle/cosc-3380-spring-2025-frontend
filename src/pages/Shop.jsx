@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import products from "../Products.jsx";
-import { ProductGrid } from "../components";
 
 function Shop() {
   const navigate = useNavigate();
@@ -27,7 +26,7 @@ function Shop() {
   // Pagination change handler
   const handlePageChange = (newPage) => {
     setPage(newPage);
-    // Optional: Scroll to top when page changes
+    // Scroll to top when page changes might change this
     window.scrollTo(0, 0);
   };
 
