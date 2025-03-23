@@ -9,7 +9,7 @@ function Product() {
   const [quantity, setQuantity] = useState(1);
 
   const product = getProduct(id);
-  
+
   if (!product) {
     return (
       <div className="min-h-screen bg-pink-200 flex items-center justify-center">

@@ -26,7 +26,7 @@ export function ShopProvider({ children }) {
   }, [cartItems, cartLoaded]);
 
   // PRODUCT CONTEXT FUNCTIONS
-  
+
   const getProductArray = () => products;
 
   const getProduct = (id) => {

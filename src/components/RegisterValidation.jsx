@@ -16,7 +16,8 @@ function Validation(email, password, passwordcheck) {
   if (password === "") {
     error.password = "Password should not be empty";
   } else if (!passwordPattern.test(trimmedPassword)) {
-    error.password = "Needs one digit, one lowercase letter, one uppercase letter, and at least 8 characters";
+    error.password =
+      "Needs one digit, one lowercase letter, one uppercase letter, and at least 8 characters";
   } else {
     error.password = "";
   }
