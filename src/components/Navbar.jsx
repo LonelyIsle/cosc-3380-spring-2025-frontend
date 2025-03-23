@@ -10,7 +10,7 @@ const cartSvgs = Object.entries(svgs).reduce((acc, [path, module]) => {
   return acc;
 }, {});
 
-const isLoggedIn = false; // temporary
+const isLoggedIn = false; // temporary implementation to switch between being logged in and not
 
 function Navbar() {
   const [opacity, setOpacity] = useState(100);
@@ -29,6 +29,14 @@ const cartQuantity = cartLoaded
 
   console.log(cartQuantity);
   console.log(cartIcon);
+
+  useEffect(() => {
+    if (dummyCartAmount > 10) {
+      setCartAmount("overflow");
+    } else {
+      setCartAmount(dummyCartAmount);
+    }
+  }, [dummyCartAmount]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -53,8 +61,8 @@ const cartQuantity = cartLoaded
 
   return (
     <nav
-      className="h-20 bg-mantle flex justify-between items-center px-28 sticky top-0 z-10 transition-opacity duration-300"
-      style={{ opacity: `${opacity}%` }}
+      className="h-20 bg-mantle flex justify-between items-center px-28 sticky top-0 z-10 transition-all duration-300"
+      style={{ backgroundColor: `rgba(24, 24, 37, ${opacity / 100})` }}
     >
       <Link to="/" className="text-3xl text-text">
         <img src={logo} alt="Navbar Logo" className="header-box h-20" />
