@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useShop } from "../context/ShopContext";
 
-
 function Shop() {
   const navigate = useNavigate();
   const { getProductArray } = useShop();
@@ -20,7 +19,7 @@ function Shop() {
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = filteredProducts.slice(
     indexOfFirstProduct,
-    indexOfLastProduct
+    indexOfLastProduct,
   );
 
   // Calculate total pages
@@ -56,18 +55,18 @@ function Shop() {
       result = result.filter(
         (product) =>
           product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          product.description.toLowerCase().includes(searchTerm.toLowerCase())
+          product.description.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
 
     // Filter by categories
     const activeCategories = Object.keys(selectedCategories).filter(
-      (cat) => selectedCategories[cat]
+      (cat) => selectedCategories[cat],
     );
 
     if (activeCategories.length > 0) {
       result = result.filter((product) =>
-        product.category.some((cat) => activeCategories.includes(cat))
+        product.category.some((cat) => activeCategories.includes(cat)),
       );
     }
 
@@ -79,7 +78,7 @@ function Shop() {
 
     // Filter by colors
     const activeColors = Object.keys(selectedColors).filter(
-      (color) => selectedColors[color]
+      (color) => selectedColors[color],
     );
     if (activeColors.length > 0) {
       result = result.filter((product) => activeColors.includes(product.color));
@@ -87,7 +86,7 @@ function Shop() {
 
     // Apply sort
     const sorted = [...result].sort((a, b) =>
-      sortOrder === "asc" ? a.price - b.price : b.price - a.price
+      sortOrder === "asc" ? a.price - b.price : b.price - a.price,
     );
 
     setFilteredProducts(sorted);
