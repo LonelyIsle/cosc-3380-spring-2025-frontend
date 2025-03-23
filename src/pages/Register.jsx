@@ -3,32 +3,35 @@ import { useNavigate } from "react-router-dom";
 import logo from "../assets/bag-full-logo.svg";
 import Validation from "../components/RegisterValidation";
 import axios from "axios";
+
 function Register() {
-  const [passwordcheck, setpasswordcheck] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [middleName, setMiddleName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [address, setAddress] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
-  /* These will check to see if there are any errors if so
-     then they will be stored in errors */
-  const [errors, setErrors] = useState({});
-
   const handleSubmit = (event) => {
-    // console.log(values)
     event.preventDefault();
-    setErrors(Validation(passwordcheck, email, password)); // console.log(values);
+    const validationErrors = Validation(email, password, confirmPassword);
+    setErrors(validationErrors);
 
-    /* The if checks that if after putting signup information and it comes back empty string for all info
-         it can proceed to post the information to the  database*/
     if (
-      errors.passwordcheck === "" &&
-      errors.email === "" &&
-      errors.password === ""
+      !validationErrors.passwordcheck &&
+      !validationErrors.email &&
+      !validationErrors.password
     ) {
       axios
-        .post("http://http://localhost:5175/register", {
-          passwordcheck: passwordcheck,
+        .post("http://localhost:5175/register", {
+          firstName: firstName,
+          middleName: middleName,
+          lastName: lastName,
+          address: address,
+          passwordcheck: confirmPassword,
           email: email,
           password: password,
         })
@@ -40,6 +43,7 @@ function Register() {
     }
   };
 
+
   return (
     <div className="center-container">
       <div className="p-6 bg-mantle text-text rounded-xl shadow-lg min-w-[200px] min-h-[150px] sm:min-w-[300px] sm:min-h-[200px] md:min-w-[400px] md:min-h-[250px] lg:min-w-[500px] lg:min-h-[300px] xl:min-w-[600px] xl:min-h-[350px] mx-auto my-4">
@@ -49,7 +53,7 @@ function Register() {
           </div>
           Register your account
         </h1>
-        <form action='' onSubmit={handleSubmit}>
+        <form action="" onSubmit={handleSubmit}>
           <div className="mb-2">
             <label htmlFor="Fname" className="block text-subtext0">
               First Name:
@@ -60,8 +64,8 @@ function Register() {
               id="Fname"
               className="border p-2 w-full rounded bg-surface2 text-text"
               placeholder="Enter First Name"
-              value={passwordcheck}
-              onChange={(e) => setpasswordcheck(e.target.value)}
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
             />
           </div>
           <div className="mb-2">
@@ -69,10 +73,12 @@ function Register() {
               Middle Name:
             </label>
             <input
-              type="Mname"
+              type="text" // Corrected type to text
               id="Mname"
               className="border p-2 w-full rounded bg-surface2 text-text"
               placeholder="Enter Middle Name"
+              value={middleName}
+              onChange={(e) => setMiddleName(e.target.value)}
             />
           </div>
           <div className="mb-2">
@@ -80,10 +86,12 @@ function Register() {
               Last Name:
             </label>
             <input
-              type="Lname"
+              type="text" // Corrected type to text
               id="Lname"
               className="border p-2 w-full rounded bg-surface2 text-text"
               placeholder="Enter Last Name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
             />
           </div>
           <div className="mb-2">
@@ -99,7 +107,14 @@ function Register() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-             {errors.email && <span className="text-red-700 px-2 py-1 rounded relative" role="alert" >{errors.email}</span>}
+            {errors.email && (
+              <span
+                className="text-red-700 px-2 py-1 rounded relative"
+                role="alert"
+              >
+                {errors.email}
+              </span>
+            )}
           </div>
           <div className="mb-2">
             <label name="password" className="block text-subtext0">
@@ -114,7 +129,14 @@ function Register() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            {errors.password && <span className="text-red-700 px-2 py-1 rounded relative" role="alert" >{errors.password}</span>} 
+            {errors.password && (
+              <span
+                className="text-red-700 px-2 py-1 rounded relative"
+                role="alert"
+              >
+                {errors.password}
+              </span>
+            )}
           </div>
           <div className="mb-2">
             <label htmlFor="Cpassword" className="block text-subtext0">
@@ -122,12 +144,21 @@ function Register() {
             </label>
             <input
               name="cpassword"
-              type="Cpassword"
+              type="password" //Corrected type
               id="Cpassword"
               className="border p-2 w-full rounded bg-surface2 text-text"
               placeholder="Confirm Password"
+              value={confirmPassword} // set the value
+              onChange={(e) => setConfirmPassword(e.target.value)} // set the state
             />
-             {errors.passwordcheck && <span className="text-red-700 px-2 py-1 rounded relative" role="alert" >{errors.passwordcheck}</span>} 
+            {errors.passwordcheck && (
+              <span
+                className="text-red-700 px-2 py-1 rounded relative"
+                role="alert"
+              >
+                {errors.passwordcheck}
+              </span>
+            )}
           </div>
           <div className="mb-2">
             <label htmlFor="address" className="block text-subtext0">
@@ -135,14 +166,17 @@ function Register() {
             </label>
             <input
               name="address"
-              type="address"
+              type="text" //Corrected type
               id="address"
               className="border p-2 w-full rounded bg-surface2 text-text"
-              placeholder="Enter Adress"
+              placeholder="Enter Address"
             />
           </div>
           <div className="mt-6 text-center">
-            <button type="submit" className="bg-green text-base py-2 px-4 rounded hover:bg-teal">
+            <button
+              type="submit"
+              className="bg-green text-base py-2 px-4 rounded hover:bg-teal"
+            >
               Sign Up
             </button>
           </div>
