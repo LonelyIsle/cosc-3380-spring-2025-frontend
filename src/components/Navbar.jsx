@@ -31,14 +31,6 @@ const cartQuantity = cartLoaded
   console.log(cartIcon);
 
   useEffect(() => {
-    if (dummyCartAmount > 10) {
-      setCartAmount("overflow");
-    } else {
-      setCartAmount(dummyCartAmount);
-    }
-  }, [dummyCartAmount]);
-
-  useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const pxDelimeter = 100;
