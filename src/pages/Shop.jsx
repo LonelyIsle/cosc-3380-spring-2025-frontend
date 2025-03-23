@@ -5,7 +5,8 @@ import { useShop } from "../context/ShopContext";
 function Shop() {
   const navigate = useNavigate();
   const { getProductArray } = useShop();
-  const [filteredProducts, setFilteredProducts] = useState(getProductArray());
+  const products = getProductArray();
+  const [filteredProducts, setFilteredProducts] = useState(products);
   const [sortOrder, setSortOrder] = useState("asc");
   const [searchTerm, setSearchTerm] = useState("");
 
