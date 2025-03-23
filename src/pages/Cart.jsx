@@ -2,7 +2,17 @@ import { useCart } from "../context/CartContext";
 import products from "../Products.jsx";
 
 function Cart() {
-  const { cartItems, updateQuantity, removeItem } = useCart();
+  const { cartItems, cartLoaded, updateQuantity, removeItem } = useCart();
+
+  if (!cartLoaded) {
+    return (
+      <div className="w-full max-w-5xl mx-auto text-center py-20">
+        <p className="text-pink-500 animate-pulse font-semibold">
+          Loading your cart...
+        </p>
+      </div>
+    );
+  }
 
   const productMap = new Map(products.map((p) => [p.id, p]));
 

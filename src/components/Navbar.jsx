@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 import { useEffect, useState } from "react";
 import logo from "../assets/navbar-logo.svg";
 
@@ -9,11 +10,25 @@ const cartSvgs = Object.entries(svgs).reduce((acc, [path, module]) => {
   return acc;
 }, {});
 
-const isLoggedIn = false; // temporary 
+const isLoggedIn = false; // temporary
 
 function Navbar() {
   const [opacity, setOpacity] = useState(100);
-  const [cartAmount, setCartAmount] = useState(0); // not implemented
+  const { cartItems, cartLoaded } = useCart();
+
+
+
+const cartQuantity = cartLoaded
+  ? cartItems.reduce((total, item) => total + item.quantity, 0)
+  : 0;
+
+  const cartIcon =
+    cartQuantity > 10
+      ? cartSvgs["cart-overflow"]
+      : cartSvgs[`cart-${cartQuantity}`];
+
+  console.log(cartQuantity);
+  console.log(cartIcon);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -76,11 +91,7 @@ function Navbar() {
         )}
         <li>
           <Link to="/cart">
-            <img
-              src={cartSvgs[`cart-${cartAmount}`]}
-              alt="Cart"
-              className="header-box h-20"
-            />
+            <img src={cartIcon} alt="Cart" className="header-box h-20" />
           </Link>
         </li>
       </ul>
