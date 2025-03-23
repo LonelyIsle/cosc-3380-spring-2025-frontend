@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useCart } from "../context/CartContext";
+import { useShop } from "../context/ShopContext";
 import { useEffect, useState } from "react";
 import logo from "../assets/navbar-logo.svg";
 
@@ -14,21 +14,14 @@ const isLoggedIn = false; // temporary implementation to switch between being lo
 
 function Navbar() {
   const [opacity, setOpacity] = useState(100);
-  const { cartItems, cartLoaded } = useCart();
+  const { getCartQuantity } = useShop();
 
-
-
-const cartQuantity = cartLoaded
-  ? cartItems.reduce((total, item) => total + item.quantity, 0)
-  : 0;
+  const cartQuantity = getCartQuantity();
 
   const cartIcon =
     cartQuantity > 10
       ? cartSvgs["cart-overflow"]
       : cartSvgs[`cart-${cartQuantity}`];
-
-  console.log(cartQuantity);
-  console.log(cartIcon);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -37,10 +30,8 @@ const cartQuantity = cartLoaded
 
       setOpacity((prevOpacity) => {
         if (scrollY > pxDelimeter && prevOpacity !== 80) {
-          console.log(80);
           return 80;
         } else if (scrollY <= pxDelimeter && prevOpacity !== pxDelimeter) {
-          console.log(pxDelimeter);
           return pxDelimeter;
         }
         return prevOpacity; // Ensure no unnecessary re-renders
