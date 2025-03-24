@@ -169,6 +169,8 @@ function Register() {
               id="address"
               className="border p-2 w-full rounded bg-surface2 text-text"
               placeholder="Enter Address"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
             />
           </div>
           <div className="mt-6 text-center">
