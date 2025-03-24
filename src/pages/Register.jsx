@@ -25,23 +25,20 @@ function Register() {
       !validationErrors.email &&
       !validationErrors.password
     ) {
-      axios
-        .post("http://localhost:5175/register", {
-          firstName: firstName,
-          middleName: middleName,
-          lastName: lastName,
-          address: address,
-          passwordcheck: confirmPassword,
-          email: email,
-          password: password,
-        })
-        .then((data) => {
-          navigate("/");
-          console.log(data);
-        })
-        .catch((err) => console.log(err));
+      console.log({
+        firstName,
+        middleName,
+        lastName,
+        address,
+        email,
+        password,
+        confirmPassword,
+      });
+      alert("Form submitted successfully!");
+      navigate("/");
     }
   };
+
 
   return (
     <div className="center-container">
