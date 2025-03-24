@@ -11,6 +11,7 @@ const products = [
     category: ["Animals", "Anime"],
     size: 1.5,
     color: "Red",
+    quantity: 10,
   },
   {
     id: 2,
@@ -21,6 +22,7 @@ const products = [
     category: ["Movies & TV Shows"],
     size: 2.5,
     color: "Blue",
+    quantity: 5,
   },
   {
     id: 3,
@@ -31,6 +33,7 @@ const products = [
     category: ["Anime"],
     size: 3.5,
     color: "Green",
+    quantity: 20,
   },
   {
     id: 4,
@@ -41,6 +44,7 @@ const products = [
     category: ["Animals"],
     size: 4.5,
     color: "Blue",
+    quantity: 12,
   },
   {
     id: 5,
@@ -51,6 +55,7 @@ const products = [
     category: ["Anime"],
     size: 5.5,
     color: "Red",
+    quantity: 8,
   },
   {
     id: 6,
@@ -61,6 +66,7 @@ const products = [
     category: ["Anime"],
     size: 6.5,
     color: "Green",
+    quantity: 15,
   },
   {
     id: 7,
@@ -71,6 +77,7 @@ const products = [
     category: ["Animals"],
     size: 7.5,
     color: "Red",
+    quantity: 30,
   },
   {
     id: 8,
@@ -81,6 +88,7 @@ const products = [
     category: ["Anime"],
     size: 8.5,
     color: "Blue",
+    quantity: 18,
   },
   {
     id: 9,
@@ -91,6 +99,7 @@ const products = [
     category: ["Anime"],
     size: 9.5,
     color: "Green",
+    quantity: 22,
   },
   {
     id: 10,
@@ -101,6 +110,7 @@ const products = [
     category: ["Animals"],
     size: 0.5,
     color: "Red",
+    quantity: 7,
   },
   {
     id: 11,
@@ -111,6 +121,7 @@ const products = [
     category: ["Anime"],
     size: 1.5,
     color: "Blue",
+    quantity: 14,
   },
   {
     id: 12,
@@ -121,6 +132,7 @@ const products = [
     category: ["Anime"],
     size: 2.5,
     color: "Green",
+    quantity: 6,
   },
   {
     id: 13,
@@ -131,6 +143,7 @@ const products = [
     category: ["Anime"],
     size: 3.2,
     color: "Blue",
+    quantity: 25,
   },
   {
     id: 14,
@@ -141,6 +154,7 @@ const products = [
     category: ["Movies & TV Shows"],
     size: 4.0,
     color: "Green",
+    quantity: 9,
   },
   {
     id: 15,
@@ -151,6 +165,7 @@ const products = [
     category: ["Animals"],
     size: 2.5,
     color: "Black",
+    quantity: 11,
   },
   {
     id: 16,
@@ -161,6 +176,7 @@ const products = [
     category: ["Anime"],
     size: 1.0,
     color: "Yellow",
+    quantity: 4,
   },
   {
     id: 17,
@@ -171,6 +187,7 @@ const products = [
     category: ["Movies & TV Shows"],
     size: 5.0,
     color: "Orange",
+    quantity: 13,
   },
 ];
 
