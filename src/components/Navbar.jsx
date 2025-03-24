@@ -81,6 +81,14 @@ function Navbar() {
           </li>
         )}
         <li>
+          <Link
+            to="/shop"
+            className="header-box text-mantle bg-gradient-to-r from-blue to-sapphire"
+          >
+            Shop
+          </Link>
+        </li>
+        <li>
           <Link to="/cart">
             <img src={cartIcon} alt="Cart" className="header-box h-20" />
           </Link>
