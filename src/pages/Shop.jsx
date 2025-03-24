@@ -10,6 +10,28 @@ function Shop() {
   const [sortOrder, setSortOrder] = useState("asc");
   const [searchTerm, setSearchTerm] = useState("");
 
+  // Pagination state
+  const [page, setPage] = useState(1);
+  const [productsPerPage] = useState(12);
+
+  // Calculate current products
+  const indexOfLastProduct = page * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = filteredProducts.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct,
+  );
+
+  // Calculate total pages
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+
+  // Pagination change handler
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+    // Scroll to top when page changes might change this
+    window.scrollTo(0, 0);
+  };
+
   // Filter states
   const [selectedCategories, setSelectedCategories] = useState({
     Animals: false,
@@ -68,6 +90,8 @@ function Shop() {
     );
 
     setFilteredProducts(sorted);
+    // Reset to first page when filters change
+    setPage(1);
   }, [
     searchTerm,
     selectedCategories,
@@ -102,9 +126,42 @@ function Shop() {
     navigate(`/product/${productId}`);
   };
 
-  // For debugging - log the number of products
-  console.log(`Total products in filteredProducts: ${filteredProducts.length}`);
+  // Generate page numbers array
+  const getPageNumbers = () => {
+    let pages = [];
 
+    // Always show first page
+    pages.push(1);
+
+    // Add current page and neighbors
+    for (
+      let i = Math.max(2, page - 1);
+      i <= Math.min(totalPages - 1, page + 1);
+      i++
+    ) {
+      if (!pages.includes(i)) pages.push(i);
+    }
+
+    // Always show last page if there's more than one page
+    if (totalPages > 1 && !pages.includes(totalPages)) {
+      pages.push(totalPages);
+    }
+
+    // Sort and add ellipses
+    pages.sort((a, b) => a - b);
+
+    let result = [];
+    for (let i = 0; i < pages.length; i++) {
+      result.push(pages[i]);
+
+      // Add ellipsis if there's a gap
+      if (i < pages.length - 1 && pages[i + 1] - pages[i] > 1) {
+        result.push("...");
+      }
+    }
+
+    return result;
+  };
   return (
     <>
       {/* Main Container */}
@@ -282,9 +339,10 @@ function Shop() {
             <div className="mb-4 text-sm">
               Showing {filteredProducts.length} products
             </div>
+
             {/* Product Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 mb-8">
-              {filteredProducts.map((product) => (
+              {currentProducts.map((product) => (
                 <div
                   key={product.id}
                   className="bg-white rounded-lg overflow-hidden shadow-sm transition-transform duration-300 hover:scale-105 cursor-pointer"
@@ -312,6 +370,64 @@ function Shop() {
                 </div>
               ))}
             </div>
+
+            {/* Pagination with Tailwind */}
+            {totalPages > 1 && (
+              <div className="flex flex-col items-center space-y-2 mt-8 mb-8">
+                <p className="text-sm text-gray-700">
+                  Page {page} of {totalPages}
+                </p>
+                <div className="flex space-x-2">
+                  {/* Previous button */}
+                  <button
+                    onClick={() => page > 1 && handlePageChange(page - 1)}
+                    disabled={page === 1}
+                    className={`px-3 py-1 rounded-md ${
+                      page === 1
+                        ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    }`}
+                  >
+                    &laquo;
+                  </button>
+
+                  {/* Page numbers */}
+                  {getPageNumbers().map((pageNum, index) => (
+                    <button
+                      key={index}
+                      onClick={() =>
+                        pageNum !== "..." && handlePageChange(pageNum)
+                      }
+                      disabled={pageNum === "..."}
+                      className={`px-3 py-1 rounded-md ${
+                        pageNum === page
+                          ? "bg-pink-500 text-white"
+                          : pageNum === "..."
+                            ? "bg-gray-100 text-gray-700 cursor-default"
+                            : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  ))}
+
+                  {/* Next button */}
+                  <button
+                    onClick={() =>
+                      page < totalPages && handlePageChange(page + 1)
+                    }
+                    disabled={page === totalPages}
+                    className={`px-3 py-1 rounded-md ${
+                      page === totalPages
+                        ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    }`}
+                  >
+                    &raquo;
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Empty state */}
             {filteredProducts.length === 0 && (
@@ -342,5 +458,4 @@ function Shop() {
     </>
   );
 }
-
 export default Shop;

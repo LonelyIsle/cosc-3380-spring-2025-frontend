@@ -56,26 +56,58 @@ export function ShopProvider({ children }) {
     // add product to cart
     setCartItems((prev) => {
       const existing = prev.find((item) => item.id === productId);
+      const product = productMap.get(productId);
+
+      // If product doesn't exist or has no quantity property, return unchanged
+      if (!product || typeof product.quantity !== "number") {
+        return prev;
+      }
+
       if (existing) {
+        // Calculate the new potential quantity
+        const newQuantity = existing.quantity + quantity;
+
+        // Ensure the quantity doesn't exceed the available product quantity
+        const limitedQuantity = Math.min(newQuantity, product.quantity);
+
         return prev.map((item) =>
-          item.id === productId
-            ? { ...item, quantity: item.quantity + quantity }
-            : item,
+          item.id === productId ? { ...item, quantity: limitedQuantity } : item
         );
       }
-      return [...prev, { id: productId, quantity }];
+
+      // For new items, ensure we don't add more than available
+      const limitedQuantity = Math.min(quantity, product.quantity);
+
+      // Only add to cart if there's available quantity
+      if (limitedQuantity > 0) {
+        return [...prev, { id: productId, quantity: limitedQuantity }];
+      }
+
+      return prev;
     });
   };
 
   const updateQuantity = (id, delta) => {
     // update quantity of product in cart
-    setCartItems((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + delta) }
-          : item,
-      ),
-    );
+    setCartItems((prev) => {
+      const product = productMap.get(id);
+
+      // If product doesn't exist or has no quantity property, return unchanged
+      if (!product || typeof product.quantity !== "number") {
+        return prev;
+      }
+
+      return prev.map((item) => {
+        if (item.id === id) {
+          // Calculate new quantity ensuring it's at least 1 and no more than product quantity
+          const newQuantity = Math.max(1, item.quantity + delta);
+          const limitedQuantity = Math.min(newQuantity, product.quantity);
+
+          return { ...item, quantity: limitedQuantity };
+        }
+        return item;
+      });
+    });
   };
 
   const removeItem = (id) => {

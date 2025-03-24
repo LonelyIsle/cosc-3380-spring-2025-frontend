@@ -1,6 +1,15 @@
 import OrderHistory from "../components/OrderHistory";
+import { useNavigate } from "react-router-dom";
 
 function Profile() {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login");
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 py-10">
       <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-xl overflow-hidden">
@@ -49,6 +58,15 @@ function Profile() {
               <OrderHistory />
             </div>
           </div>
+        </div>
+
+        <div className="flex justify-center">
+          <button
+            onClick={handleLogout}
+            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
+          >
+            Log Out
+          </button>
         </div>
       </div>
     </div>
