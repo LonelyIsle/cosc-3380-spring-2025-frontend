@@ -6,11 +6,47 @@ function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState({});
 
-  const handleSubmit = (event) => {
-    event.preventDefault;
-    setErrors(Validation(email, password));
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const validationErrors = Validation(email, password);
+
+    if (Object.keys(validationErrors).length === 0) {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/auth/login`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, password }),
+          },
+        );
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Store token and user info
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("user", JSON.stringify(data.user));
+
+          // Redirect based on role
+          const role = data.user.role;
+          if (role === "admin") {
+            navigate("/admin-dashboard");
+          } else if (role === "employee") {
+            navigate("/employee-portal");
+          } else {
+            navigate("/shop");
+          }
+        } else {
+          console.error("Login failed:", data.message || "Unknown error");
+        }
+      } catch (err) {
+        console.error("Network error:", err);
+      }
+    }
   };
 
   return (
