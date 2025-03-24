@@ -1,14 +1,32 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 
 import { useShop } from "../context/ShopContext";
 
 function Product() {
-  const { addToCart, getProduct } = useShop();
+  const { addToCart, getProduct, cartItems } = useShop();
   const { id } = useParams();
   const [quantity, setQuantity] = useState(1);
+  const [maxAvailable, setMaxAvailable] = useState(0);
 
   const product = getProduct(id);
+
+  // maximum available quantity (stock minus cart)
+  useEffect(() => {
+    if (product) {
+      const cartItem = cartItems.find((item) => item.id === product.id);
+      const inCart = cartItem ? cartItem.quantity : 0;
+      const available = Math.max(0, product.quantity - inCart);
+      setMaxAvailable(available);
+
+      // If selected quantity exceeds available
+      if (quantity > available) {
+        setQuantity(available > 0 ? available : 0);
+      } else if (quantity === 0 && available > 0) {
+        setQuantity(1); // Reset to 1 if we had 0 but now have stock
+      }
+    }
+  }, [product, cartItems, quantity]);
 
   if (!product) {
     return (
@@ -29,14 +47,25 @@ function Product() {
     );
   }
 
-  // implement your cart functionality
+  const itemInCart = cartItems.find((item) => item.id === product.id);
+
   const handleAddToCart = () => {
-    addToCart(product.id, quantity);
-    alert(`${quantity} × ${product.name} added to your cart!`);
+    if (quantity > 0) {
+      addToCart(product.id, quantity);
+      alert(`${quantity} × ${product.name} added to your cart!`);
+
+      const newAvailable = maxAvailable - quantity;
+      setMaxAvailable(newAvailable);
+      setQuantity(newAvailable > 0 ? 1 : 0);
+    } else {
+      alert(
+        "Sorry, this item is out of stock or already in your cart at maximum quantity."
+      );
+    }
   };
 
   const increaseQuantity = () => {
-    if (quantity < product.quantity) {
+    if (quantity < maxAvailable) {
       setQuantity((prev) => prev + 1);
     }
   };
@@ -106,6 +135,7 @@ function Product() {
                   <button
                     onClick={decreaseQuantity}
                     className="px-3 py-1 border-r hover:bg-gray-100"
+                    disabled={quantity <= 1 || maxAvailable === 0}
                   >
                     -
                   </button>
@@ -113,28 +143,32 @@ function Product() {
                   <button
                     onClick={increaseQuantity}
                     className="px-3 py-1 border-l hover:bg-gray-100"
+                    disabled={quantity >= maxAvailable}
                   >
                     +
                   </button>
                 </div>
               </div>
 
-              {/*Quantity Remainng */}
-              <div className="flex items-center mb-8 text-right">
-                <span className="mr-1 text-gray-700 text-sm/1 font-style: italic">
-                  Items in Stock:
-                </span>
-                <span className="text-gray-700 text-sm/1 font-style: italic">
-                  {product.quantity}
-                </span>
+              {/* Inventory Information */}
+              <div className="flex flex-col mb-8 text-sm text-gray-700">
+                <div className="flex items-center gap-1">
+                  <span>Items in Stock:</span>
+                  <span>{product.quantity}</span>
+                </div>
               </div>
 
               {/* Add to Cart Button */}
               <button
                 onClick={handleAddToCart}
-                className="w-full bg-pink-500 text-white py-3 rounded-lg hover:bg-pink-600 transition duration-300"
+                className={`w-full py-3 rounded-lg transition duration-300 ${
+                  maxAvailable > 0
+                    ? "bg-pink-500 text-white hover:bg-pink-600"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+                disabled={maxAvailable === 0}
               >
-                Add to Cart
+                {maxAvailable > 0 ? "Add to Cart" : "Out of Stock"}
               </button>
             </div>
           </div>
