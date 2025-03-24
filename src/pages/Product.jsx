@@ -166,7 +166,6 @@ function Product() {
                     ? "bg-pink-500 text-white hover:bg-pink-600"
                     : "bg-gray-300 text-gray-500 cursor-not-allowed"
                 }`}
-                disabled={maxAvailable === 0}
               >
                 {maxAvailable > 0 ? "Add to Cart" : "Out of Stock"}
               </button>
