@@ -167,7 +167,7 @@ function Product() {
                     : "bg-gray-300 text-gray-500 cursor-not-allowed"
                 }`}
               >
-                {maxAvailable > 0 ? "Add to Cart" : "Out of Stock"}
+                {maxAvailable > 0 ? "Add to Cart" : "Not Available"}
               </button>
             </div>
           </div>
