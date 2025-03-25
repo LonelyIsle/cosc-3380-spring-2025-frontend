@@ -3,11 +3,14 @@ import { useNavigate } from "react-router-dom";
 import logo from "../assets/bag-full-logo.svg";
 import Validation from "../components/LoginValidation";
 import axios from "axios";
+import { UserContext } from "./UserContext"; // adjust path if needed
 
 function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { setUser } = useContext(UserContext); // 👈 pull login state from context
+  
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -30,6 +33,7 @@ function Login() {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data));
         localStorage.setItem("loggedIn", true);
+        setUser(localStorage.getItem("loggedIn"));
 
         // Redirect based on role
         const role = data.role?.toUpperCase();
