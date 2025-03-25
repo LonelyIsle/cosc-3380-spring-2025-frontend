@@ -24,25 +24,21 @@ function Register() {
       !validationErrors.passwordcheck &&
       !validationErrors.email &&
       !validationErrors.password
-    ) {
-      axios
-        .post("http://localhost:5175/register", {
-          firstName: firstName,
-          middleName: middleName,
-          lastName: lastName,
-          address: address,
-          passwordcheck: confirmPassword,
-          email: email,
-          password: password,
-        })
-        .then((data) => {
-          navigate("/");
-          console.log(data);
-        })
-        .catch((err) => console.log(err));
-    }
-  };
-
+    ) axios.post(`https://poswebapp-d8f0geh5dyhfgyfj.centralus-01.azurewebsites.net/register`, {
+      first_name: firstName,
+      middle_name: middleName,
+      last_name: lastName,
+      email,
+      password
+    })
+    .then((res) => {
+      console.log("Registration success:", res.data);
+      navigate("/");
+    })
+    .catch((err) => {
+      console.error("Registration failed:", err.response?.data || err.message);
+    });
+  }
   return (
     <div className="center-container">
       <div className="p-6 bg-mantle text-text rounded-xl shadow-lg min-w-[200px] min-h-[150px] sm:min-w-[300px] sm:min-h-[200px] md:min-w-[400px] md:min-h-[250px] lg:min-w-[500px] lg:min-h-[300px] xl:min-w-[600px] xl:min-h-[350px] mx-auto my-4">
@@ -169,6 +165,8 @@ function Register() {
               id="address"
               className="border p-2 w-full rounded bg-surface2 text-text"
               placeholder="Enter Address"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
             />
           </div>
           <div className="mt-6 text-center">

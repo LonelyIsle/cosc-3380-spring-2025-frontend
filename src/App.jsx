@@ -13,6 +13,7 @@ import {
 
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Admin from "./pages/Admin";
 
 function RedirectToHome() {
   const navigate = useNavigate();
@@ -37,6 +38,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/register" element={<Register />} />
         <Route path="/shop" element={<Shop />} />
+        <Route path="/admin" element={<Admin />} />
         {<Route path="*" element={<RedirectToHome />} />}
       </Routes>
       <Footer />
