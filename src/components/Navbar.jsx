@@ -10,12 +10,12 @@ const cartSvgs = Object.entries(svgs).reduce((acc, [path, module]) => {
   return acc;
 }, {});
 
+const isLoggedIn = false; // temporary implementation to switch between being logged in and not
+
 function Navbar() {
   const [opacity, setOpacity] = useState(100);
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    JSON.parse(localStorage.getItem("loggedIn")) || false,
-  );
   const { getCartQuantity } = useShop();
+
   const cartQuantity = getCartQuantity();
 
   const cartIcon =
@@ -23,18 +23,6 @@ function Navbar() {
       ? cartSvgs["cart-overflow"]
       : cartSvgs[`cart-${cartQuantity}`];
 
-  // 🔥 Listens for login/logout changes via 'authChange' event
-  useEffect(() => {
-    const handleAuthChange = () => {
-      const loggedIn = JSON.parse(localStorage.getItem("loggedIn"));
-      setIsLoggedIn(loggedIn);
-    };
-
-    window.addEventListener("authChange", handleAuthChange);
-    return () => window.removeEventListener("authChange", handleAuthChange);
-  }, []);
-
-  // Scroll opacity effect
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -46,13 +34,13 @@ function Navbar() {
         } else if (scrollY <= pxDelimeter && prevOpacity !== pxDelimeter) {
           return pxDelimeter;
         }
-        return prevOpacity;
+        return prevOpacity; // Ensure no unnecessary re-renders
       });
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, []); // No need to include `opacity` in the dependency array
 
   return (
     <nav
