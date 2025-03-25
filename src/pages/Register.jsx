@@ -15,7 +15,7 @@ function Register() {
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const validationErrors = Validation(email, password, confirmPassword);
     setErrors(validationErrors);

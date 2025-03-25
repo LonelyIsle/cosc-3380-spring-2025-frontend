@@ -2,46 +2,57 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/bag-full-logo.svg";
 import Validation from "../components/LoginValidation";
+
 function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
 
-  const handleSubmit = async (event) => {
+  // Dummy mock login data
+  const mockUsers = [
+    { email: "admin@example.com", password: "Admin123", role: "admin" },
+    {
+      email: "employee@example.com",
+      password: "employee123",
+      role: "employee",
+    },
+    { email: "user@example.com", password: "user123", role: "user" },
+  ];
+
+
+  const handleSubmit = (event) => {
     event.preventDefault();
     const validationErrors = Validation(email, password);
+    setErrors(validationErrors);
+    console.log(validationErrors)
+    console.log(Object.keys(validationErrors).length)
 
-    if (Object.keys(validationErrors).length === 0) {
+    if (Object.keys(validationErrors).length === 2) {
       try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/auth/login`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ email, password }),
-          },
+        
+        console.log(email,password)
+
+        const user = mockUsers.find(
+          (u) => u.email === email && u.password === password
         );
+        console.log(email, password);
 
-        const data = await response.json();
+        console.log(user.role);
+        if (user) {
+          localStorage.setItem("token", "dummy-token");
+          localStorage.setItem("user", JSON.stringify(user));
+          console.log(user.role);
 
-        if (response.ok) {
-          // Store token and user info
-          localStorage.setItem("token", data.token);
-          localStorage.setItem("user", JSON.stringify(data.user));
-
-          // Redirect based on role
-          const role = data.user.role;
-          if (role === "admin") {
-            navigate("/admin-dashboard");
-          } else if (role === "employee") {
-            navigate("/employee-portal");
+          if (user.role === "admin" || user.role === "employee") {
+            console.log("Navigating to /admin");
+            navigate("/admin");
           } else {
+            console.log("Navigating to /shop");
             navigate("/shop");
           }
         } else {
-          console.error("Login failed:", data.message || "Unknown error");
+          console.error("Login failed: Invalid email or password");
         }
       } catch (err) {
         console.error("Network error:", err);
@@ -69,6 +80,7 @@ function Login() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
+            {errors.email && <p className="text-red-500">{errors.email}</p>}
           </div>
           <div className="mb-2">
             <label htmlFor="password" className="block text-subtext0">
@@ -82,9 +94,15 @@ function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+            {errors.password && (
+              <p className="text-red-500">{errors.password}</p>
+            )}
           </div>
           <div className="mt-6 text-center">
-            <button className="bg-maroon text-base py-2 px-4 rounded hover:bg-peach">
+            <button
+              type="submit"
+              className="bg-maroon text-base py-2 px-4 rounded hover:bg-peach"
+            >
               Sign In
             </button>
           </div>
