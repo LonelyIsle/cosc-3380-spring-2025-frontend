@@ -26,10 +26,11 @@ function Register() {
       !validationErrors.password
     )
       axios
-        .post(`${import.meta.env.VITE_BACKEND_URL}/register`, {
+        .post(`${import.meta.env.VITE_API_URL}/register`, {
           first_name: firstName,
           middle_name: middleName,
           last_name: lastName,
+          address,
           email,
           password,
         })
