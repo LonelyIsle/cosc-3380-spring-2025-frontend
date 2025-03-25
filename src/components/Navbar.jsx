@@ -13,7 +13,7 @@ const cartSvgs = Object.entries(svgs).reduce((acc, [path, module]) => {
 function Navbar() {
   const [opacity, setOpacity] = useState(100);
   const [isLoggedIn, setIsLoggedIn] = useState(
-    JSON.parse(localStorage.getItem("loggedIn")),
+    JSON.parse(localStorage.getItem("loggedIn")) || false,
   );
   const { getCartQuantity } = useShop();
   const cartQuantity = getCartQuantity();
@@ -23,6 +23,18 @@ function Navbar() {
       ? cartSvgs["cart-overflow"]
       : cartSvgs[`cart-${cartQuantity}`];
 
+  // 🔥 Listens for login/logout changes via 'authChange' event
+  useEffect(() => {
+    const handleAuthChange = () => {
+      const loggedIn = JSON.parse(localStorage.getItem("loggedIn"));
+      setIsLoggedIn(loggedIn);
+    };
+
+    window.addEventListener("authChange", handleAuthChange);
+    return () => window.removeEventListener("authChange", handleAuthChange);
+  }, []);
+
+  // Scroll opacity effect
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -40,17 +52,6 @@ function Navbar() {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // 🔥 This listens for login/logout updates
-  useEffect(() => {
-    const handleAuthChange = () => {
-      const loggedIn = JSON.parse(localStorage.getItem("loggedIn"));
-      setIsLoggedIn(loggedIn);
-    };
-
-    window.addEventListener("authChange", handleAuthChange);
-    return () => window.removeEventListener("authChange", handleAuthChange);
   }, []);
 
   return (
