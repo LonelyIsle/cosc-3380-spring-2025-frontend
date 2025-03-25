@@ -34,9 +34,9 @@ function Login() {
           // Redirect based on role
           const role = data.user.role;
           if (role === "MANAGER") {
-            navigate("/Admin");
+            navigate("/admin");
           } else if (role === "STAFF") {
-            navigate("/Admin");
+            navigate("/admin");
           } else {
             navigate("/shop");
           }
