@@ -15,7 +15,7 @@ function Login() {
     const validationErrors = Validation(email, password);
     console.log("🧪 Validation errors:", validationErrors);
 
-    if (Object.keys(validationErrors).length === 0) {
+    if (Object.keys(validationErrors).length === 2) {
       console.log("✅ No validation errors, sending login request...");
       try {
         const response = await axios.post(
