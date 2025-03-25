@@ -1,23 +1,10 @@
-import { Link } from "react-router-dom";
-import { useShop } from "../context/ShopContext";
-import { useEffect, useState } from "react";
-import logo from "../assets/navbar-logo.svg";
-
-const svgs = import.meta.glob("../assets/cart-assets/*.svg", { eager: true });
-const cartSvgs = Object.entries(svgs).reduce((acc, [path, module]) => {
-  const key = path.split("/").pop().replace(".svg", "");
-  acc[key] = module.default;
-  return acc;
-}, {});
-
 function Navbar() {
   const [opacity, setOpacity] = useState(100);
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    JSON.parse(localStorage.getItem("loggedIn")),
+  );
   const { getCartQuantity } = useShop();
-
   const cartQuantity = getCartQuantity();
-
-  const isLoggedIn = JSON.parse(localStorage.getItem("loggedIn"));
-  console.log(isLoggedIn);
 
   const cartIcon =
     cartQuantity > 10
@@ -35,13 +22,24 @@ function Navbar() {
         } else if (scrollY <= pxDelimeter && prevOpacity !== pxDelimeter) {
           return pxDelimeter;
         }
-        return prevOpacity; // Ensure no unnecessary re-renders
+        return prevOpacity;
       });
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []); // No need to include `opacity` in the dependency array
+  }, []);
+
+  // 🔥 This listens for login/logout updates
+  useEffect(() => {
+    const handleAuthChange = () => {
+      const loggedIn = JSON.parse(localStorage.getItem("loggedIn"));
+      setIsLoggedIn(loggedIn);
+    };
+
+    window.addEventListener("authChange", handleAuthChange);
+    return () => window.removeEventListener("authChange", handleAuthChange);
+  }, []);
 
   return (
     <nav
@@ -98,5 +96,3 @@ function Navbar() {
     </nav>
   );
 }
-
-export default Navbar;
