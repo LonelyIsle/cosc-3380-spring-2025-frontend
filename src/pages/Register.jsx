@@ -24,7 +24,7 @@ function Register() {
       !validationErrors.passwordcheck &&
       !validationErrors.email &&
       !validationErrors.password
-    ) axios.post("https://poswebapp-d8f0geh5dyhfgyfj.centralus-01.azurewebsites.net/register", {
+    ) axios.post( `${import.meta.env.VITE_API_URL}/register`, {
       first_name: firstName,
       middle_name: middleName,
       last_name: lastName,
