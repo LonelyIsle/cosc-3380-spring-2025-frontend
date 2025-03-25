@@ -10,13 +10,14 @@ const cartSvgs = Object.entries(svgs).reduce((acc, [path, module]) => {
   return acc;
 }, {});
 
-const isLoggedIn = JSON.parse(localStorage.getItem("loggedIn"));
-
 function Navbar() {
   const [opacity, setOpacity] = useState(100);
   const { getCartQuantity } = useShop();
 
   const cartQuantity = getCartQuantity();
+
+  const isLoggedIn = JSON.parse(localStorage.getItem("loggedIn"));
+  console.log(isLoggedIn);
 
   const cartIcon =
     cartQuantity > 10
