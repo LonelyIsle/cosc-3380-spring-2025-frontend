@@ -14,7 +14,6 @@ import {
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Admin from "./pages/Admin";
-import { UserProvider } from "./components/UserContext";
 
 function RedirectToHome() {
   const navigate = useNavigate();
@@ -28,7 +27,6 @@ function RedirectToHome() {
 
 function App() {
   return (
-    <UserProvider>
       <div className="bg-flamingo flex flex-col justify-between min-h-screen">
         <Navbar />
         <Routes>
@@ -45,7 +43,6 @@ function App() {
         </Routes>
         <Footer />
       </div>
-    </UserProvider>
   );
 }
 
