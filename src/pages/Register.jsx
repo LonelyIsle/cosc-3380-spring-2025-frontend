@@ -28,6 +28,7 @@ function Register() {
       first_name: firstName,
       middle_name: middleName,
       last_name: lastName,
+      address,
       email,
       password
     })
