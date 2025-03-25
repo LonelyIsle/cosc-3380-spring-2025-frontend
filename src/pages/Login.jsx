@@ -14,7 +14,7 @@ function Login() {
     if (Object.keys(validationErrors).length === 0) {
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/auth/login`,
+          "https://poswebapp-d8f0geh5dyhfgyfj.centralus-01.azurewebsites.net/login",
           {
             method: "POST",
             headers: {
