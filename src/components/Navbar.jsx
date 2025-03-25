@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useShop } from "../context/ShopContext";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import { UserContext } from "./UserContext"; // adjust path if needed
 import logo from "../assets/navbar-logo.svg";
 
 const svgs = import.meta.glob("../assets/cart-assets/*.svg", { eager: true });
@@ -10,14 +11,12 @@ const cartSvgs = Object.entries(svgs).reduce((acc, [path, module]) => {
   return acc;
 }, {});
 
-const isLoggedIn = false; // temporary implementation to switch between being logged in and not
-
 function Navbar() {
   const [opacity, setOpacity] = useState(100);
   const { getCartQuantity } = useShop();
+  const { user } = useContext(UserContext); // 👈 pull login state from context
 
   const cartQuantity = getCartQuantity();
-
   const cartIcon =
     cartQuantity > 10
       ? cartSvgs["cart-overflow"]
@@ -34,13 +33,13 @@ function Navbar() {
         } else if (scrollY <= pxDelimeter && prevOpacity !== pxDelimeter) {
           return pxDelimeter;
         }
-        return prevOpacity; // Ensure no unnecessary re-renders
+        return prevOpacity;
       });
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []); // No need to include `opacity` in the dependency array
+  }, []);
 
   return (
     <nav
@@ -51,7 +50,7 @@ function Navbar() {
         <img src={logo} alt="Navbar Logo" className="header-box h-20" />
       </Link>
       <ul className="flex gap-4 justify-center items-center">
-        {!isLoggedIn ? (
+        {!user ? (
           <>
             <li>
               <Link
