@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/bag-full-logo.svg";
 import Validation from "../components/RegisterValidation";
-import axios from "axios";
+//import axios from "axios";
 
 function Register() {
   const [firstName, setFirstName] = useState("");
@@ -35,7 +35,7 @@ function Register() {
         confirmPassword,
       });
       alert("Form submitted successfully!");
-      navigate("/");
+      navigate("/shop");
     }
   };
 
