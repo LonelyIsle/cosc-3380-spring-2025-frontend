@@ -13,9 +13,8 @@ function Login() {
     event.preventDefault();
     console.log("🔐 Submitting login form");
     const validationErrors = Validation(email, password);
-    console.log("🧪 Validation errors:", validationErrors);
 
-    if (Object.keys(validationErrors).length === 2) {
+    if (Object.keys(validationErrors).length === 0) {
       console.log("✅ No validation errors, sending login request...");
       try {
         const response = await axios.post(
@@ -29,10 +28,10 @@ function Login() {
 
         // Store token and user info
         localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("user", JSON.stringify(data));
 
         // Redirect based on role
-        const role = data.user.role?.toUpperCase();
+        const role = data.role?.toUpperCase();
         console.log("👤 Logged in user role:", role);
 
         if (role === "MANAGER" || role === "STAFF") {
