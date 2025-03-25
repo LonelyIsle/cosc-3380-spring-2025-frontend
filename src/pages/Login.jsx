@@ -13,6 +13,7 @@ function Login() {
     event.preventDefault();
     console.log("🔐 Submitting login form");
     const validationErrors = Validation(email, password);
+    console.log("🧪 Validation errors:", validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
       console.log("✅ No validation errors, sending login request...");
