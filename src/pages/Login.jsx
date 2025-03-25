@@ -30,15 +30,14 @@ function Login() {
         localStorage.setItem("user", JSON.stringify(data.user));
 
         // Redirect based on role
-        const role = data.user.role;
-        if (role === "MANAGER") {
-          console.log("🔁 Navigating to /admin");
-          navigate("/admin");
-        } else if (role === "STAFF") {
-          console.log("🔁 Navigating to /admin");
+        const role = data.user.role?.toUpperCase();
+        console.log("👤 Logged in user role:", role);
+
+        if (role === "MANAGER" || role === "STAFF") {
+          console.log("🔁 Redirecting to /admin");
           navigate("/admin");
         } else {
-          console.log("🛒 Navigating to /shop");
+          console.log("🛒 Redirecting to /shop");
           navigate("/shop");
         }
       } catch (err) {
