@@ -15,6 +15,7 @@ function Login() {
     const validationErrors = Validation(email, password);
 
     if (Object.keys(validationErrors).length === 0) {
+      console.log("✅ No validation errors, sending login request...");
       try {
         const response = await axios.post(
           `${import.meta.env.VITE_API_URL}/login`,
@@ -41,10 +42,14 @@ function Login() {
           navigate("/shop");
         }
       } catch (err) {
+        console.error("❌ Error caught in login attempt:", err);
+
         if (err.response) {
-          console.error("Login failed:", err.response.data.message || "Unknown error");
+          console.error("❌ Backend error response:", err.response.data);
+          alert(err.response.data.message || "Login failed");
         } else {
-          console.error("Network error:", err.message);
+          console.error("❌ Network or unknown error:", err.message);
+          alert("Network error — check your connection or try again.");
         }
       }
     }
