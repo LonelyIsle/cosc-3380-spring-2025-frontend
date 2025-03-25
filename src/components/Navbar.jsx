@@ -10,7 +10,7 @@ const cartSvgs = Object.entries(svgs).reduce((acc, [path, module]) => {
   return acc;
 }, {});
 
-const isLoggedIn = false; // temporary implementation to switch between being logged in and not
+const isLoggedIn = JSON.parse(localStorage.getItem("loggedIn"));
 
 function Navbar() {
   const [opacity, setOpacity] = useState(100);
