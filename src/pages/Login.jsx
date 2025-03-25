@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/bag-full-logo.svg";
 import Validation from "../components/LoginValidation";
+import axios from "axios";
+
 function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -9,41 +11,42 @@ function Login() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    console.log("🔐 Submitting login form");
     const validationErrors = Validation(email, password);
 
     if (Object.keys(validationErrors).length === 0) {
       try {
-        const response = await fetch( `${import.meta.env.VITE_API_URL}/login`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ email, password }),
-          },
+        const response = await axios.post(
+          `${import.meta.env.VITE_API_URL}/login`,
+          { email, password },
+          { headers: { "Content-Type": "application/json" } }
         );
 
-        const data = await response.json();
+        const data = response.data;
+        console.log("✅ Response data:", data);
 
-        if (response.ok) {
-          // Store token and user info
-          localStorage.setItem("token", data.token);
-          localStorage.setItem("user", JSON.stringify(data.user));
+        // Store token and user info
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
 
-          // Redirect based on role
-          const role = data.user.role;
-          if (role === "MANAGER") {
-            navigate("/admin");
-          } else if (role === "STAFF") {
-            navigate("/admin");
-          } else {
-            navigate("/shop");
-          }
+        // Redirect based on role
+        const role = data.user.role;
+        if (role === "MANAGER") {
+          console.log("🔁 Navigating to /admin");
+          navigate("/admin");
+        } else if (role === "STAFF") {
+          console.log("🔁 Navigating to /admin");
+          navigate("/admin");
         } else {
-          console.error("Login failed:", data.message || "Unknown error");
+          console.log("🛒 Navigating to /shop");
+          navigate("/shop");
         }
       } catch (err) {
-        console.error("Network error:", err);
+        if (err.response) {
+          console.error("Login failed:", err.response.data.message || "Unknown error");
+        } else {
+          console.error("Network error:", err.message);
+        }
       }
     }
   };
