@@ -29,7 +29,6 @@ function Login() {
         // Store token and user info
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data));
-        localStorage.setItem("loggedIn", true);
 
         // Redirect based on role
         const role = data.role?.toUpperCase();
