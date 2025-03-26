@@ -18,7 +18,7 @@ function Login() {
       console.log("✅ No validation errors, sending login request...");
       try {
         const response = await axios.post(
-          `${import.meta.env.VITE_API_URL}/login`,
+          `${import.meta.env.VITE_API_URL}/customer/login`,
           { email, password },
           { headers: { "Content-Type": "application/json" } }
         );
