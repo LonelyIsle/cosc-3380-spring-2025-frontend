@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { useShop } from "../context/ShopContext"; // Adjust import path as needed
+import { useShop } from "../context/ShopContext";
 
-const CheckoutPage = () => {
+const Checkout = () => {
   const {
     cartItems,
     getProduct,
@@ -233,4 +233,4 @@ const CheckoutPage = () => {
   );
 };
 
-export default CheckoutPage;
+export default Checkout;
