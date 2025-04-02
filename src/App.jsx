@@ -14,6 +14,8 @@ import {
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Admin from "./pages/Admin";
+import {Adminlogin} from "./pages";
+import Fpassword from "./pages/ForgotPassword";
 
 function RedirectToHome() {
   const navigate = useNavigate();
@@ -34,11 +36,13 @@ function App() {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/fpassword" element={<Fpassword />} />
         <Route path="/product/:id" element={<Product />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/register" element={<Register />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/admin/login" element={<Adminlogin />} />
         {<Route path="*" element={<RedirectToHome />} />}
       </Routes>
       <Footer />
