@@ -1,16 +1,29 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import products from "../Products.jsx";
 
 // Declare productMap globally once, so it's not recalculated on every render
-const productMap = new Map(products.map((p) => [p.id, p]));
-
 const ShopContext = createContext();
 
 export const useShop = () => useContext(ShopContext);
 
 export function ShopProvider({ children }) {
+  const [products, setProducts] = useState([]);
+  const productMap = new Map(products.map((p) => [p.id, p]));
   const [cartItems, setCartItems] = useState([]);
   const [cartLoaded, setCartLoaded] = useState(false);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/product`);
+        const data = await res.json();
+        setProducts(data);
+      } catch (err) {
+        console.error("Failed to load products:", err);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -71,7 +84,7 @@ export function ShopProvider({ children }) {
         const limitedQuantity = Math.min(newQuantity, product.quantity);
 
         return prev.map((item) =>
-          item.id === productId ? { ...item, quantity: limitedQuantity } : item
+          item.id === productId ? { ...item, quantity: limitedQuantity } : item,
         );
       }
 
