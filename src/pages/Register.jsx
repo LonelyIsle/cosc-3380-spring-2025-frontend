@@ -41,7 +41,7 @@ function Register() {
         .catch((err) => {
           console.error(
             "Registration failed:",
-            err.response?.data || err.message
+            err.response?.data || err.message,
           );
         });
   };

@@ -59,7 +59,7 @@ function Product() {
       setQuantity(newAvailable > 0 ? 1 : 0);
     } else {
       alert(
-        "Sorry, this item is out of stock or already in your cart at maximum quantity."
+        "Sorry, this item is out of stock or already in your cart at maximum quantity.",
       );
     }
   };

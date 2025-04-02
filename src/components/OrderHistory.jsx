@@ -9,7 +9,9 @@ function OrderHistory() {
             <th className="border border-gray-400 px-4 py-2">Last Name</th>
             <th className="border border-gray-400 px-4 py-2">Item</th>
             <th className="border border-gray-400 px-4 py-2">Purchase Price</th>
-            <th className="border border-gray-400 px-4 py-2">Shipping Address</th>
+            <th className="border border-gray-400 px-4 py-2">
+              Shipping Address
+            </th>
             <th className="border border-gray-400 px-4 py-2">Order Number</th>
           </tr>
         </thead>
@@ -24,12 +26,12 @@ function OrderHistory() {
             <td className="border border-gray-400 px-4 py-2">ORD-12345</td>
           </tr>
           <tr>
-             <td className="border border-gray-400 px-4 py-2">Jane</td>
-             <td className="border border-gray-400 px-4 py-2">Smith</td>
-             <td className="border border-gray-400 px-4 py-2">Gadget</td>
-             <td className="border border-gray-400 px-4 py-2">$29.99</td>
-             <td className="border border-gray-400 px-4 py-2">456 Oak Ave</td>
-             <td className="border border-gray-400 px-4 py-2">ORD-67890</td>
+            <td className="border border-gray-400 px-4 py-2">Jane</td>
+            <td className="border border-gray-400 px-4 py-2">Smith</td>
+            <td className="border border-gray-400 px-4 py-2">Gadget</td>
+            <td className="border border-gray-400 px-4 py-2">$29.99</td>
+            <td className="border border-gray-400 px-4 py-2">456 Oak Ave</td>
+            <td className="border border-gray-400 px-4 py-2">ORD-67890</td>
           </tr>
           {/* Add more rows as needed */}
         </tbody>
