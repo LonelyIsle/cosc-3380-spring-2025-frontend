@@ -24,7 +24,7 @@ function Cart() {
   const totalCartAmount = getCartAmount();
   const totalItems = cartItems.reduce(
     (total, item) => total + item.quantity,
-    0
+    0,
   );
 
   return (
@@ -50,9 +50,11 @@ function Cart() {
                     className="flex items-center justify-between border-b pb-4"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-16 h-16 bg-gray-200 flex items-center justify-center rounded text-sm text-gray-500">
-                        No Image
-                      </div>
+                      <img
+                        className="w-16 h-16 bg-gray-200 flex items-center justify-center rounded text-sm text-gray-500"
+                        src={product.image}
+                        alt={product.name}
+                      ></img>
                       <div>
                         <h3 className="font-semibold">{product.name}</h3>
                         <p className="text-sm text-gray-500">

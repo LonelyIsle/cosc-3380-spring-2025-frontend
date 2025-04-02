@@ -4,7 +4,7 @@ import { useShop } from "../context/ShopContext";
 
 function Shop() {
   const navigate = useNavigate();
-  const { getProductArray } = useShop();
+  const { getProductArray, productsLoaded } = useShop();
   const products = getProductArray();
   const [filteredProducts, setFilteredProducts] = useState(products);
   const [sortOrder, setSortOrder] = useState("asc");
@@ -45,6 +45,13 @@ function Shop() {
     Blue: false,
     Green: false,
   });
+
+  // Update filtered products when products are loaded
+  useEffect(() => {
+    if (productsLoaded) {
+      setFilteredProducts(products);
+    }
+  }, [productsLoaded, products]);
 
   // Apply filters when any filter changes
   useEffect(() => {
