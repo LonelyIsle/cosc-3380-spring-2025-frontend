@@ -6,6 +6,8 @@ const ShopContext = createContext();
 export const useShop = () => useContext(ShopContext);
 
 export function ShopProvider({ children }) {
+  const [products, setProducts] = useState([]);
+  const productMap = new Map(products.map((p) => [p.id, p]));
   const [cartItems, setCartItems] = useState([]);
   const [cartLoaded, setCartLoaded] = useState(false);
   const [productsLoaded, setProductsLoaded] = useState(false);
@@ -43,6 +45,20 @@ export function ShopProvider({ children }) {
   }, []);
 
   const productMap = new Map(products.map((p) => [p.id, p])); // Rebuild when products change
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/product`);
+        const data = await res.json();
+        setProducts(data);
+      } catch (err) {
+        console.error("Failed to load products:", err);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
