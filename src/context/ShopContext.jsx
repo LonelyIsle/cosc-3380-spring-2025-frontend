@@ -10,7 +10,6 @@ export function ShopProvider({ children }) {
   const [cartItems, setCartItems] = useState([]);
   const [cartLoaded, setCartLoaded] = useState(false);
   const [productsLoaded, setProductsLoaded] = useState(false);
-  const [products, setProducts] = useState([]);
 
   // Fetch product data on first render
   useEffect(() => {
