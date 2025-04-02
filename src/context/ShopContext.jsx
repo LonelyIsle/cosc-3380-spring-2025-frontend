@@ -45,20 +45,6 @@ export function ShopProvider({ children }) {
   const productMap = new Map(products.map((p) => [p.id, p])); // Rebuild when products change
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/product`);
-        const data = await res.json();
-        setProducts(data);
-      } catch (err) {
-        console.error("Failed to load products:", err);
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
-  useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
     setCartItems(storedCart); // load cart from localstorage on initial app render
     setCartLoaded(true); // mark as loaded to allow dependent components to now load
