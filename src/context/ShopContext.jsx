@@ -42,7 +42,6 @@ export function ShopProvider({ children }) {
       });
   }, []);
 
-  console.log(products);
   const productMap = new Map(products.map((p) => [p.id, p])); // Rebuild when products change
 
   useEffect(() => {
