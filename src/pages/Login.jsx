@@ -96,27 +96,31 @@ function Login() {
             </button>
           </div>
         </form>
-        <div className="mt-6 text-center">
-          <p className="text-subtext0">Don't have an account?</p>
-          <button
-            className="bg-green text-base py-2 px-4 rounded hover:bg-teal"
-            onClick={(e) => {
-              e.preventDefault();
-              navigate("/register");
-            }}
-          >
-            Register
-          </button>
-          <p className="text-subtext0">Forgot Password?</p>
-          <button
-            className="bg-green text-base py-2 px-4 rounded hover:bg-teal"
-            onClick={(e) => {
-              e.preventDefault();
-              navigate("/Fpassword");
-            }}
-          >
-            Register
-          </button>
+        <div className="grid grid-cols-2 mt-6 text-center">
+          <div className=" mt-6 text-center">
+            <p className="text-subtext0">Don't have an account?</p>
+            <button
+              className="bg-green text-base py-2 px-4 rounded hover:bg-teal"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/register");
+              }}
+            >
+              Register
+            </button>
+          </div>
+          <div className=" mt-6 text-center">
+            <p className="text-subtext0">Forgot Password?</p>
+            <button
+              className="bg-green text-base py-2 px-4 rounded hover:bg-teal"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/Fpassword");
+              }}
+            >
+              Reset
+            </button>
+          </div>
         </div>
       </div>
     </div>

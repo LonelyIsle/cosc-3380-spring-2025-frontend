@@ -7,7 +7,12 @@ export const useShop = () => useContext(ShopContext);
 
 export function ShopProvider({ children }) {
   const [products, setProducts] = useState([]);
-  const productMap = new Map(products.map((p) => [p.id, p]));
+  console.log(products)
+  let productArray = Object.values(products);
+  console.log(productArray)
+  let productMap = new Map(productArray.map((product) => [product.id, product]));
+  console.log(productMap);
+  // const productMap = new Map(products.map((p) => [p.id, p]));
   const [cartItems, setCartItems] = useState([]);
   const [cartLoaded, setCartLoaded] = useState(false);
 
