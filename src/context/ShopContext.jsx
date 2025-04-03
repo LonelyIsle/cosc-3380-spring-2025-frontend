@@ -10,37 +10,54 @@ export function ShopProvider({ children }) {
   const [cartItems, setCartItems] = useState([]);
   const [cartLoaded, setCartLoaded] = useState(false);
   const [productsLoaded, setProductsLoaded] = useState(false);
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState([]); // New state for selected category IDs
 
-  // Fetch product data on first render
+  // Function to fetch products based on category filter
+  const fetchProducts = async (categoryIds = []) => {
+    setProductsLoaded(false);
+
+    let url = `${import.meta.env.VITE_API_URL}/product?limit=999`;
+
+    // Append category_id filter if there are selected categories
+    if (categoryIds.length > 0) {
+      url += `&category_id=${categoryIds.join(",")}`;
+    }
+
+    try {
+      const res = await axios.get(url);
+      const products = res.data.data.rows.map((p) => ({
+        id: p.id,
+        name: p.name,
+        price: parseFloat(p.price),
+        quantity: p.quantity,
+        description: p.description,
+        category: p.category || [],
+        image: p.image
+          ? `data:image/${p.image_extension};base64,${p.image}`
+          : "",
+      }));
+      setProducts(products);
+      setProductsLoaded(true);
+    } catch (err) {
+      console.error(
+        "Failed to fetch products:",
+        err.response?.data || err.message
+      );
+      setProductsLoaded(true); // Set to true even on error to prevent perpetual loading state
+    }
+  };
+
+  // Fetch all products on first render
   useEffect(() => {
-    axios
-      .get(`${import.meta.env.VITE_API_URL}/product?limit=999`)
-      .then((res) => {
-        const products = res.data.data.rows.map((p) => ({
-          id: p.id,
-          name: p.name,
-          price: parseFloat(p.price),
-          quantity: p.quantity,
-          description: p.description,
-          category: p.category || [],
-          image: p.image
-            ? `data:image/${p.image_extension};base64,${p.image}`
-            : "",
-
-          // TEMP MOCK
-          size: 1 + Math.random() * 4,
-          color: ["Red", "Blue", "Green", "Yellow", "Black"][p.id % 5],
-        }));
-        setProducts(products);
-        setProductsLoaded(true);
-      })
-      .catch((err) => {
-        console.error(
-          "Failed to fetch products:",
-          err.response?.data || err.message,
-        );
-      });
+    fetchProducts();
   }, []);
+
+  // Fetch products when selected categories change
+  useEffect(() => {
+    if (selectedCategoryIds.length > 0) {
+      fetchProducts(selectedCategoryIds);
+    }
+  }, [selectedCategoryIds]);
 
   const productMap = new Map(products.map((p) => [p.id, p])); // Rebuild when products change
 
@@ -63,6 +80,11 @@ export function ShopProvider({ children }) {
 
   const getProduct = (id) => {
     return products.find((p) => p.id === parseInt(id, 10));
+  };
+
+  // Update selected categories
+  const updateSelectedCategories = (categoryIds) => {
+    setSelectedCategoryIds(categoryIds);
   };
 
   // CART CONTEXT FUNCTIONS
@@ -103,7 +125,7 @@ export function ShopProvider({ children }) {
         const limitedQuantity = Math.min(newQuantity, product.quantity);
 
         return prev.map((item) =>
-          item.id === productId ? { ...item, quantity: limitedQuantity } : item,
+          item.id === productId ? { ...item, quantity: limitedQuantity } : item
         );
       }
 
@@ -163,6 +185,8 @@ export function ShopProvider({ children }) {
         updateQuantity,
         removeItem,
         clearCart,
+        updateSelectedCategories,
+        fetchProducts,
       }}
     >
       {children}
