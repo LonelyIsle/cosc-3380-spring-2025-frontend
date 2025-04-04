@@ -8,7 +8,8 @@ function Register() {
   const [firstName, setFirstName] = useState("");
   const [middleName, setMiddleName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [address, setAddress] = useState("");
+  const [question, setQuestion] = useState("");
+  const [answer, setAnswer] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -30,7 +31,8 @@ function Register() {
           first_name: firstName,
           middle_name: middleName,
           last_name: lastName,
-          address,
+          reset_password_question: question,
+          reset_password_answer: answer,
           email,
           password,
         })
@@ -162,19 +164,34 @@ function Register() {
             )}
           </div>
           <div className="mb-2">
-            <label htmlFor="address" className="block text-subtext0">
-              Address:
+            <label htmlFor="question" className="block text-subtext0">
+              Secret question:
             </label>
             <input
-              name="address"
+              name="question"
               type="text" //Corrected type
-              id="address"
+              id="question"
               className="border p-2 w-full rounded bg-surface2 text-text"
-              placeholder="Enter Address"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
+              placeholder="Enter Question"
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
             />
           </div>
+          <div className="mb-2">
+            <label htmlFor="Answer" className="block text-subtext0">
+              Answer:
+            </label>
+            <input
+              name="answer"
+              type="text" //Corrected type
+              id="answer"
+              className="border p-2 w-full rounded bg-surface2 text-text"
+              placeholder="Enter Answer"
+              value={answer}
+              onChange={(e) => setAnswer(e.target.value)}
+            />
+          </div>
+
           <div className="mt-6 text-center">
             <button
               type="submit"

@@ -8,6 +8,7 @@ function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  //https://poswebapp-d8f0geh5dyhfgyfj.centralus-01.azurewebsites.net/
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -16,25 +17,25 @@ function Login() {
 
     if (Object.keys(validationErrors).length === 2) {
       console.log("✅ No validation errors, sending login request...");
+      console.log(import.meta.env.VITE_API_URL);
       try {
         const response = await axios.post(
           `${import.meta.env.VITE_API_URL}/customer/login`,
           { email, password },
           { headers: { "Content-Type": "application/json" } },
         );
-
         const data = response.data;
-        console.log("✅ Response data:", data);
+        console.log("✅ Response:", response);
 
         // Store token and user info
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data));
 
         // Redirect based on role
-        const role = data.role?.toUpperCase();
+        const role = response.data.role;
         console.log("👤 Logged in user role:", role);
 
-        if (role === "MANAGER" || role === "STAFF") {
+        if (data.role == 1 || data.role == 0) {
           console.log("🔁 Redirecting to /admin");
           navigate("/admin");
         } else {
@@ -95,17 +96,31 @@ function Login() {
             </button>
           </div>
         </form>
-        <div className="mt-6 text-center">
-          <p className="text-subtext0">Don't have an account?</p>
-          <button
-            className="bg-green text-base py-2 px-4 rounded hover:bg-teal"
-            onClick={(e) => {
-              e.preventDefault();
-              navigate("/register");
-            }}
-          >
-            Register
-          </button>
+        <div className="grid grid-cols-2 mt-6 text-center">
+          <div className=" mt-6 text-center">
+            <p className="text-subtext0">Don't have an account?</p>
+            <button
+              className="bg-green text-base py-2 px-4 rounded hover:bg-teal"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/register");
+              }}
+            >
+              Register
+            </button>
+          </div>
+          <div className=" mt-6 text-center">
+            <p className="text-subtext0">Forgot Password?</p>
+            <button
+              className="bg-green text-base py-2 px-4 rounded hover:bg-teal"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/Fpassword");
+              }}
+            >
+              Reset
+            </button>
+          </div>
         </div>
       </div>
     </div>
