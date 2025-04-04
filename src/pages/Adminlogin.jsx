@@ -41,7 +41,7 @@ function Adminlogin() {
           navigate("/admin");
         } else {
           console.log("🛒 Redirecting to /shop");
-          navigate("/shop");
+          navigate("/admin");
         }
       } catch (err) {
         console.error("❌ Error caught in login attempt:", err);

@@ -16,27 +16,29 @@ const mockInventory = [
 
 const Inventory = () => {
   const [inventory, setInventory] = useState([]);
-  const [restockQuantities, setRestockQuantities] = useState({});
+  const [editItems, setEditItems] = useState({});
 
   useEffect(() => {
     setInventory(mockInventory);
-    const initialRestockQuantities = {};
+    const initialEditState = {};
     mockInventory.forEach((item) => {
-      initialRestockQuantities[item.id] = 0;
+      initialEditState[item.id] = { ...item };
     });
-    setRestockQuantities(initialRestockQuantities);
+    setEditItems(initialEditState);
   }, []);
 
-  const handleRestockChange = (itemId, quantity) => {
-    setRestockQuantities({ ...restockQuantities, [itemId]: parseInt(quantity, 10) || 0 });
+  const handleEditChange = (itemId, field, value) => {
+    setEditItems({
+      ...editItems,
+      [itemId]: {
+        ...editItems[itemId],
+        [field]: field === "price" || field === "quantity" ? parseFloat(value) || 0 : value,
+      },
+    });
   };
 
-  const handleRestockSubmit = (itemId) => {
-    const updatedInventory = inventory.map((item) =>
-      item.id === itemId ? { ...item, quantity: item.quantity + restockQuantities[itemId] } : item
-    );
-    setInventory(updatedInventory);
-    setRestockQuantities({ ...restockQuantities, [itemId]: 0 });
+  const handleSave = (itemId) => {
+    setInventory(inventory.map((item) => (item.id === itemId ? editItems[itemId] : item)));
   };
 
   return (
@@ -49,12 +51,8 @@ const Inventory = () => {
               <th className="py-3 px-4 border border-black text-center">ID</th>
               <th className="py-3 px-4 border border-black text-center">Item Name</th>
               <th className="py-3 px-4 border border-black text-center">Quantity</th>
-              <th className="py-3 px-4 border border-black text-center">Restock Threshold</th>
               <th className="py-3 px-4 border border-black text-center">Price ($)</th>
-              <th className="py-3 px-4 border border-black text-center">Category</th>
-              <th className="py-3 px-4 border border-black text-center">Size</th>
               <th className="py-3 px-4 border border-black text-center">Color</th>
-              <th className="py-3 px-4 border border-black text-center">Restock Quantity</th>
               <th className="py-3 px-4 border border-black text-center">Actions</th>
             </tr>
           </thead>
@@ -62,29 +60,44 @@ const Inventory = () => {
             {inventory.map((item, index) => (
               <tr key={item.id} className={index % 2 === 0 ? 'bg-gray-300' : 'bg-gray-100'}>
                 <td className="py-3 px-4 border border-black text-center">{item.id}</td>
-                <td className="py-3 px-4 border border-black text-center">{item.name}</td>
                 <td className="py-3 px-4 border border-black text-center">
-                  {item.quantity} {item.quantity <= item.restockThreshold && <span className="text-red-500"> (Low Stock)</span>}
+                  <input
+                    type="text"
+                    value={editItems[item.id]?.name || ""}
+                    onChange={(e) => handleEditChange(item.id, "name", e.target.value)}
+                    className="border border-black rounded p-1 w-24 text-center"
+                  />
                 </td>
-                <td className="py-3 px-4 border border-black text-center">{item.restockThreshold}</td>
-                <td className="py-3 px-4 border border-black text-center">${item.price.toFixed(2)}</td>
-                <td className="py-3 px-4 border border-black text-center">{item.category.join(", ")}</td>
-                <td className="py-3 px-4 border border-black text-center">{item.size}</td>
-                <td className="py-3 px-4 border border-black text-center">{item.color}</td>
                 <td className="py-3 px-4 border border-black text-center">
                   <input
                     type="number"
-                    value={restockQuantities[item.id]}
-                    onChange={(e) => handleRestockChange(item.id, e.target.value)}
+                    value={editItems[item.id]?.quantity || 0}
+                    onChange={(e) => handleEditChange(item.id, "quantity", e.target.value)}
+                    className="border border-black rounded p-1 w-16 text-center"
+                  />
+                </td>
+                <td className="py-3 px-4 border border-black text-center">
+                  <input
+                    type="number"
+                    value={editItems[item.id]?.price || 0}
+                    onChange={(e) => handleEditChange(item.id, "price", e.target.value)}
+                    className="border border-black rounded p-1 w-16 text-center"
+                  />
+                </td>
+                <td className="py-3 px-4 border border-black text-center">
+                  <input
+                    type="text"
+                    value={editItems[item.id]?.color || ""}
+                    onChange={(e) => handleEditChange(item.id, "color", e.target.value)}
                     className="border border-black rounded p-1 w-20 text-center"
                   />
                 </td>
                 <td className="py-3 px-4 border border-black text-center">
                   <button
-                    onClick={() => handleRestockSubmit(item.id)}
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded"
+                    onClick={() => handleSave(item.id)}
+                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-3 rounded"
                   >
-                    Restock
+                    Save
                   </button>
                 </td>
               </tr>
@@ -97,3 +110,4 @@ const Inventory = () => {
 };
 
 export default Inventory;
+
