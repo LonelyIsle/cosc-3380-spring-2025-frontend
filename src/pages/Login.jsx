@@ -22,7 +22,7 @@ function Login() {
         const response = await axios.post(
           `${import.meta.env.VITE_API_URL}/customer/login`,
           { email, password },
-          { headers: { "Content-Type": "application/json" } }
+          { headers: { "Content-Type": "application/json" } },
         );
         const data = response.data;
         console.log("✅ Response:", response);

@@ -4,7 +4,7 @@ import { useShop } from "../context/ShopContext";
 
 function Shop() {
   const navigate = useNavigate();
-  const { getProductArray } = useShop();
+  const { getProductArray, productsLoaded } = useShop();
   const products = getProductArray();
   console.log(products, "Products from shop")
   const [filteredProducts, setFilteredProducts] = useState(products);
@@ -46,6 +46,13 @@ function Shop() {
     Blue: false,
     Green: false,
   });
+
+  // Update filtered products when products are loaded
+  useEffect(() => {
+    if (productsLoaded) {
+      setFilteredProducts(products);
+    }
+  }, [productsLoaded, products]);
 
   // Apply filters when any filter changes
   useEffect(() => {

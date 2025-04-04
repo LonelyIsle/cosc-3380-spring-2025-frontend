@@ -1,34 +1,48 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import axios from "axios";
 
-// Declare productMap globally once, so it's not recalculated on every render
 const ShopContext = createContext();
 
 export const useShop = () => useContext(ShopContext);
 
 export function ShopProvider({ children }) {
   const [products, setProducts] = useState([]);
-  console.log(products)
-  let productArray = Object.values(products);
-  console.log(productArray)
-  let productMap = new Map(productArray.map((product) => [product.id, product]));
-  console.log(productMap);
-  // const productMap = new Map(products.map((p) => [p.id, p]));
   const [cartItems, setCartItems] = useState([]);
   const [cartLoaded, setCartLoaded] = useState(false);
+  const [productsLoaded, setProductsLoaded] = useState(false);
 
+  // Fetch product data on first render
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/product`);
-        const data = await res.json();
-        setProducts(data);
-      } catch (err) {
-        console.error("Failed to load products:", err);
-      }
-    };
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/product?limit=999`)
+      .then((res) => {
+        const products = res.data.data.rows.map((p) => ({
+          id: p.id,
+          name: p.name,
+          price: parseFloat(p.price),
+          quantity: p.quantity,
+          description: p.description,
+          category: p.category || [],
+          image: p.image
+            ? `data:image/${p.image_extension};base64,${p.image}`
+            : "",
 
-    fetchProducts();
+          // TEMP MOCK
+          size: 1 + Math.random() * 4,
+          color: ["Red", "Blue", "Green", "Yellow", "Black"][p.id % 5],
+        }));
+        setProducts(products);
+        setProductsLoaded(true);
+      })
+      .catch((err) => {
+        console.error(
+          "Failed to fetch products:",
+          err.response?.data || err.message,
+        );
+      });
   }, []);
+
+  const productMap = new Map(products.map((p) => [p.id, p])); // Rebuild when products change
 
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -140,6 +154,7 @@ export function ShopProvider({ children }) {
       value={{
         cartItems,
         cartLoaded,
+        productsLoaded,
         getProductArray,
         getProduct,
         getCartAmount,

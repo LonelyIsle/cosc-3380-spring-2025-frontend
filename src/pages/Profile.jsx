@@ -44,7 +44,9 @@ function Profile() {
                 <span className="text-gray-600">11722 Random Lane</span>
               </div>
               <div>
-                <strong className="block mb-1 text-gray-700">Member Status:</strong>
+                <strong className="block mb-1 text-gray-700">
+                  Member Status:
+                </strong>
                 <span className="text-gray-600">Subscribed</span>
               </div>
             </div>
