@@ -1,51 +1,69 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useShop } from "../context/ShopContext";
+import axios from "axios";
 
 function Shop() {
   const navigate = useNavigate();
-  const { getProductArray, productsLoaded } = useShop();
+  const { getProductArray, productsLoaded, updateSelectedCategories } =
+    useShop();
   const products = getProductArray();
   console.log(products, "Products from shop")
   const [filteredProducts, setFilteredProducts] = useState(products);
   const [sortOrder, setSortOrder] = useState("asc");
   const [searchTerm, setSearchTerm] = useState("");
 
+  // Categories state
+  const [categories, setCategories] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState({});
+  const [categoriesLoaded, setCategoriesLoaded] = useState(false);
+
   // Pagination state
   const [page, setPage] = useState(1);
   const [productsPerPage] = useState(12);
+  const [priceRange, setPriceRange] = useState(50);
 
   // Calculate current products
   const indexOfLastProduct = page * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = filteredProducts.slice(
     indexOfFirstProduct,
-    indexOfLastProduct,
+    indexOfLastProduct
   );
 
   // Calculate total pages
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
-  // Pagination change handler
-  const handlePageChange = (newPage) => {
-    setPage(newPage);
-    // Scroll to top when page changes might change this
-    window.scrollTo(0, 0);
-  };
+  // Fetch categories from backend
+  useEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/category`)
+      .then((res) => {
+        const fetchedCategories = res.data.data.rows || [];
 
-  // Filter states
-  const [selectedCategories, setSelectedCategories] = useState({
-    Animals: false,
-    "Movies & TV Shows": false,
-    Anime: false,
-  });
-  const [priceRange, setPriceRange] = useState(150);
-  const [sizeRange, setSizeRange] = useState(10);
-  const [selectedColors, setSelectedColors] = useState({
-    Red: false,
-    Blue: false,
-    Green: false,
-  });
+        // Filter out deleted categories
+        const activeCategories = fetchedCategories.filter(
+          (category) => !category.is_deleted
+        );
+
+        setCategories(activeCategories);
+
+        // Initialize selectedCategories
+        const categoriesObj = {};
+        activeCategories.forEach((category) => {
+          categoriesObj[category.name] = false;
+        });
+        setSelectedCategories(categoriesObj);
+        setCategoriesLoaded(true);
+      })
+      .catch((err) => {
+        console.error(
+          "Failed to fetch categories:",
+          err.response?.data || err.message
+        );
+        setCategoriesLoaded(true); // Set to true even on error to prevent perpetual loading state
+      });
+  }, []);
 
   // Update filtered products when products are loaded
   useEffect(() => {
@@ -54,8 +72,17 @@ function Shop() {
     }
   }, [productsLoaded, products]);
 
-  // Apply filters when any filter changes
+  // Pagination change handler
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+    // Scroll to top when page changes
+    window.scrollTo(0, 0);
+  };
+
+  // Apply filters when any filter changes except categories
   useEffect(() => {
+    if (!productsLoaded || !categoriesLoaded) return;
+
     let result = [...products];
 
     // Filter by search term
@@ -63,38 +90,16 @@ function Shop() {
       result = result.filter(
         (product) =>
           product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          product.description.toLowerCase().includes(searchTerm.toLowerCase()),
-      );
-    }
-
-    // Filter by categories
-    const activeCategories = Object.keys(selectedCategories).filter(
-      (cat) => selectedCategories[cat],
-    );
-
-    if (activeCategories.length > 0) {
-      result = result.filter((product) =>
-        product.category.some((cat) => activeCategories.includes(cat)),
+          product.description.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
     // Filter by price
     result = result.filter((product) => product.price <= priceRange);
 
-    // Filter by size
-    result = result.filter((product) => product.size <= sizeRange);
-
-    // Filter by colors
-    const activeColors = Object.keys(selectedColors).filter(
-      (color) => selectedColors[color],
-    );
-    if (activeColors.length > 0) {
-      result = result.filter((product) => activeColors.includes(product.color));
-    }
-
     // Apply sort
     const sorted = [...result].sort((a, b) =>
-      sortOrder === "asc" ? a.price - b.price : b.price - a.price,
+      sortOrder === "asc" ? a.price - b.price : b.price - a.price
     );
 
     setFilteredProducts(sorted);
@@ -102,26 +107,40 @@ function Shop() {
     setPage(1);
   }, [
     searchTerm,
-    selectedCategories,
     priceRange,
-    sizeRange,
-    selectedColors,
     sortOrder,
+    productsLoaded,
+    categoriesLoaded,
+    products,
   ]);
+
+  // Update selected categories and fetch products when categories change
+  useEffect(() => {
+    if (!categoriesLoaded) return;
+
+    const activeCategories = Object.keys(selectedCategories).filter(
+      (cat) => selectedCategories[cat]
+    );
+
+    // Get the active category IDs
+    const activeCategoryIds = [];
+    if (activeCategories.length > 0) {
+      categories.forEach((category) => {
+        if (activeCategories.includes(category.name)) {
+          activeCategoryIds.push(category.id);
+        }
+      });
+    }
+
+    // Update selected category IDs in context
+    updateSelectedCategories(activeCategoryIds);
+  }, [selectedCategories, categoriesLoaded, categories]);
 
   // Toggle category selection
   const toggleCategory = (category) => {
     setSelectedCategories({
       ...selectedCategories,
       [category]: !selectedCategories[category],
-    });
-  };
-
-  // Toggle color selection
-  const toggleColor = (color) => {
-    setSelectedColors({
-      ...selectedColors,
-      [color]: !selectedColors[color],
     });
   };
 
@@ -170,6 +189,7 @@ function Shop() {
 
     return result;
   };
+
   return (
     <>
       {/* Main Container */}
@@ -182,50 +202,33 @@ function Shop() {
               <h2 className="font-medium mb-3">Search and Filter</h2>
             </div>
 
-            {/* Filter Options*/}
+            {/* Filter Options - Dynamically generated from categories */}
             <div className="mb-6 space-y-1.5">
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 mr-2"
-                  checked={selectedCategories["Animals"]}
-                  onChange={() => toggleCategory("Animals")}
-                />
-                <div>
-                  <div className="font-medium">Animals</div>
-                  <div className="text-gray-500 text-xs">
-                    Cute and fluffy companions
-                  </div>
-                </div>
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 mr-2"
-                  checked={selectedCategories["Movies & TV Shows"]}
-                  onChange={() => toggleCategory("Movies & TV Shows")}
-                />
-                <div>
-                  <div className="font-medium">Movies & TV Shows</div>
-                  <div className="text-gray-500 text-xs">
-                    Entertainment favorites
-                  </div>
-                </div>
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 mr-2"
-                  checked={selectedCategories["Anime"]}
-                  onChange={() => toggleCategory("Anime")}
-                />
-                <div>
-                  <div className="font-medium">Anime</div>
-                  <div className="text-gray-500 text-xs">
-                    Japanese animation
-                  </div>
-                </div>
-              </label>
+              {categoriesLoaded ? (
+                Object.keys(selectedCategories).length > 0 ? (
+                  Object.keys(selectedCategories).map((category) => (
+                    <label key={category} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        className="w-4 h-4 mr-2"
+                        checked={selectedCategories[category]}
+                        onChange={() => toggleCategory(category)}
+                      />
+                      <div>
+                        <div className="font-medium">{category}</div>
+                        <div className="text-gray-500 text-xs">
+                          {categories.find((cat) => cat.name === category)
+                            ?.description || ""}
+                        </div>
+                      </div>
+                    </label>
+                  ))
+                ) : (
+                  <p className="text-gray-500 text-sm">No categories found</p>
+                )
+              ) : (
+                <p className="text-gray-500 text-sm">Loading categories...</p>
+              )}
             </div>
 
             {/* Price Range Slider*/}
@@ -239,62 +242,10 @@ function Shop() {
                 type="range"
                 className="w-full"
                 min="0"
-                max="150"
+                max="50"
                 value={priceRange}
                 onChange={(e) => setPriceRange(parseInt(e.target.value))}
               />
-            </div>
-
-            {/* Size Range Slider */}
-            <div className="mb-4">
-              <h2 className="font-medium mb-1">Size</h2>
-              <div className="flex justify-between text-xs mb-1">
-                <span>.5Ft</span>
-                <span>{sizeRange}Ft</span>
-              </div>
-              <input
-                type="range"
-                className="w-full"
-                min="0.5"
-                max="10"
-                step="0.5"
-                value={sizeRange}
-                onChange={(e) => setSizeRange(parseFloat(e.target.value))}
-              />
-            </div>
-
-            {/* Color Filter */}
-            <div className="mb-4">
-              <h2 className="font-medium mb-2">Color</h2>
-              <div className="space-y-1.5">
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="w-4 h-4 mr-2"
-                    checked={selectedColors["Red"]}
-                    onChange={() => toggleColor("Red")}
-                  />
-                  <span>Red</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="w-4 h-4 mr-2"
-                    checked={selectedColors["Blue"]}
-                    onChange={() => toggleColor("Blue")}
-                  />
-                  <span>Blue</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="w-4 h-4 mr-2"
-                    checked={selectedColors["Green"]}
-                    onChange={() => toggleColor("Green")}
-                  />
-                  <span>Green</span>
-                </label>
-              </div>
             </div>
           </div>
 
@@ -366,14 +317,8 @@ function Shop() {
                   <div className="p-2 bg-pink-100">
                     <h3 className="font-medium text-sm">{product.name}</h3>
                     <p className="text-xs text-gray-600">
-                      {product.category.join(", ")}
+                      {product.description}
                     </p>
-                    <div className="flex justify-between items-center mt-1">
-                      <p className="font-bold text-sm">${product.price}</p>
-                      <span className="text-xs bg-pink-200 px-2 py-0.5 rounded">
-                        {product.category.join(", ")}
-                      </span>
-                    </div>
                   </div>
                 </div>
               ))}
@@ -437,33 +382,68 @@ function Shop() {
               </div>
             )}
 
-            {/* Empty state */}
-            {filteredProducts.length === 0 && (
+            {/* Loading state */}
+            {(!productsLoaded || !categoriesLoaded) && (
               <div className="flex flex-col items-center justify-center bg-white rounded-lg p-8 text-center">
                 <svg
+                  className="animate-spin h-8 w-8 text-pink-500 mb-4"
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-12 w-12 text-gray-400 mb-4"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke="currentColor"
                 >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
                   <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1}
-                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                  />
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
                 </svg>
-                <h3 className="text-lg font-medium mb-2">No products found</h3>
+                <h3 className="text-lg font-medium mb-2">Loading...</h3>
                 <p className="text-gray-500">
-                  Try adjusting your filters or search term
+                  Please wait while we fetch products and categories
                 </p>
               </div>
             )}
+
+            {/* Empty state */}
+            {productsLoaded &&
+              categoriesLoaded &&
+              filteredProducts.length === 0 && (
+                <div className="flex flex-col items-center justify-center bg-white rounded-lg p-8 text-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-12 w-12 text-gray-400 mb-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1}
+                      d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                    />
+                  </svg>
+                  <h3 className="text-lg font-medium mb-2">
+                    No products found
+                  </h3>
+                  <p className="text-gray-500">
+                    Try adjusting your filters or search term
+                  </p>
+                </div>
+              )}
           </div>
         </div>
       </div>
     </>
   );
 }
+
 export default Shop;
