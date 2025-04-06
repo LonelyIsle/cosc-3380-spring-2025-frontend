@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Inventory from "../components/Inventory";
-
-const mockEmployees = [
-  { id: 1, name: "Will", role: 1 }, // 1 = Manager
-  { id: 2, name: "H-Tran", role: 0 }, // 0 = Staff
-  { id: 3, name: "Jester", role: 1 },
-  { id: 4, name: "Yusuf", role: 0 },
-];
+import Employee from "../components/Employee";
 
 const mockOrders = [
   { id: 101, customer: "Customer A", tracking_info: "Shipped", employeeId: 2 },
@@ -27,11 +21,9 @@ const mockOrders = [
 
 const Admin = () => {
   const [activeSection, setActiveSection] = useState("orders");
-  const [employees, setEmployees] = useState([]);
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    setEmployees(mockEmployees);
     setOrders(mockOrders);
   }, []);
 
@@ -41,19 +33,23 @@ const Admin = () => {
       <div className="w-64 bg-gray-800 text-white p-5 flex flex-col">
         <h2 className="text-2xl font-bold mb-6">Admin Panel</h2>
         <nav>
-          {["orders", "products", "inventory", "config", "sales"].map(
-            (section) => (
-              <button
-                key={section}
-                onClick={() => setActiveSection(section)}
-                className={`block w-full text-left px-4 py-2 mb-2 rounded-lg hover:bg-gray-700 ${
-                  activeSection === section ? "bg-gray-700" : ""
-                }`}
-              >
-                {section.charAt(0).toUpperCase() + section.slice(1)}
-              </button>
-            ),
-          )}
+          {[
+            "orders",
+            "Pronduct Management",
+            "employees",
+            "config",
+            "sales",
+          ].map((section) => (
+            <button
+              key={section}
+              onClick={() => setActiveSection(section)}
+              className={`block w-full text-left px-4 py-2 mb-2 rounded-lg hover:bg-gray-700 ${
+                activeSection === section ? "bg-gray-700" : ""
+              }`}
+            >
+              {section.charAt(0).toUpperCase() + section.slice(1)}
+            </button>
+          ))}
         </nav>
       </div>
 
@@ -97,7 +93,8 @@ const Admin = () => {
             </table>
           </div>
         )}
-        {activeSection === "inventory" && <Inventory />}
+        {activeSection === "Pronduct Management" && <Inventory />}
+        {activeSection === "employees" && <Employee />}
         {activeSection === "products" && (
           <h2>Product Management Coming Soon...</h2>
         )}

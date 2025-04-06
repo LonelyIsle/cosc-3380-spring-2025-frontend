@@ -1,234 +1,112 @@
-import React, { useState, useEffect } from "react";
-
-// Mock inventory data (updated to match the products structure)
-const mockInventory = [
-  {
-    id: 1,
-    name: "Product 1",
-    quantity: 50,
-    restockThreshold: 20,
-    price: 19.99,
-    category: ["Animals", "Anime"],
-    size: 1.5,
-    color: "Red",
-  },
-  {
-    id: 2,
-    name: "Product 2",
-    quantity: 10,
-    restockThreshold: 5,
-    price: 29.99,
-    category: ["Movies & TV Shows"],
-    size: 2.5,
-    color: "Blue",
-  },
-  {
-    id: 3,
-    name: "Product 3",
-    quantity: 100,
-    restockThreshold: 30,
-    price: 39.99,
-    category: ["Anime"],
-    size: 3.5,
-    color: "Green",
-  },
-  {
-    id: 4,
-    name: "Product 4",
-    quantity: 5,
-    restockThreshold: 10,
-    price: 49.99,
-    category: ["Animals"],
-    size: 4.5,
-    color: "Blue",
-  },
-  {
-    id: 5,
-    name: "Product 5",
-    quantity: 20,
-    restockThreshold: 15,
-    price: 59.99,
-    category: ["Anime"],
-    size: 5.5,
-    color: "Red",
-  },
-  {
-    id: 6,
-    name: "Product 6",
-    quantity: 8,
-    restockThreshold: 12,
-    price: 69.99,
-    category: ["Anime"],
-    size: 6.5,
-    color: "Green",
-  },
-  {
-    id: 7,
-    name: "Product 7",
-    quantity: 30,
-    restockThreshold: 25,
-    price: 79.99,
-    category: ["Animals"],
-    size: 7.5,
-    color: "Red",
-  },
-  {
-    id: 8,
-    name: "Product 8",
-    quantity: 15,
-    restockThreshold: 10,
-    price: 89.99,
-    category: ["Anime"],
-    size: 8.5,
-    color: "Blue",
-  },
-  {
-    id: 9,
-    name: "Product 9",
-    quantity: 5,
-    restockThreshold: 8,
-    price: 99.99,
-    category: ["Anime"],
-    size: 9.5,
-    color: "Green",
-  },
-  {
-    id: 10,
-    name: "Product 10",
-    quantity: 12,
-    restockThreshold: 5,
-    price: 109.99,
-    category: ["Animals"],
-    size: 0.5,
-    color: "Red",
-  },
-];
+import { useShop } from "../context/ShopContext";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Inventory = () => {
-  const [inventory, setInventory] = useState([]);
+  const { getProductArray } = useShop();
+  const inventory = getProductArray();
   const [restockQuantities, setRestockQuantities] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortKey, setSortKey] = useState("");
+  const navigate = useNavigate();
+
+  const handleRestockClick = (productId, restockAmount) => {
+    navigate(`/restock/${productId}`, {
+      state: { restockAmount },
+    });
+  };
 
   useEffect(() => {
-    setInventory(mockInventory);
     const initialRestockQuantities = {};
-    mockInventory.forEach((item) => {
+    inventory.forEach((item) => {
       initialRestockQuantities[item.id] = 0;
     });
     setRestockQuantities(initialRestockQuantities);
-  }, []);
+  }, [inventory]);
 
-  const handleRestockChange = (itemId, quantity) => {
-    setRestockQuantities({
-      ...restockQuantities,
-      [itemId]: parseInt(quantity, 10) || 0,
+  const filteredInventory = inventory
+    .filter((item) =>
+      item.name.toLowerCase().includes(searchTerm.toLowerCase()),
+    )
+    .sort((a, b) => {
+      if (!sortKey) return 0;
+      if (sortKey === "category") {
+        return a.category[0]?.localeCompare(b.category[0] || "") || 0;
+      }
+      return typeof a[sortKey] === "string"
+        ? a[sortKey].localeCompare(b[sortKey])
+        : a[sortKey] - b[sortKey];
     });
-  };
-
-  const handleRestockSubmit = (itemId) => {
-    const updatedInventory = inventory.map((item) =>
-      item.id === itemId
-        ? { ...item, quantity: item.quantity + restockQuantities[itemId] }
-        : item,
-    );
-    setInventory(updatedInventory);
-    setRestockQuantities({ ...restockQuantities, [itemId]: 0 });
-  };
 
   return (
-    <div className="p-6 flex justify-center">
-      <div className="w-full max-w-5xl">
-        <h2 className="text-2xl font-bold text-center mb-4">
-          Inventory Management
-        </h2>
-        <table className="w-full border border-black bg-gray-200">
-          <thead>
-            <tr className="bg-gray-400 text-white">
-              <th className="py-3 px-4 border border-black text-center">ID</th>
-              <th className="py-3 px-4 border border-black text-center">
-                Item Name
-              </th>
-              <th className="py-3 px-4 border border-black text-center">
-                Quantity
-              </th>
-              <th className="py-3 px-4 border border-black text-center">
-                Restock Threshold
-              </th>
-              <th className="py-3 px-4 border border-black text-center">
-                Price ($)
-              </th>
-              <th className="py-3 px-4 border border-black text-center">
-                Category
-              </th>
-              <th className="py-3 px-4 border border-black text-center">
-                Size
-              </th>
-              <th className="py-3 px-4 border border-black text-center">
-                Color
-              </th>
-              <th className="py-3 px-4 border border-black text-center">
-                Restock Quantity
-              </th>
-              <th className="py-3 px-4 border border-black text-center">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {inventory.map((item, index) => (
-              <tr
-                key={item.id}
-                className={index % 2 === 0 ? "bg-gray-300" : "bg-gray-100"}
-              >
-                <td className="py-3 px-4 border border-black text-center">
-                  {item.id}
-                </td>
-                <td className="py-3 px-4 border border-black text-center">
-                  {item.name}
-                </td>
-                <td className="py-3 px-4 border border-black text-center">
-                  {item.quantity}{" "}
-                  {item.quantity <= item.restockThreshold && (
-                    <span className="text-red-500"> (Low Stock)</span>
-                  )}
-                </td>
-                <td className="py-3 px-4 border border-black text-center">
-                  {item.restockThreshold}
-                </td>
-                <td className="py-3 px-4 border border-black text-center">
-                  ${item.price.toFixed(2)}
-                </td>
-                <td className="py-3 px-4 border border-black text-center">
-                  {item.category.join(", ")}
-                </td>
-                <td className="py-3 px-4 border border-black text-center">
-                  {item.size}
-                </td>
-                <td className="py-3 px-4 border border-black text-center">
-                  {item.color}
-                </td>
-                <td className="py-3 px-4 border border-black text-center">
-                  <input
-                    type="number"
-                    value={restockQuantities[item.id]}
-                    onChange={(e) =>
-                      handleRestockChange(item.id, e.target.value)
-                    }
-                    className="border border-black rounded p-1 w-20 text-center"
-                  />
-                </td>
-                <td className="py-3 px-4 border border-black text-center">
-                  <button
-                    onClick={() => handleRestockSubmit(item.id)}
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded"
-                  >
-                    Restock
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="p-4">
+      <h2 className="text-2xl font-bold mb-4">Inventory Management</h2>
+      <div className="flex justify-between items-center mb-4">
+        <input
+          type="text"
+          placeholder="Search by name..."
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="border p-2 rounded w-1/3"
+        />
+        <select
+          onChange={(e) => setSortKey(e.target.value)}
+          className="border p-2 rounded"
+        >
+          <option value="">Sort By</option>
+          <option value="name">Name</option>
+          <option value="quantity">Quantity</option>
+          <option value="price">Price</option>
+          <option value="category">Category</option>
+        </select>
       </div>
+      <table className="w-full border border-black bg-gray-200">
+        <thead>
+          <tr className="bg-gray-400 text-white">
+            <th className="p-2 border">Name</th>
+            <th className="p-2 border">Quantity</th>
+            <th className="p-2 border">Restock Threshold</th>
+            <th className="p-2 border">Price</th>
+            <th className="p-2 border">Category</th>
+            <th className="p-2 border">Restock</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredInventory.map((item, index) => (
+            <tr
+              key={item.id}
+              className={index % 2 === 0 ? "bg-gray-300" : "bg-gray-100"}
+            >
+              <td className="p-2 border">{item.name}</td>
+              <td className="p-2 border">{item.quantity}</td>
+              <td className="p-2 border">{item.restockThreshold || 0}</td>
+              <td className="p-2 border">${item.price.toFixed(2)}</td>
+              <td className="p-2 border">{item.category?.[0] || "N/A"}</td>
+              <td className="p-2 border">
+                <input
+                  type="number"
+                  min="0"
+                  value={restockQuantities[item.id] || 0}
+                  onChange={(e) =>
+                    setRestockQuantities((prev) => ({
+                      ...prev,
+                      [item.id]: parseInt(e.target.value, 10),
+                    }))
+                  }
+                  className="w-16 border p-1"
+                />
+                <button
+                  className="ml-2 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                  onClick={() =>
+                    handleRestockClick(item.id, restockQuantities[item.id] || 0)
+                  }
+                >
+                  Edit
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
