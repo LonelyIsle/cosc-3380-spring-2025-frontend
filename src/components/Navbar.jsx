@@ -69,6 +69,14 @@ function Navbar() {
                 Register
               </Link>
             </li>
+            <li>
+              <Link
+                to="/admin/login"
+                className="header-box text-mantle bg-gradient-to-r from-green to-teal"
+              >
+                Admin
+              </Link>
+            </li>
           </>
         ) : (
           <li>

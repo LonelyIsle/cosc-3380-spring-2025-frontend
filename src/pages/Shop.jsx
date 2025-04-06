@@ -6,6 +6,7 @@ function Shop() {
   const navigate = useNavigate();
   const { getProductArray, productsLoaded } = useShop();
   const products = getProductArray();
+  console.log(products, "Products from shop")
   const [filteredProducts, setFilteredProducts] = useState(products);
   const [sortOrder, setSortOrder] = useState("asc");
   const [searchTerm, setSearchTerm] = useState("");
