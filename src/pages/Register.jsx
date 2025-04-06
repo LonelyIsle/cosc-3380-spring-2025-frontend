@@ -35,6 +35,7 @@ function Register() {
           reset_password_answer: answer,
           email,
           password,
+          role: -1,
         })
         .then((res) => {
           console.log("Registration success:", res.data);
