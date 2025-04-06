@@ -36,7 +36,7 @@ const Admin = () => {
   }, []);
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen overflow-hidden"> {/* Added overflow hidden to prevent overall scrolling */}
       {/* Sidebar Navigation */}
       <div className="w-64 bg-gray-800 text-white p-5 flex flex-col">
         <h2 className="text-2xl font-bold mb-6">Admin Panel</h2>
@@ -52,49 +52,51 @@ const Admin = () => {
               >
                 {section.charAt(0).toUpperCase() + section.slice(1)}
               </button>
-            ),
+            )
           )}
         </nav>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-6">
+      <div className="flex-1 p-6 overflow-y-auto"> {/* Added overflow-y-auto to enable vertical scrolling in the main content */}
         {activeSection === "orders" && (
           <div>
             <h2 className="text-xl font-semibold mb-2">Order Management</h2>
-            <table className="min-w-full border border-black bg-gray-100 text-center">
-              <thead>
-                <tr className="bg-gray-300">
-                  <th className="py-2 px-4 border border-black">ID</th>
-                  <th className="py-2 px-4 border border-black">Customer</th>
-                  <th className="py-2 px-4 border border-black">
-                    Tracking Info
-                  </th>
-                  <th className="py-2 px-4 border border-black">Employee ID</th>
-                </tr>
-              </thead>
-              <tbody>
-                {orders.map((order, index) => (
-                  <tr
-                    key={order.id}
-                    className={`${index % 2 === 0 ? "bg-gray-200" : "bg-white"} text-center`}
-                  >
-                    <td className="py-2 px-4 border border-black">
-                      {order.id}
-                    </td>
-                    <td className="py-2 px-4 border border-black">
-                      {order.customer}
-                    </td>
-                    <td className="py-2 px-4 border border-black">
-                      {order.tracking_info}
-                    </td>
-                    <td className="py-2 px-4 border border-black">
-                      {order.employeeId}
-                    </td>
+            <div className="overflow-x-auto"> {/* Added overflow-x-auto to enable horizontal scrolling if needed */}
+              <table className="min-w-full border border-black bg-gray-100 text-center">
+                <thead>
+                  <tr className="bg-gray-300">
+                    <th className="py-2 px-4 border border-black">ID</th>
+                    <th className="py-2 px-4 border border-black">Customer</th>
+                    <th className="py-2 px-4 border border-black">
+                      Tracking Info
+                    </th>
+                    <th className="py-2 px-4 border border-black">Employee ID</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {orders.map((order, index) => (
+                    <tr
+                      key={order.id}
+                      className={`${index % 2 === 0 ? "bg-gray-200" : "bg-white"} text-center`}
+                    >
+                      <td className="py-2 px-4 border border-black">
+                        {order.id}
+                      </td>
+                      <td className="py-2 px-4 border border-black">
+                        {order.customer}
+                      </td>
+                      <td className="py-2 px-4 border border-black">
+                        {order.tracking_info}
+                      </td>
+                      <td className="py-2 px-4 border border-black">
+                        {order.employeeId}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
         {activeSection === "inventory" && <Inventory />}

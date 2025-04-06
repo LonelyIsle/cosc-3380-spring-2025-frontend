@@ -7,28 +7,62 @@ import axios from "axios";
 function Fpassword() {
   const [email, setEmail] = useState("");
   const [secretQuestion, setSecretQuestion] = useState("");
+  const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [answer, setAnswer] = useState("");
+  const [reset_password_answer, Set_reset_password_answer] = useState("");
   const [showModal, setShowModal] = useState(false);
-  //https://poswebapp-d8f0geh5dyhfgyfj.centralus-01.azurewebsites.net/
+  const [successMessage, setSuccessMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setErrorMessage("");
+    setSuccessMessage("");
 
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/customer/forget/question`,
         { email }
       );
-      console.log(response.data.message);
-      if (response.data.message == "success") {
-      setShowModal(true)
+      if (response.data.message === "success") {
+        console.log(response.data.data.reset_password_question);
+        setSecretQuestion(response.data.data.reset_password_question);
+        setShowModal(true);
       } else {
         setErrorMessage("Email Not Found.");
       }
     } catch (error) {
-      setErrorMessage("An error occurred. Please try again later.");
+      setErrorMessage(
+        "Email is incorrect, or An error occurred. Please try again later."
+      );
+    }
+  };
+
+  const handleAnswerSubmit = async (event) => {
+    event.preventDefault();
+    setErrorMessage("");
+    setSuccessMessage("");
+
+    console.log("Submitting answer:", { email,reset_password_answer, password });
+
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/customer/forget`,
+        { email, reset_password_answer, password }
+      );
+
+      console.log("Response from answer submit:", response.data);
+      console.log(response, "Secret Answer");
+      if (response.data.message === "success") {
+        setSuccessMessage("Answer correct. Redirecting to reset page...");
+        setTimeout(() => {
+          navigate(`/reset-password?email=${encodeURIComponent(email)}`);
+        }, 2000);
+      } else {
+        setErrorMessage("Incorrect answer. Please try again.");
+      }
+    } catch (error) {
+      setErrorMessage("An error occurred. Please try again.");
     }
   };
 
@@ -39,7 +73,7 @@ function Fpassword() {
           <img src={logo} alt="Logo" className="w-64 h-64" />
         </div>
         <h1 className="text-lg font-bold mb-4 text-subtext1">Reset Password</h1>
-        <form action="" onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
           <div className="mb-2">
             <label htmlFor="email" className="block text-subtext0">
               Email:
@@ -51,8 +85,10 @@ function Fpassword() {
               placeholder="Enter Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
             />
           </div>
+          {errorMessage && <p className="text-red-500 mt-2">{errorMessage}</p>}
           <div className="mt-6 text-center">
             <button className="bg-maroon text-base py-2 px-4 rounded hover:bg-peach">
               Reset
@@ -60,6 +96,64 @@ function Fpassword() {
           </div>
         </form>
       </div>
+
+      {/* Modal */}
+      {showModal && (
+        <div className="fixed inset-0 bg-maroon bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-base p-6 rounded-lg shadow-xl w-96 text-text">
+            <h2 className="text-xl font-semibold mb-4">
+              Answer Security Question
+            </h2>
+            <p className="mb-2">{secretQuestion}</p>
+            <form onSubmit={handleAnswerSubmit}>
+              <input
+                type="text"
+                className="border p-2 w-full rounded mb-4 bg-surface2 text-text"
+                placeholder="Enter your answer"
+                value={reset_password_answer}
+                onChange={(e) => Set_reset_password_answer(e.target.value)}
+                required
+              />
+              {errorMessage && (
+                <p className="text-red-500 mb-2">{errorMessage}</p>
+              )}
+              {successMessage && (
+                <p className="text-green-500 mb-2">{successMessage}</p>
+              )}
+              <p className="mb-2"> New Password</p>
+              <input
+                type="text"
+                className="border p-2 w-full rounded mb-4 bg-surface2 text-text"
+                placeholder="Enter your answer"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              {errorMessage && (
+                <p className="text-red-500 mb-2">{errorMessage}</p>
+              )}
+              {successMessage && (
+                <p className="text-green-500 mb-2">{successMessage}</p>
+              )}
+              <div className="flex justify-end space-x-2">
+                <button
+                  type="button"
+                  onClick={() => setShowModal(false)}
+                  className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="bg-maroon text-white px-4 py-2 rounded hover:bg-peach"
+                >
+                  Submit
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
