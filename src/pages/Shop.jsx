@@ -41,7 +41,7 @@ function Shop() {
       .then((res) => {
         const fetchedCategories = res.data.data.rows || [];
 
-        // Filter out deleted categories
+        // Filter out deleted categories, not sure why this is in DB
         const activeCategories = fetchedCategories.filter(
           (category) => !category.is_deleted
         );
@@ -61,7 +61,7 @@ function Shop() {
           "Failed to fetch categories:",
           err.response?.data || err.message
         );
-        setCategoriesLoaded(true); // Set to true even on error to prevent perpetual loading state
+        setCategoriesLoaded(true);
       });
   }, []);
 
@@ -122,7 +122,7 @@ function Shop() {
       (cat) => selectedCategories[cat]
     );
 
-    // Get the active category IDs
+    // Get active category IDs
     const activeCategoryIds = [];
     if (activeCategories.length > 0) {
       categories.forEach((category) => {
@@ -132,7 +132,7 @@ function Shop() {
       });
     }
 
-    // Update selected category IDs in context
+    // Update selected category IDs
     updateSelectedCategories(activeCategoryIds);
   }, [selectedCategories, categoriesLoaded, categories]);
 
@@ -142,6 +142,15 @@ function Shop() {
       ...selectedCategories,
       [category]: !selectedCategories[category],
     });
+  };
+
+  // Reset all category filters
+  const resetCategories = () => {
+    const resetCategoriesObj = {};
+    Object.keys(selectedCategories).forEach((category) => {
+      resetCategoriesObj[category] = false;
+    });
+    setSelectedCategories(resetCategoriesObj);
   };
 
   // Sort products function
@@ -190,6 +199,11 @@ function Shop() {
     return result;
   };
 
+  // Check if any categories are selected
+  const anyCategoriesSelected = Object.values(selectedCategories).some(
+    (value) => value === true
+  );
+
   return (
     <>
       {/* Main Container */}
@@ -201,34 +215,46 @@ function Shop() {
             <div className="mb-6">
               <h2 className="font-medium mb-3">Search and Filter</h2>
             </div>
-
-            {/* Filter Options - Dynamically generated from categories */}
-            <div className="mb-6 space-y-1.5">
-              {categoriesLoaded ? (
-                Object.keys(selectedCategories).length > 0 ? (
-                  Object.keys(selectedCategories).map((category) => (
-                    <label key={category} className="flex items-center">
-                      <input
-                        type="checkbox"
-                        className="w-4 h-4 mr-2"
-                        checked={selectedCategories[category]}
-                        onChange={() => toggleCategory(category)}
-                      />
-                      <div>
-                        <div className="font-medium">{category}</div>
-                        <div className="text-gray-500 text-xs">
-                          {categories.find((cat) => cat.name === category)
-                            ?.description || ""}
-                        </div>
-                      </div>
-                    </label>
-                  ))
-                ) : (
-                  <p className="text-gray-500 text-sm">No categories found</p>
-                )
-              ) : (
-                <p className="text-gray-500 text-sm">Loading categories...</p>
+            <div className="flex justify-between items-center mb-3">
+              <h2 className="font-medium">Categories</h2>
+              {anyCategoriesSelected && (
+                <button
+                  onClick={resetCategories}
+                  className="text-xs bg-pink-200 hover:bg-pink-300 px-2 py-1 rounded transition-colors"
+                >
+                  Reset Categories
+                </button>
               )}
+            </div>
+            {/* Filter Options with Reset Button */}
+            <div className="mb-6">
+              <div className="space-y-1.5">
+                {categoriesLoaded ? (
+                  Object.keys(selectedCategories).length > 0 ? (
+                    Object.keys(selectedCategories).map((category) => (
+                      <label key={category} className="flex items-center">
+                        <input
+                          type="checkbox"
+                          className="w-4 h-4 mr-2"
+                          checked={selectedCategories[category]}
+                          onChange={() => toggleCategory(category)}
+                        />
+                        <div>
+                          <div className="font-medium">{category}</div>
+                          <div className="text-gray-500 text-xs">
+                            {categories.find((cat) => cat.name === category)
+                              ?.description || ""}
+                          </div>
+                        </div>
+                      </label>
+                    ))
+                  ) : (
+                    <p className="text-gray-500 text-sm">No categories found</p>
+                  )
+                ) : (
+                  <p className="text-gray-500 text-sm">Loading categories...</p>
+                )}
+              </div>
             </div>
 
             {/* Price Range Slider*/}
@@ -300,29 +326,67 @@ function Shop() {
             </div>
 
             {/* Product Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 mb-8">
-              {currentProducts.map((product) => (
-                <div
-                  key={product.id}
-                  className="bg-white rounded-lg overflow-hidden shadow-sm transition-transform duration-300 hover:scale-105 cursor-pointer"
-                  onClick={() => handleProductClick(product.id)}
+            {productsLoaded && (
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 mb-8">
+                {currentProducts.map((product) => (
+                  <div
+                    key={product.id}
+                    className="bg-white rounded-lg overflow-hidden shadow-sm transition-transform duration-300 hover:scale-105 cursor-pointer"
+                    onClick={() => handleProductClick(product.id)}
+                  >
+                    <div className="bg-gray-200 h-40 flex items-center justify-center">
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="p-2 bg-pink-100">
+                      <h3 className="font-medium text-sm">{product.name}</h3>
+                      <p className="text-xs text-gray-600">
+                        {product.description}
+                      </p>
+                      <div className="flex justify-between items-center mt-1">
+                        <p className="font-bold text-sm">${product.price}</p>
+                        <span className="text-xs bg-pink-200 px-2 py-0.5 rounded">
+                          {product.category.join(", ")}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Loading state */}
+            {(!productsLoaded || !categoriesLoaded) && (
+              <div className="flex flex-col items-center justify-center bg-white rounded-lg p-8 text-center">
+                <svg
+                  className="animate-spin h-8 w-8 text-pink-500 mb-4"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
                 >
-                  <div className="bg-gray-200 h-40 flex items-center justify-center">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="p-2 bg-pink-100">
-                    <h3 className="font-medium text-sm">{product.name}</h3>
-                    <p className="text-xs text-gray-600">
-                      {product.description}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                <h3 className="text-lg font-medium mb-2">Loading...</h3>
+                <p className="text-gray-500">
+                  Please wait while we fetch products and categories
+                </p>
+              </div>
+            )}
 
             {/* Pagination with Tailwind */}
             {totalPages > 1 && (
@@ -379,36 +443,6 @@ function Shop() {
                     &raquo;
                   </button>
                 </div>
-              </div>
-            )}
-
-            {/* Loading state */}
-            {(!productsLoaded || !categoriesLoaded) && (
-              <div className="flex flex-col items-center justify-center bg-white rounded-lg p-8 text-center">
-                <svg
-                  className="animate-spin h-8 w-8 text-pink-500 mb-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                <h3 className="text-lg font-medium mb-2">Loading...</h3>
-                <p className="text-gray-500">
-                  Please wait while we fetch products and categories
-                </p>
               </div>
             )}
 

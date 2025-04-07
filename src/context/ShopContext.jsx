@@ -10,32 +10,33 @@ export function ShopProvider({ children }) {
   const [cartItems, setCartItems] = useState([]);
   const [cartLoaded, setCartLoaded] = useState(false);
   const [productsLoaded, setProductsLoaded] = useState(false);
-  const [selectedCategoryIds, setSelectedCategoryIds] = useState([]); // New state for selected category IDs
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
 
-  // Function to fetch products based on category filter
+  // fetch products based on category filter
   const fetchProducts = async (categoryIds = []) => {
     setProductsLoaded(false);
 
     let url = `${import.meta.env.VITE_API_URL}/product?limit=999`;
 
-    // Append category_id filter if there are selected categories
+    // Append category id filter if there are selected categories
     if (categoryIds.length > 0) {
-      url += `&category_id=${categoryIds.join(",")}`;
+      url += `&category_id=[${categoryIds.join(",")}]`;
     }
 
     try {
       const res = await axios.get(url);
-      const products = res.data.data.rows.map((p) => ({
+      const mappedproducts = res.data.data.rows.map((p) => ({
         id: p.id,
         name: p.name,
         price: parseFloat(p.price),
         quantity: p.quantity,
         description: p.description,
-        category: p.category || [],
+        category: p.category?.map((c) => c.name) || [],
         image: p.image
           ? `data:image/${p.image_extension};base64,${p.image}`
           : "",
       }));
+      const products = mappedproducts;
       setProducts(products);
       setProductsLoaded(true);
     } catch (err) {
@@ -43,7 +44,7 @@ export function ShopProvider({ children }) {
         "Failed to fetch products:",
         err.response?.data || err.message
       );
-      setProductsLoaded(true); // Set to true even on error to prevent perpetual loading state
+      setProductsLoaded(true);
     }
   };
 
