@@ -20,6 +20,7 @@ export function ShopProvider({ children }) {
           id: p.id,
           name: p.name,
           price: parseFloat(p.price),
+          restock_threshold: p.restock_threshold,
           quantity: p.quantity,
           description: p.description,
           category: p.category || [],
