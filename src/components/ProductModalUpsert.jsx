@@ -137,7 +137,7 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
               />
             </div>
 
-            <select
+            <select // placeholder select with no API calls
               name="category"
               value={product.category[0]?.name || ""}
               onChange={(e) =>
@@ -156,12 +156,14 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
               <option value="Movie & TV Shows">Movie & TV Shows</option>
             </select>
 
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="w-full text-sm"
-            />
+            {productId ? (
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="w-full text-sm"
+              />
+            ) : null}
 
             <div className="flex justify-between mt-6">
               <button
