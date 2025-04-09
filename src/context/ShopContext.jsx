@@ -16,7 +16,7 @@ export function ShopProvider({ children }) {
     axios
       .get(`${import.meta.env.VITE_API_URL}/product?limit=999`)
       .then((res) => {
-        const products = res.data.data.rows.map((p) => ({
+        const products = res.data.data.map((p) => ({
           id: p.id,
           name: p.name,
           price: parseFloat(p.price),

@@ -14,16 +14,41 @@ function Profile() {
     navigate("/login");
   };
 
+  const orders = [
+    {
+      id: "123456",
+      date: "2025-04-01",
+      total: "49.99",
+      items: [
+        { name: "Anime Plushie", quantity: 1 },
+        { name: "Super Hero Plushie", quantity: 2 },
+      ],
+    },
+    {
+      id: "123457",
+      date: "2025-03-15",
+      total: "29.99",
+      items: [
+        { name: "Cartoon Plushie", quantity: 1 },
+        { name: "Red Plushie", quantity: 3 },
+      ],
+    },
+    {
+      id: "123457",
+      date: "2025-03-15",
+      total: "29.99",
+      items: [
+        { name: "Cartoon Plushie", quantity: 1 },
+        { name: "Red Plushie", quantity: 3 },
+      ],
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-100 py-10">
       <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-xl overflow-hidden">
         <div className="bg-indigo-600 text-white py-12 px-4 sm:px-6">
           <div className="text-center">
-            <img
-              className="h-24 w-24 rounded-full mx-auto mb-4 border-4 border-white"
-              src=""
-              alt="Profile"
-            />
             <h2 className="text-3xl font-semibold">John Middle Doe</h2>
             <p className="text-lg mt-1">Mofu Shopper</p>
           </div>
@@ -58,7 +83,7 @@ function Profile() {
             Past Order History
           </h3>
           <div className="border-t pt-4">
-            <OrderHistory />
+            <OrderHistory orders={orders} />
           </div>
         </div>
 
