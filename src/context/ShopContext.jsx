@@ -29,6 +29,7 @@ export function ShopProvider({ children }) {
         id: p.id,
         name: p.name,
         price: parseFloat(p.price),
+        threshold: p.threshold,
         quantity: p.quantity,
         description: p.description,
         category: p.category?.map((c) => c.name) || [],
