@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useShop } from "../context/ShopContext";
 
 const defaultProduct = {
   sku: "",
@@ -15,6 +16,8 @@ const defaultProduct = {
 const ProductModalUpsert = ({ productId = null, onClose }) => {
   const [product, setProduct] = useState(defaultProduct);
   const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const { getProduct, getAllCategories } = useShop();
 
   // Fetch product info if updating product
   useEffect(() => {
@@ -25,11 +28,9 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
 
       const fetchProduct = async () => {
         try {
-          // const res = await fetch(`/api/products/${productId}`);
-          // const data = await res.json();
-          const data = {}; // ← mock data
-
+          const data = getProduct(productId);
           setProduct(data);
+          console.log("Product fetched:", data);
         } catch (err) {
           console.error("Error fetching product:", err);
         } finally {
@@ -40,6 +41,19 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
       fetchProduct();
     }
   }, [productId]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await getAllCategories();
+        setCategories(data);
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -137,23 +151,28 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
               />
             </div>
 
-            <select // placeholder select with no API calls
+            <select
               name="category"
-              value={product.category[0]?.name || ""}
-              onChange={(e) =>
+              value={product.category[0]?.id || ""}
+              onChange={(e) => {
+                const selected = categories.find(
+                  (cat) => cat.id === parseInt(e.target.value),
+                );
                 setProduct((prev) => ({
                   ...prev,
-                  category: [{ id: null, name: e.target.value }],
-                }))
-              }
+                  category: selected ? [selected] : [],
+                }));
+              }}
               className="w-full p-2 rounded bg-surface1 text-text"
             >
               <option value="" disabled>
                 Select Category
               </option>
-              <option value="Animals">Animals</option>
-              <option value="Anime">Anime</option>
-              <option value="Movie & TV Shows">Movie & TV Shows</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
             </select>
 
             {productId ? (
