@@ -172,6 +172,30 @@ export function ShopProvider({ children }) {
     setCartItems((prev) => prev.filter((item) => item.id !== id));
   };
 
+  // pull all categories not deleted
+  const getAllCategories = async () => {
+    let url = `${import.meta.env.VITE_API_URL}/category`;
+    try {
+      const res = await axios.get(url);
+      const mappedproducts = res.data.data.rows
+        .filter((p) => p.is_deleted !== 1) // Filter out products where is_deleted is 1
+        .map((p) => ({
+          id: p.id,
+          name: p.name,
+          description: p.description,
+          created_at: p.created_at,
+          updated_at: p.updated_at,
+        }));
+      return mappedproducts;
+    } catch (err) {
+      console.error(
+        "Failed to fetch products:",
+        err.response?.data || err.message,
+      );
+      return [];
+    }
+  };
+
   const clearCart = () => setCartItems([]); // clear cart completely
 
   return (
@@ -189,7 +213,7 @@ export function ShopProvider({ children }) {
         removeItem,
         clearCart,
         updateSelectedCategories,
-        fetchProducts,
+        getAllCategories,
       }}
     >
       {children}
