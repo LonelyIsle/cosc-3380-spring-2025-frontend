@@ -23,7 +23,7 @@ const Restock = () => {
         },
       );
       setMessage("Product restocked successfully.");
-      setTimeout(() => navigate("/inventory"), 1500);
+      setTimeout(() => navigate("/admin", { state: { tab: "product-management" } }), 1500);
     } catch (err) {
       setMessage("Failed to restock product.");
       console.error(err);

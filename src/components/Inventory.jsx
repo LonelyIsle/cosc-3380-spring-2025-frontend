@@ -10,11 +10,6 @@ const Inventory = () => {
   const [sortKey, setSortKey] = useState("");
   const navigate = useNavigate();
 
-  const handleRestockClick = (productId, restockAmount) => {
-    navigate(`/restock/${productId}`, {
-      state: { restockAmount },
-    });
-  };
 
   useEffect(() => {
     const initialRestockQuantities = {};
@@ -78,7 +73,7 @@ const Inventory = () => {
             >
               <td className="p-2 border">{item.name}</td>
               <td className="p-2 border">{item.quantity}</td>
-              <td className="p-2 border">{item.restockThreshold || 0}</td>
+              <td className="p-2 border">{item.threshold || 0}</td>
               <td className="p-2 border">${item.price.toFixed(2)}</td>
               <td className="p-2 border">{item.category?.[0] || "N/A"}</td>
               <td className="p-2 border">
@@ -96,11 +91,9 @@ const Inventory = () => {
                 />
                 <button
                   className="ml-2 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                  onClick={() =>
-                    handleRestockClick(item.id, restockQuantities[item.id] || 0)
-                  }
+                  onClick={() => navigate(`/restock/${item.id}`)}
                 >
-                  Edit
+                  Edit Product
                 </button>
               </td>
             </tr>
