@@ -27,6 +27,7 @@ export function ShopProvider({ children }) {
       const res = await axios.get(url);
       const mappedproducts = res.data.data.rows.map((p) => ({
         id: p.id,
+        sku: p.sku,
         name: p.name,
         price: parseFloat(p.price),
         threshold: p.threshold,
@@ -43,7 +44,7 @@ export function ShopProvider({ children }) {
     } catch (err) {
       console.error(
         "Failed to fetch products:",
-        err.response?.data || err.message
+        err.response?.data || err.message,
       );
       setProductsLoaded(true);
     }
@@ -127,7 +128,7 @@ export function ShopProvider({ children }) {
         const limitedQuantity = Math.min(newQuantity, product.quantity);
 
         return prev.map((item) =>
-          item.id === productId ? { ...item, quantity: limitedQuantity } : item
+          item.id === productId ? { ...item, quantity: limitedQuantity } : item,
         );
       }
 
