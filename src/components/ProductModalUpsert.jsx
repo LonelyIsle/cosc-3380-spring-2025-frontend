@@ -16,19 +16,15 @@ const defaultProduct = {
 const ProductModalUpsert = ({ productId = null, onClose }) => {
   const [product, setProduct] = useState(defaultProduct);
   const [loading, setLoading] = useState(false);
-  const [categories, setCategories] = useState([]);
-  const { getProduct, getAllCategories } = useShop();
+  const { getProduct, categories, categoriesLoaded } = useShop();
 
   // Fetch product info if updating product
   useEffect(() => {
     if (productId !== null) {
       setLoading(true);
-
-      // TODO: add API call to fetch product by ID
-
       const fetchProduct = async () => {
         try {
-          const data = getProduct(productId);
+          const data = await getProduct(productId);
           setProduct(data);
           console.log("Product fetched:", data);
         } catch (err) {
@@ -37,23 +33,24 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
           setLoading(false);
         }
       };
-
       fetchProduct();
     }
-  }, [productId]);
+  }, [productId, getProduct]);
 
+  // Convert product categories from names to full objects if needed
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const data = await getAllCategories();
-        setCategories(data);
-      } catch (err) {
-        console.error("Error fetching categories:", err);
-      }
-    };
-
-    fetchCategories();
-  }, []);
+    if (
+      productId !== null &&
+      categoriesLoaded &&
+      product.category.length > 0 &&
+      typeof product.category[0] === "string"
+    ) {
+      const convertedCategories = product.category
+        .map((catName) => categories.find((cat) => cat.name === catName))
+        .filter(Boolean);
+      setProduct((prev) => ({ ...prev, category: convertedCategories }));
+    }
+  }, [categoriesLoaded, product, productId, categories]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -71,24 +68,39 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
     }
   };
 
+  // Handle toggling of category checkboxes
+  const handleCategoryToggle = (e) => {
+    const id = parseInt(e.target.value, 10);
+    let updatedCategories;
+    if (e.target.checked) {
+      // Find the complete category object from the global list
+      const selectedCategory = categories.find((cat) => cat.id === id);
+      if (selectedCategory && !product.category.some((cat) => cat.id === id)) {
+        updatedCategories = [...product.category, selectedCategory];
+      } else {
+        updatedCategories = [...product.category];
+      }
+    } else {
+      updatedCategories = product.category.filter((cat) => cat.id !== id);
+    }
+    setProduct((prev) => ({ ...prev, category: updatedCategories }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     // 🛠️ TODO: Handle API call for insert or update
     if (productId === null) {
       console.log("Creating product...", product);
     } else {
       console.log("Updating product...", product);
     }
-
     onClose(); // Close the modal after submit
   };
 
   return (
     <div
-      className="fixed top-0 left-0 w-screen h-screen flex justify-center
-      items-center z-50"
-      style={{ backgroundColor: `rgba(24, 24, 37, 0.7)` }}
+      className="fixed top-0 left-0 w-screen h-screen flex justify-center items-center z-50"
+      style={{ backgroundColor: "rgba(24, 24, 37, 0.7)" }}
       onClick={onClose}
     >
       <div
@@ -98,9 +110,8 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
         <h2 className="text-xl font-semibold mb-4">
           {productId ? "Update Product" : "Add New Product"}
         </h2>
-
         {loading ? (
-          <p className="text-overlay1">Loading...</p>
+          <p className="text-overlay1">Loading product...</p>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="flex justify-center items-center gap-4">
@@ -112,7 +123,6 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
                 onChange={handleChange}
                 className="w-full p-2 rounded bg-surface1 text-text"
               />
-
               <input
                 type="text"
                 name="sku"
@@ -122,7 +132,6 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
                 className="w-full p-2 rounded bg-surface1 text-text"
               />
             </div>
-
             <textarea
               name="description"
               placeholder="Description"
@@ -130,7 +139,6 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
               onChange={handleChange}
               className="w-full p-2 rounded bg-surface1 text-text"
             />
-
             <div className="flex justify-center items-center gap-4">
               <input
                 type="number"
@@ -140,7 +148,6 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
                 onChange={handleChange}
                 className="w-full p-2 rounded bg-surface1 text-text"
               />
-
               <input
                 type="number"
                 name="quantity"
@@ -150,31 +157,27 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
                 className="w-full p-2 rounded bg-surface1 text-text"
               />
             </div>
-
-            <select
-              name="category"
-              value={product.category[0]?.id || ""}
-              onChange={(e) => {
-                const selected = categories.find(
-                  (cat) => cat.id === parseInt(e.target.value),
-                );
-                setProduct((prev) => ({
-                  ...prev,
-                  category: selected ? [selected] : [],
-                }));
-              }}
-              className="w-full p-2 rounded bg-surface1 text-text"
-            >
-              <option value="" disabled>
-                Select Category
-              </option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
-
+            <div className="flex flex-col gap-2">
+              <label className="font-semibold">Categories</label>
+              {categoriesLoaded ? (
+                <div className="flex flex-wrap gap-4">
+                  {categories.map((cat) => (
+                    <label key={cat.id} className="inline-flex items-center">
+                      <input
+                        type="checkbox"
+                        value={cat.id}
+                        checked={product.category.some((c) => c.id === cat.id)}
+                        onChange={handleCategoryToggle}
+                        className="mr-2"
+                      />
+                      {cat.name}
+                    </label>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-overlay1">Loading categories...</p>
+              )}
+            </div>
             {productId ? (
               <input
                 type="file"
@@ -183,7 +186,6 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
                 className="w-full text-sm"
               />
             ) : null}
-
             <div className="flex justify-between mt-6">
               <button
                 type="button"
@@ -192,7 +194,6 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
               >
                 Cancel
               </button>
-
               <button
                 type="submit"
                 className="px-4 py-2 bg-green rounded hover:bg-teal text-black transition"
@@ -206,4 +207,5 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
     </div>
   );
 };
+
 export default ProductModalUpsert;
