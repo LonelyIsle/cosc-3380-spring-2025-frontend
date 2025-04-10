@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import Admin from "./pages/Admin";
 import {Adminlogin} from "./pages";
 import Fpassword from "./pages/ForgotPassword";
+import Restock from "./pages/Restock";
 
 function RedirectToHome() {
   const navigate = useNavigate();
@@ -43,6 +44,7 @@ function App() {
         <Route path="/shop" element={<Shop />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/admin/login" element={<Adminlogin />} />
+        <Route path="/restock/:id" element={<Restock />} />
         {<Route path="*" element={<RedirectToHome />} />}
       </Routes>
       <Footer />
