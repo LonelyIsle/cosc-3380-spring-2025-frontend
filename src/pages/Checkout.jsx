@@ -30,7 +30,31 @@ const Checkout = () => {
 
   const handleSubmitOrder = (e) => {
     e.preventDefault();
-    //Add backend code
+    const handleSubmitOrder = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/order`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            shippingInfo,
+            cartItems,
+            total: getCartAmount(),
+          }),
+        });
+    
+        if (!response.ok) {
+          throw new Error("Failed to submit order");
+        }
+    
+        alert("Order Submitted!");
+        clearCart();
+      } catch (err) {
+        console.error("Order submission error:", err);
+        alert("There was a problem placing your order.");
+      }
+    };
     alert("Order Submitted! Thank you for your purchase.");
     clearCart();
   };
