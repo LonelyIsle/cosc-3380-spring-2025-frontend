@@ -9,7 +9,7 @@ const Employee = () => {
     const fetchEmployees = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/employees/:id`,
+          `${import.meta.env.VITE_API_URL}/employee/:id`,
         );
         setEmployees(response.data.rows || []);
       } catch (err) {
