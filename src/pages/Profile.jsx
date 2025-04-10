@@ -38,8 +38,8 @@ function Profile() {
       date: "2025-03-15",
       total: "29.99",
       items: [
-        { name: "Cartoon Plushie", quantity: 1 },
-        { name: "Red Plushie", quantity: 3 },
+        { name: "Disney Plushie", quantity: 1 },
+        { name: "Blue Plushie", quantity: 3 },
       ],
     },
   ];
