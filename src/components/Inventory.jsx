@@ -5,19 +5,9 @@ import { useNavigate } from "react-router-dom";
 const Inventory = () => {
   const { getProductArray } = useShop();
   const inventory = getProductArray();
-  const [restockQuantities, setRestockQuantities] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
   const [sortKey, setSortKey] = useState("");
   const navigate = useNavigate();
-
-
-  useEffect(() => {
-    const initialRestockQuantities = {};
-    inventory.forEach((item) => {
-      initialRestockQuantities[item.id] = 0;
-    });
-    setRestockQuantities(initialRestockQuantities);
-  }, [inventory]);
 
   const filteredInventory = inventory
     .filter((item) =>
@@ -62,7 +52,7 @@ const Inventory = () => {
             <th className="p-2 border">Restock Threshold</th>
             <th className="p-2 border">Price</th>
             <th className="p-2 border">Category</th>
-            <th className="p-2 border">Restock</th>
+            <th className="p-2 border">Manage</th>
           </tr>
         </thead>
         <tbody>
@@ -77,20 +67,8 @@ const Inventory = () => {
               <td className="p-2 border">${item.price.toFixed(2)}</td>
               <td className="p-2 border">{item.category?.[0] || "N/A"}</td>
               <td className="p-2 border">
-                <input
-                  type="number"
-                  min="0"
-                  value={restockQuantities[item.id] || 0}
-                  onChange={(e) =>
-                    setRestockQuantities((prev) => ({
-                      ...prev,
-                      [item.id]: parseInt(e.target.value, 10),
-                    }))
-                  }
-                  className="w-16 border p-1"
-                />
                 <button
-                  className="ml-2 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                  className="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
                   onClick={() => navigate(`/restock/${item.id}`)}
                 >
                   Edit Product
