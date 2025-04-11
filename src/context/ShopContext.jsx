@@ -77,7 +77,9 @@ export function ShopProvider({ children }) {
     }
   }, [cartItems, cartLoaded]);
 
-  // PRODUCT CONTEXT FUNCTIONS
+  ///////////////////////////////
+  // PRODUCT CONTEXT FUNCTIONS //
+  ///////////////////////////////
   const getProductArray = () => products;
   const getProduct = (id) => {
     return products.find((p) => p.id === parseInt(id, 10));
@@ -274,7 +276,9 @@ export function ShopProvider({ children }) {
     }
   };
 
-  // CART CONTEXT FUNCTIONS
+  ////////////////////////////
+  // CART CONTEXT FUNCTIONS //
+  ////////////////////////////
   const getCartAmount = () => {
     return cartItems
       .reduce((total, cartItem) => {
