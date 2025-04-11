@@ -24,7 +24,7 @@ function Login() {
           { email, password },
           { headers: { "Content-Type": "application/json" } },
         );
-        const data = response.data;
+        const data = response.data.data;
         console.log("✅ Response:", response);
 
         // Store token and user info
