@@ -32,10 +32,10 @@ function Login() {
         localStorage.setItem("user", JSON.stringify(data));
 
         // Redirect based on role
-        const role = response.data.role;
-        console.log("👤 Logged in user role:", role);
+        // const role = response.data.role;
+        console.log("👤 Logged in user role:", response.data.data.role);
 
-        if (data.role == 1 || data.role == 0) {
+        if (response.data.data.role == 1 || response.data.data.role == 0) {
           console.log("🔁 Redirecting to /admin");
           navigate("/admin");
         } else {

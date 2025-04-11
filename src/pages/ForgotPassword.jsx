@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/bag-full-logo.svg";
-import Validation from "../components/LoginValidation";
 import axios from "axios";
 
 function Fpassword() {
@@ -43,7 +42,11 @@ function Fpassword() {
     setErrorMessage("");
     setSuccessMessage("");
 
-    console.log("Submitting answer:", { email,reset_password_answer, password });
+    console.log("Submitting answer:", {
+      email,
+      reset_password_answer,
+      password,
+    });
 
     try {
       const response = await axios.post(

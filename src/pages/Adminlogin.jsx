@@ -34,14 +34,14 @@ function Adminlogin() {
 
         // Redirect based on role
         const role = <data value="" className="role"></data>;
-        console.log("👤 Logged in user role:", role);
+        console.log("👤 Logged in user role:", data.role);
 
-        if (role === 1 || role === 0) {
+        if (data.role === 1 || data.role === 0) {
           console.log("🔁 Redirecting to /admin");
           navigate("/admin");
         } else {
           console.log("🛒 Redirecting to /shop");
-          navigate("/admin");
+          navigate("/shop");
         }
       } catch (err) {
         console.error("❌ Error caught in login attempt:", err);
