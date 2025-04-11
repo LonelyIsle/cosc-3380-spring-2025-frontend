@@ -43,7 +43,11 @@ function Fpassword() {
     setErrorMessage("");
     setSuccessMessage("");
 
-    console.log("Submitting answer:", { email,reset_password_answer, password });
+    console.log("Submitting answer:", {
+      email,
+      reset_password_answer,
+      password,
+    });
 
     try {
       const response = await axios.post(
