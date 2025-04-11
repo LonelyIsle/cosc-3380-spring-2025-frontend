@@ -14,6 +14,14 @@ function Profile() {
     navigate("/login");
   };
 
+  const [showSavedMessage, setShowSavedMessage] = useState(false);
+
+  const handleSave = () => {
+    console.log("Profile Saved");
+    setShowSavedMessage(true);
+    setTimeout(() => setShowSavedMessage(false), 2000);
+  };
+
   const orders = [
     {
       id: "123456",
@@ -38,8 +46,8 @@ function Profile() {
       date: "2025-03-15",
       total: "29.99",
       items: [
-        { name: "Cartoon Plushie", quantity: 1 },
-        { name: "Red Plushie", quantity: 3 },
+        { name: "Disney Plushie", quantity: 1 },
+        { name: "Blue Plushie", quantity: 3 },
       ],
     },
   ];
@@ -90,7 +98,7 @@ function Profile() {
         <div className="flex justify-between p-6 border-t bg-gray-50">
           <button
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
-            onClick={() => console.log("Profile Saved")}
+            onClick={handleSave}
           >
             Save
           </button>
@@ -182,6 +190,11 @@ function Profile() {
           </div>
         </div>
       </Dialog>
+      {showSavedMessage && (
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded shadow-lg transition-opacity duration-300">
+          Changes Saved
+        </div>
+      )}
     </div>
   );
 }
