@@ -72,7 +72,7 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
         setProduct((prev) => ({
           ...prev,
           image: reader.result,
-          imageFile: file, // ← store the actual File object
+          imageFile: file,
           image_extension: file.name.split(".").pop(),
         }));
       };
@@ -116,19 +116,20 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
     try {
       let result;
       if (productId === null) {
-        console.log("Creating product...");
         result = await addProduct(productData);
+
+        if (product.imageFile instanceof File) {
+          await uploadProductImage(result.id, product.imageFile);
+        }
       } else {
-        console.log("Updating product...");
         result = await updateProduct(productId, productData);
+
+        if (product.imageFile instanceof File) {
+          await uploadProductImage(productId, product.imageFile);
+        }
       }
 
-      // 🖼 Upload new image only if a file was selected
-      if (product.imageFile instanceof File) {
-        await uploadProductImage(result.id ?? productId, product.imageFile);
-      }
-
-      onClose(); // close modal on success
+      onClose();
     } catch (err) {
       console.error("Submit failed:", err);
     }
@@ -223,23 +224,21 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
                 <p className="text-overlay1">Loading categories...</p>
               )}
             </div>
-            {productId && (
-              <div className="flex flex-col gap-2">
-                {product.image && (
-                  <img
-                    src={product.image}
-                    alt="Product"
-                    className="max-h-48 object-contain rounded border border-overlay1 mb-2"
-                  />
-                )}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="w-full text-sm"
+            <div className="flex flex-col gap-2">
+              {product.image && (
+                <img
+                  src={product.image}
+                  alt="Product"
+                  className="max-h-48 object-contain rounded border border-overlay1 mb-2"
                 />
-              </div>
-            )}
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="w-full text-sm"
+              />
+            </div>
             <div className="flex justify-between mt-6">
               <button
                 type="button"
