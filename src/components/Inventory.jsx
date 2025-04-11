@@ -1,13 +1,43 @@
 import { useShop } from "../context/ShopContext";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import ProductModalUpsert from "./ProductModalUpsert";
+import DeleteProductModal from "./DeleteProductModal";
+import RestockProductModal from "./RestockProductModal";
 
 const Inventory = () => {
-  const { getProductArray } = useShop();
+  const { getProductArray, deleteProduct, restockProduct } = useShop();
   const inventory = getProductArray();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState(null);
+  const [deleteProductTarget, setDeleteProductTarget] = useState(null);
+  const [restockProductTarget, setRestockProductTarget] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortKey, setSortKey] = useState("");
-  const navigate = useNavigate();
+
+  const openUpsertModal = (productId = null) => {
+    setSelectedProductId(productId);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setSelectedProductId(null);
+  };
+
+  useEffect(() => {
+    // add esc as a valid way to close modal
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") closeModal();
+    };
+
+    if (modalOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [modalOpen]);
 
   const filteredInventory = inventory
     .filter((item) =>
@@ -25,7 +55,16 @@ const Inventory = () => {
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Inventory Management</h2>
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold mb-4">Inventory Management</h2>
+
+        <button
+          className="ml-2 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+          onClick={() => openUpsertModal(null)}
+        >
+          + Add New Product
+        </button>
+      </div>
       <div className="flex justify-between items-center mb-4">
         <input
           type="text"
@@ -68,16 +107,65 @@ const Inventory = () => {
               <td className="p-2 border">{item.category?.[0] || "N/A"}</td>
               <td className="p-2 border">
                 <button
-                  className="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                  onClick={() => navigate(`/restock/${item.id}`)}
+                  className="ml-2 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                  onClick={() => openUpsertModal(item.id)}
                 >
                   Edit Product
+                </button>
+                <button
+                  className="ml-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                  onClick={() => setDeleteProductTarget(item)}
+                >
+                  Delete
+                </button>
+
+                <button
+                  className="ml-2 px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+                  onClick={() => setRestockProductTarget(item)}
+                >
+                  Restock
                 </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+      {modalOpen && (
+        <ProductModalUpsert
+          productId={selectedProductId}
+          onClose={closeModal}
+        />
+      )}
+      {deleteProductTarget && (
+        <DeleteProductModal
+          product={deleteProductTarget}
+          onCancel={() => setDeleteProductTarget(null)}
+          onConfirm={async () => {
+            try {
+              await deleteProduct(deleteProductTarget.id);
+              setDeleteProductTarget(null);
+            } catch (err) {
+              console.error("Failed to delete product:", err);
+              alert("Failed to delete product.");
+            }
+          }}
+        />
+      )}
+      {restockProductTarget && (
+        <RestockProductModal
+          product={restockProductTarget}
+          onCancel={() => setRestockProductTarget(null)}
+          onConfirm={async (quantity) => {
+            try {
+              await restockProduct(restockProductTarget.id, quantity);
+              setRestockProductTarget(null);
+            } catch (err) {
+              alert("Failed to restock product.");
+              console.error(err);
+            }
+          }}
+        />
+      )}
     </div>
   );
 };

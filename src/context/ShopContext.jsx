@@ -11,45 +11,44 @@ export function ShopProvider({ children }) {
   const [cartLoaded, setCartLoaded] = useState(false);
   const [productsLoaded, setProductsLoaded] = useState(false);
   const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [categoriesLoaded, setCategoriesLoaded] = useState(false);
 
-  // fetch products based on category filter
+  // Fetch products based on category filter
   const fetchProducts = async (categoryIds = []) => {
     setProductsLoaded(false);
-
     let url = `${import.meta.env.VITE_API_URL}/product?limit=999`;
-
-    // Append category id filter if there are selected categories
     if (categoryIds.length > 0) {
       url += `&category_id=[${categoryIds.join(",")}]`;
     }
-
     try {
       const res = await axios.get(url);
       const mappedproducts = res.data.data.rows.map((p) => ({
         id: p.id,
+        sku: p.sku,
         name: p.name,
         price: parseFloat(p.price),
         threshold: p.threshold,
         quantity: p.quantity,
         description: p.description,
+        // Convert category array into an array of names for display
         category: p.category?.map((c) => c.name) || [],
         image: p.image
           ? `data:image/${p.image_extension};base64,${p.image}`
           : "",
       }));
-      const products = mappedproducts;
-      setProducts(products);
+      setProducts(mappedproducts);
       setProductsLoaded(true);
     } catch (err) {
       console.error(
         "Failed to fetch products:",
-        err.response?.data || err.message
+        err.response?.data || err.message,
       );
       setProductsLoaded(true);
     }
   };
 
-  // Fetch all products on first render
+  // Fetch products on first render
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -61,38 +60,226 @@ export function ShopProvider({ children }) {
     }
   }, [selectedCategoryIds]);
 
-  const productMap = new Map(products.map((p) => [p.id, p])); // Rebuild when products change
+  // Build a product map for quick lookup
+  const productMap = new Map(products.map((p) => [p.id, p]));
 
+  // Load cart from localStorage on initial app render
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-    setCartItems(storedCart); // load cart from localstorage on initial app render
-    setCartLoaded(true); // mark as loaded to allow dependent components to now load
+    setCartItems(storedCart);
+    setCartLoaded(true);
   }, []);
 
+  // Update localStorage when cartItems change
   useEffect(() => {
-    // update localstorage when cartItems change
     if (cartLoaded) {
       localStorage.setItem("cart", JSON.stringify(cartItems));
     }
   }, [cartItems, cartLoaded]);
 
-  // PRODUCT CONTEXT FUNCTIONS
-
+  ///////////////////////////////
+  // PRODUCT CONTEXT FUNCTIONS //
+  ///////////////////////////////
   const getProductArray = () => products;
-
   const getProduct = (id) => {
     return products.find((p) => p.id === parseInt(id, 10));
   };
 
-  // Update selected categories
+  // Update selected categories (for filtering products, if needed)
   const updateSelectedCategories = (categoryIds) => {
     setSelectedCategoryIds(categoryIds);
   };
 
-  // CART CONTEXT FUNCTIONS
+  // POST request to add a new product
 
+  const addProduct = async (productData) => {
+    try {
+      const url = `${import.meta.env.VITE_API_URL}/product`;
+      const token = localStorage.getItem("token");
+
+      console.log("Token:", token);
+      const res = await axios.post(url, productData, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      const newProduct = res.data.data;
+
+      // Update local state
+      setProducts((prev) => [
+        ...prev,
+        {
+          id: newProduct.id,
+          sku: newProduct.sku,
+          name: newProduct.name,
+          price: parseFloat(newProduct.price),
+          threshold: newProduct.threshold,
+          quantity: newProduct.quantity,
+          description: newProduct.description,
+          category: newProduct.category?.map((c) => c.name) || [],
+          image: newProduct.image
+            ? `data:image/${newProduct.image_extension};base64,${newProduct.image}`
+            : "",
+        },
+      ]);
+
+      return newProduct;
+    } catch (err) {
+      console.error(
+        "Failed to add product:",
+        err.response?.data || err.message,
+      );
+      throw err;
+    }
+  };
+  // PATCH request to update an existing product
+
+  const updateProduct = async (id, productData) => {
+    try {
+      const url = `${import.meta.env.VITE_API_URL}/product/${id}`;
+      const token = localStorage.getItem("token");
+      const res = await axios.patch(url, productData, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      const updated = res.data.data;
+
+      // Update frontend state
+      setProducts((prev) =>
+        prev.map((p) =>
+          p.id === updated.id
+            ? {
+                id: updated.id,
+                sku: updated.sku,
+                name: updated.name,
+                price: parseFloat(updated.price),
+                threshold: updated.threshold,
+                quantity: updated.quantity,
+                description: updated.description,
+                category: updated.category?.map((c) => c.name) || [],
+                image: updated.image
+                  ? `data:image/${updated.image_extension};base64,${updated.image}`
+                  : "",
+              }
+            : p,
+        ),
+      );
+
+      return updated;
+    } catch (err) {
+      console.error(
+        "Failed to update product:",
+        err.response?.data || err.message,
+      );
+      throw err;
+    }
+  };
+
+  // PATCH request to update an existing product image
+
+  const uploadProductImage = async (productId, file) => {
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const token = localStorage.getItem("token");
+    const url = `${import.meta.env.VITE_API_URL}/product/${productId}/image`;
+
+    try {
+      const res = await axios.patch(url, formData, {
+        headers: {
+          Authorization: token,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      const updated = res.data.data;
+
+      // Update frontend state
+      setProducts((prev) =>
+        prev.map((p) =>
+          p.id === updated.id
+            ? {
+                ...p,
+                image: updated.image
+                  ? `data:image/${updated.image_extension};base64,${updated.image}`
+                  : "",
+              }
+            : p,
+        ),
+      );
+
+      return updated;
+    } catch (err) {
+      console.error(
+        "Failed to upload image:",
+        err.response?.data || err.message,
+      );
+      throw err;
+    }
+  };
+
+  // DELETE request to delete an existing product
+
+  const deleteProduct = async (id) => {
+    const url = `${import.meta.env.VITE_API_URL}/product/${id}`;
+    const token = localStorage.getItem("token");
+
+    console.log(url);
+
+    try {
+      await axios.delete(url, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      // Update frontend state
+      setProducts((prev) => prev.filter((p) => p.id !== id));
+    } catch (err) {
+      console.error(
+        "Failed to delete product:",
+        err.response?.data || err.message,
+      );
+      throw err;
+    }
+  };
+
+  // PATCH request to add/restock products
+
+  const restockProduct = async (id, quantity) => {
+    const url = `${import.meta.env.VITE_API_URL}/product/${id}/restock`;
+    const token = localStorage.getItem("token");
+    try {
+      await axios.patch(
+        url,
+        { quantity },
+        {
+          headers: {
+            Authorization: token,
+          },
+        },
+      );
+      // Update frontend state
+      setProducts((prev) =>
+        prev.map((p) =>
+          p.id === id ? { ...p, quantity: p.quantity + quantity } : p,
+        ),
+      );
+    } catch (err) {
+      console.error(
+        "Failed to restock product:",
+        err.response?.data || err.message,
+      );
+      throw err;
+    }
+  };
+
+  ////////////////////////////
+  // CART CONTEXT FUNCTIONS //
+  ////////////////////////////
   const getCartAmount = () => {
-    // pull cart amount
     return cartItems
       .reduce((total, cartItem) => {
         const product = productMap.get(cartItem.id);
@@ -101,40 +288,29 @@ export function ShopProvider({ children }) {
       .toFixed(2);
   };
 
-  const getCartQuantity = () => {
-    // pull current cart quantity
-    return cartLoaded
+  const getCartQuantity = () =>
+    cartLoaded
       ? cartItems.reduce((total, item) => total + item.quantity, 0)
       : 0;
-  };
 
   const addToCart = (productId, quantity = 1) => {
-    // add product to cart
     setCartItems((prev) => {
       const existing = prev.find((item) => item.id === productId);
       const product = productMap.get(productId);
 
-      // If product doesn't exist or has no quantity property, return unchanged
       if (!product || typeof product.quantity !== "number") {
         return prev;
       }
 
       if (existing) {
-        // Calculate the new potential quantity
         const newQuantity = existing.quantity + quantity;
-
-        // Ensure the quantity doesn't exceed the available product quantity
         const limitedQuantity = Math.min(newQuantity, product.quantity);
-
         return prev.map((item) =>
-          item.id === productId ? { ...item, quantity: limitedQuantity } : item
+          item.id === productId ? { ...item, quantity: limitedQuantity } : item,
         );
       }
 
-      // For new items, ensure we don't add more than available
       const limitedQuantity = Math.min(quantity, product.quantity);
-
-      // Only add to cart if there's available quantity
       if (limitedQuantity > 0) {
         return [...prev, { id: productId, quantity: limitedQuantity }];
       }
@@ -144,21 +320,15 @@ export function ShopProvider({ children }) {
   };
 
   const updateQuantity = (id, delta) => {
-    // update quantity of product in cart
     setCartItems((prev) => {
       const product = productMap.get(id);
-
-      // If product doesn't exist or has no quantity property, return unchanged
       if (!product || typeof product.quantity !== "number") {
         return prev;
       }
-
       return prev.map((item) => {
         if (item.id === id) {
-          // Calculate new quantity ensuring it's at least 1 and no more than product quantity
           const newQuantity = Math.max(1, item.quantity + delta);
           const limitedQuantity = Math.min(newQuantity, product.quantity);
-
           return { ...item, quantity: limitedQuantity };
         }
         return item;
@@ -167,11 +337,38 @@ export function ShopProvider({ children }) {
   };
 
   const removeItem = (id) => {
-    // remove item from cart
     setCartItems((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const clearCart = () => setCartItems([]); // clear cart completely
+  const clearCart = () => setCartItems([]);
+
+  // Fetch and store categories globally on first render
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const url = `${import.meta.env.VITE_API_URL}/category`;
+      try {
+        const res = await axios.get(url);
+        const mappedCategories = res.data.data.rows
+          .filter((p) => p.is_deleted !== 1)
+          .map((p) => ({
+            id: p.id,
+            name: p.name,
+            description: p.description,
+            created_at: p.created_at,
+            updated_at: p.updated_at,
+          }));
+        setCategories(mappedCategories);
+      } catch (err) {
+        console.error(
+          "Failed to fetch categories:",
+          err.response?.data || err.message,
+        );
+      } finally {
+        setCategoriesLoaded(true);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   return (
     <ShopContext.Provider
@@ -188,7 +385,13 @@ export function ShopProvider({ children }) {
         removeItem,
         clearCart,
         updateSelectedCategories,
-        fetchProducts,
+        categories,
+        categoriesLoaded,
+        addProduct,
+        updateProduct,
+        uploadProductImage,
+        deleteProduct,
+        restockProduct,
       }}
     >
       {children}
