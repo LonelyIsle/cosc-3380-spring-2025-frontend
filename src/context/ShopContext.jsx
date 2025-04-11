@@ -93,7 +93,14 @@ export function ShopProvider({ children }) {
   const addProduct = async (productData) => {
     try {
       const url = `${import.meta.env.VITE_API_URL}/product`;
-      const res = await axios.post(url, productData);
+      const token = localStorage.getItem("token");
+
+      console.log("Token:", token);
+      const res = await axios.post(url, productData, {
+        headers: {
+          Authorization: token,
+        },
+      });
       const newProduct = res.data.data;
 
       // Update local state
@@ -124,6 +131,43 @@ export function ShopProvider({ children }) {
     }
   };
   // PATCH request to update an existing product
+
+  const updateProduct = async (id, productData) => {
+    try {
+      const url = `${import.meta.env.VITE_API_URL}/product/${id}`;
+      const res = await axios.patch(url, productData);
+      const updated = res.data.data;
+
+      // Update frontend state
+      setProducts((prev) =>
+        prev.map((p) =>
+          p.id === updated.id
+            ? {
+                id: updated.id,
+                sku: updated.sku,
+                name: updated.name,
+                price: parseFloat(updated.price),
+                threshold: updated.threshold,
+                quantity: updated.quantity,
+                description: updated.description,
+                category: updated.category?.map((c) => c.name) || [],
+                image: updated.image
+                  ? `data:image/${updated.image_extension};base64,${updated.image}`
+                  : "",
+              }
+            : p,
+        ),
+      );
+
+      return updated;
+    } catch (err) {
+      console.error(
+        "Failed to update product:",
+        err.response?.data || err.message,
+      );
+      throw err;
+    }
+  };
 
   // PATCH request to update an existing product ID
 
@@ -239,6 +283,7 @@ export function ShopProvider({ children }) {
         categories,
         categoriesLoaded,
         addProduct,
+        updateProduct,
       }}
     >
       {children}
