@@ -22,10 +22,10 @@ function Adminlogin() {
         const response = await axios.post(
           `${import.meta.env.VITE_API_URL}/employee/login`,
           { email, password },
-          { headers: { "Content-Type": "application/json" } }
+          { headers: { "Content-Type": "application/json" } },
         );
         console.log("DEBUG", response);
-        const data = response.data;
+        const data = response.data.data;
         console.log("✅ Response data:", data);
 
         // Store token and user info
