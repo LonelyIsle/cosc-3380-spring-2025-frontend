@@ -135,7 +135,12 @@ export function ShopProvider({ children }) {
   const updateProduct = async (id, productData) => {
     try {
       const url = `${import.meta.env.VITE_API_URL}/product/${id}`;
-      const res = await axios.patch(url, productData);
+      const token = localStorage.getItem("token");
+      const res = await axios.patch(url, productData, {
+        headers: {
+          Authorization: token,
+        },
+      });
       const updated = res.data.data;
 
       // Update frontend state
@@ -169,7 +174,50 @@ export function ShopProvider({ children }) {
     }
   };
 
-  // PATCH request to update an existing product ID
+  // PATCH request to update an existing product image
+
+  const uploadProductImage = async (productId, file) => {
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const token = localStorage.getItem("token");
+    const url = `${import.meta.env.VITE_API_URL}/product/${productId}/image`;
+
+    try {
+      const res = await axios.patch(url, formData, {
+        headers: {
+          Authorization: token,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      const updated = res.data.data;
+
+      // Update frontend state
+      setProducts((prev) =>
+        prev.map((p) =>
+          p.id === updated.id
+            ? {
+                ...p,
+                image: updated.image
+                  ? `data:image/${updated.image_extension};base64,${updated.image}`
+                  : "",
+              }
+            : p,
+        ),
+      );
+
+      return updated;
+    } catch (err) {
+      console.error(
+        "Failed to upload image:",
+        err.response?.data || err.message,
+      );
+      throw err;
+    }
+  };
 
   // DELETE request to delete an existing product
 
@@ -284,6 +332,7 @@ export function ShopProvider({ children }) {
         categoriesLoaded,
         addProduct,
         updateProduct,
+        uploadProductImage,
       }}
     >
       {children}
