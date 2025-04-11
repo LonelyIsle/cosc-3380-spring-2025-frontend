@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
 import { useShop } from "../context/ShopContext";
 import { useEffect, useState } from "react";
 import logo from "../assets/navbar-logo.svg";
@@ -10,11 +10,10 @@ const cartSvgs = Object.entries(svgs).reduce((acc, [path, module]) => {
   return acc;
 }, {});
 
-const isLoggedIn = false; // temporary implementation to switch between being logged in and not
-
-function Navbar() {
+function Navbar({ isLoggedIn, handleLogout }) {
   const [opacity, setOpacity] = useState(100);
   const { getCartQuantity } = useShop();
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const cartQuantity = getCartQuantity();
 
@@ -34,13 +33,18 @@ function Navbar() {
         } else if (scrollY <= pxDelimeter && prevOpacity !== pxDelimeter) {
           return pxDelimeter;
         }
-        return prevOpacity; // Ensure no unnecessary re-renders
+        return prevOpacity;
       });
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []); // No need to include `opacity` in the dependency array
+  }, []);
+
+  const handleLogoutAndNavigate = () => {
+    handleLogout(); // Call the logout function
+    navigate("/login"); // Navigate to the login page
+  };
 
   return (
     <nav
@@ -51,7 +55,39 @@ function Navbar() {
         <img src={logo} alt="Navbar Logo" className="header-box h-20" />
       </Link>
       <ul className="flex gap-4 justify-center items-center">
-        {!isLoggedIn ? (
+        {isLoggedIn ? (
+          <>
+            <li>
+              <Link
+                to="/shop"
+                className="header-box text-mantle bg-gradient-to-r from-blue to-sapphire"
+              >
+                Shop
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/profile"
+                className="header-box text-mantle bg-gradient-to-r from-blue to-sapphire"
+              >
+                Profile
+              </Link>
+            </li>
+            <li>
+              <button
+                onClick={handleLogoutAndNavigate} // Use the combined function
+                className="header-box text-mantle bg-gradient-to-r from-maroon to-peach"
+              >
+                Logout
+              </button>
+            </li>
+            <li>
+              <Link to="/cart">
+                <img src={cartIcon} alt="Cart" className="header-box h-20" />
+              </Link>
+            </li>
+          </>
+        ) : (
           <>
             <li>
               <Link
@@ -78,29 +114,7 @@ function Navbar() {
               </Link>
             </li>
           </>
-        ) : (
-          <li>
-            <Link
-              to="/profile"
-              className="header-box text-mantle bg-gradient-to-r from-green to-teal"
-            >
-              Profile Page
-            </Link>
-          </li>
         )}
-        <li>
-          <Link
-            to="/shop"
-            className="header-box text-mantle bg-gradient-to-r from-blue to-sapphire"
-          >
-            Shop
-          </Link>
-        </li>
-        <li>
-          <Link to="/cart">
-            <img src={cartIcon} alt="Cart" className="header-box h-20" />
-          </Link>
-        </li>
       </ul>
     </nav>
   );
