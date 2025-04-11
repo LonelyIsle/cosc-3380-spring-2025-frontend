@@ -35,7 +35,7 @@ const Checkout = () => {
     clearCart();
   };
 
-  const renderCartItems = () => {s
+  const renderCartItems = () => {
     return cartItems.map((cartItem) => {
       const product = getProduct(cartItem.id);
       if (!product) return null;
