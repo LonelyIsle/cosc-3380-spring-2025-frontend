@@ -2,6 +2,7 @@ import { useShop } from "../context/ShopContext";
 import { useState, useEffect } from "react";
 import ProductModalUpsert from "./ProductModalUpsert";
 import DeleteProductModal from "./DeleteProductModal";
+import RestockProductModal from "./RestockProductModal";
 
 const Inventory = () => {
   const { getProductArray, deleteProduct, restockProduct } = useShop();
@@ -9,6 +10,7 @@ const Inventory = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [deleteProductTarget, setDeleteProductTarget] = useState(null);
+  const [restockProductTarget, setRestockProductTarget] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortKey, setSortKey] = useState("");
 
@@ -116,23 +118,10 @@ const Inventory = () => {
                 >
                   Delete
                 </button>
+
                 <button
                   className="ml-2 px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700"
-                  onClick={async () => {
-                    const amount = prompt(`Restock quantity for ${item.name}:`);
-                    const parsed = parseInt(amount, 10);
-
-                    if (isNaN(parsed) || parsed === 0) {
-                      alert("Please enter a non-zero number.");
-                    } else {
-                      try {
-                        await restockProduct(item.id, parsed);
-                      } catch (err) {
-                        alert("Failed to restock product.");
-                        console.error(err);
-                      }
-                    }
-                  }}
+                  onClick={() => setRestockProductTarget(item)}
                 >
                   Restock
                 </button>
@@ -158,6 +147,21 @@ const Inventory = () => {
             } catch (err) {
               console.error("Failed to delete product:", err);
               alert("Failed to delete product.");
+            }
+          }}
+        />
+      )}
+      {restockProductTarget && (
+        <RestockProductModal
+          product={restockProductTarget}
+          onCancel={() => setRestockProductTarget(null)}
+          onConfirm={async (quantity) => {
+            try {
+              await restockProduct(restockProductTarget.id, quantity);
+              setRestockProductTarget(null);
+            } catch (err) {
+              alert("Failed to restock product.");
+              console.error(err);
             }
           }}
         />
