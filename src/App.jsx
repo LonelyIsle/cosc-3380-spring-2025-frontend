@@ -10,8 +10,7 @@ import {
   Register,
   Shop,
 } from "./pages";
-
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Admin from "./pages/Admin";
 import {Adminlogin} from "./pages";
@@ -29,9 +28,20 @@ function RedirectToHome() {
 }
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+  };
   return (
     <div className="bg-flamingo flex flex-col justify-between min-h-screen">
-      <Navbar />
+      <Navbar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
       <Routes>
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />

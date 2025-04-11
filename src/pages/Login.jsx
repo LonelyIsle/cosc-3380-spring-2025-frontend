@@ -26,16 +26,17 @@ function Login() {
         );
         const data = response.data.data;
         console.log("✅ Response:", response);
+        console.log("✅ Response:", data);
+
 
         // Store token and user info
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data));
-
         // Redirect based on role
-        // const role = response.data.role;
-        console.log("👤 Logged in user role:", response.data.data.role);
+        const role = response.data.data.role;
+        console.log("👤 Logged in user role:", role);
 
-        if (response.data.data.role == 1 || response.data.data.role == 0) {
+        if (data.role == 1 || data.role == 0) {
           console.log("🔁 Redirecting to /admin");
           navigate("/admin");
         } else {
@@ -54,6 +55,7 @@ function Login() {
         }
       }
     }
+    window.location.reload();
   };
 
   return (
