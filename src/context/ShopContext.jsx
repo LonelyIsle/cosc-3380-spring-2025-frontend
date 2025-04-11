@@ -88,6 +88,47 @@ export function ShopProvider({ children }) {
     setSelectedCategoryIds(categoryIds);
   };
 
+  // POST request to add a new product
+
+  const addProduct = async (productData) => {
+    try {
+      const url = `${import.meta.env.VITE_API_URL}/product`;
+      const res = await axios.post(url, productData);
+      const newProduct = res.data.data;
+
+      // Update local state
+      setProducts((prev) => [
+        ...prev,
+        {
+          id: newProduct.id,
+          sku: newProduct.sku,
+          name: newProduct.name,
+          price: parseFloat(newProduct.price),
+          threshold: newProduct.threshold,
+          quantity: newProduct.quantity,
+          description: newProduct.description,
+          category: newProduct.category?.map((c) => c.name) || [],
+          image: newProduct.image
+            ? `data:image/${newProduct.image_extension};base64,${newProduct.image}`
+            : "",
+        },
+      ]);
+
+      return newProduct;
+    } catch (err) {
+      console.error(
+        "Failed to add product:",
+        err.response?.data || err.message,
+      );
+      throw err;
+    }
+  };
+  // PATCH request to update an existing product
+
+  // PATCH request to update an existing product ID
+
+  // DELETE request to delete an existing product
+
   // CART CONTEXT FUNCTIONS
   const getCartAmount = () => {
     return cartItems
@@ -197,6 +238,7 @@ export function ShopProvider({ children }) {
         updateSelectedCategories,
         categories,
         categoriesLoaded,
+        addProduct,
       }}
     >
       {children}
