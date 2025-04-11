@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/bag-full-logo.svg";
-import Validation from "../components/LoginValidation";
 import axios from "axios";
 
 function Fpassword() {
