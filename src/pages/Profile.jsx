@@ -52,6 +52,15 @@ function Profile() {
     },
   ];
 
+  const handleLogoutAndNavigate = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    handleLogout(); // Call the logout function
+    navigate("/login"); // Navigate to the login page
+    window.location.reload();
+  };
+
+
   return (
     <div className="min-h-screen bg-gray-100 py-10">
       <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-xl overflow-hidden">
@@ -116,7 +125,7 @@ function Profile() {
           </button>
           <button
             className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
-            onClick={handleLogout}
+            onClick={handleLogoutAndNavigate}
           >
             Log Out
           </button>
