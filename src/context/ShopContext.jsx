@@ -221,6 +221,59 @@ export function ShopProvider({ children }) {
 
   // DELETE request to delete an existing product
 
+  const deleteProduct = async (id) => {
+    const url = `${import.meta.env.VITE_API_URL}/product/${id}`;
+    const token = localStorage.getItem("token");
+
+    console.log(url);
+
+    try {
+      await axios.delete(url, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      // Update frontend state
+      setProducts((prev) => prev.filter((p) => p.id !== id));
+    } catch (err) {
+      console.error(
+        "Failed to delete product:",
+        err.response?.data || err.message,
+      );
+      throw err;
+    }
+  };
+
+  // PATCH request to add/restock products
+
+  const restockProduct = async (id, quantity) => {
+    const url = `${import.meta.env.VITE_API_URL}/product/${id}/restock`;
+    const token = localStorage.getItem("token");
+    try {
+      await axios.patch(
+        url,
+        { quantity },
+        {
+          headers: {
+            Authorization: token,
+          },
+        },
+      );
+      // Update frontend state
+      setProducts((prev) =>
+        prev.map((p) =>
+          p.id === id ? { ...p, quantity: p.quantity + quantity } : p,
+        ),
+      );
+    } catch (err) {
+      console.error(
+        "Failed to restock product:",
+        err.response?.data || err.message,
+      );
+      throw err;
+    }
+  };
+
   // CART CONTEXT FUNCTIONS
   const getCartAmount = () => {
     return cartItems
@@ -333,6 +386,8 @@ export function ShopProvider({ children }) {
         addProduct,
         updateProduct,
         uploadProductImage,
+        deleteProduct,
+        restockProduct,
       }}
     >
       {children}
