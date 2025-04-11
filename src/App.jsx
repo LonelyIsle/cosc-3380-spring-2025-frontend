@@ -16,6 +16,7 @@ import Admin from "./pages/Admin";
 import {Adminlogin} from "./pages";
 import Fpassword from "./pages/ForgotPassword";
 import Restock from "./pages/Restock";
+import CategoryChanges from "./pages/CategoryChanges";
 
 function RedirectToHome() {
   const navigate = useNavigate();
@@ -54,6 +55,7 @@ function App() {
         <Route path="/shop" element={<Shop />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/admin/login" element={<Adminlogin />} />
+        <Route path="/edit-category/:id" element={<CategoryChanges />} />
         <Route path="/restock/:id" element={<Restock />} />
         {<Route path="*" element={<RedirectToHome />} />}
       </Routes>
