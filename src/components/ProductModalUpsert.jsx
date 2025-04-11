@@ -16,7 +16,14 @@ const defaultProduct = {
 const ProductModalUpsert = ({ productId = null, onClose }) => {
   const [product, setProduct] = useState(defaultProduct);
   const [loading, setLoading] = useState(false);
-  const { getProduct, categories, categoriesLoaded } = useShop();
+  const {
+    addProduct,
+    updateProduct,
+    getProduct,
+    categories,
+    categoriesLoaded,
+    uploadProductImage,
+  } = useShop();
 
   // Fetch product info if updating product
   useEffect(() => {
@@ -60,11 +67,16 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setProduct((prev) => ({
-        ...prev,
-        image: file,
-        image_extension: file.name.split(".").pop(),
-      }));
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProduct((prev) => ({
+          ...prev,
+          image: reader.result,
+          imageFile: file, // ← store the actual File object
+          image_extension: file.name.split(".").pop(),
+        }));
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -88,13 +100,38 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // 🛠️ TODO: Handle API call for insert or update
-    if (productId === null) {
-      console.log("Creating product...", product);
-    } else {
-      console.log("Updating product...", product);
+
+    const categoryIds = product.category.map((cat) => cat.id);
+
+    const productData = {
+      sku: product.sku,
+      price: parseFloat(product.price),
+      quantity: parseInt(product.quantity),
+      threshold: parseInt(product.threshold),
+      name: product.name,
+      description: product.description,
+      category_id: categoryIds,
+    };
+
+    try {
+      let result;
+      if (productId === null) {
+        console.log("Creating product...");
+        result = await addProduct(productData);
+      } else {
+        console.log("Updating product...");
+        result = await updateProduct(productId, productData);
+      }
+
+      // 🖼 Upload new image only if a file was selected
+      if (product.imageFile instanceof File) {
+        await uploadProductImage(result.id ?? productId, product.imageFile);
+      }
+
+      onClose(); // close modal on success
+    } catch (err) {
+      console.error("Submit failed:", err);
     }
-    onClose(); // Close the modal after submit
   };
 
   return (
@@ -156,6 +193,14 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
                 onChange={handleChange}
                 className="w-full p-2 rounded bg-surface1 text-text"
               />
+              <input
+                type="number"
+                name="threshold"
+                placeholder="Restock Threshold"
+                value={product.threshold}
+                onChange={handleChange}
+                className="w-full p-2 rounded bg-surface1 text-text"
+              />
             </div>
             <div className="flex flex-col gap-2">
               <label className="font-semibold">Categories</label>
@@ -178,14 +223,23 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
                 <p className="text-overlay1">Loading categories...</p>
               )}
             </div>
-            {productId ? (
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="w-full text-sm"
-              />
-            ) : null}
+            {productId && (
+              <div className="flex flex-col gap-2">
+                {product.image && (
+                  <img
+                    src={product.image}
+                    alt="Product"
+                    className="max-h-48 object-contain rounded border border-overlay1 mb-2"
+                  />
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="w-full text-sm"
+                />
+              </div>
+            )}
             <div className="flex justify-between mt-6">
               <button
                 type="button"
