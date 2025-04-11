@@ -14,16 +14,49 @@ function Profile() {
     navigate("/login");
   };
 
+  const [showSavedMessage, setShowSavedMessage] = useState(false);
+
+  const handleSave = () => {
+    console.log("Profile Saved");
+    setShowSavedMessage(true);
+    setTimeout(() => setShowSavedMessage(false), 2000);
+  };
+
+  const orders = [
+    {
+      id: "123456",
+      date: "2025-04-01",
+      total: "49.99",
+      items: [
+        { name: "Anime Plushie", quantity: 1 },
+        { name: "Super Hero Plushie", quantity: 2 },
+      ],
+    },
+    {
+      id: "123457",
+      date: "2025-03-15",
+      total: "29.99",
+      items: [
+        { name: "Cartoon Plushie", quantity: 1 },
+        { name: "Red Plushie", quantity: 3 },
+      ],
+    },
+    {
+      id: "123457",
+      date: "2025-03-15",
+      total: "29.99",
+      items: [
+        { name: "Disney Plushie", quantity: 1 },
+        { name: "Blue Plushie", quantity: 3 },
+      ],
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-100 py-10">
       <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-xl overflow-hidden">
         <div className="bg-indigo-600 text-white py-12 px-4 sm:px-6">
           <div className="text-center">
-            <img
-              className="h-24 w-24 rounded-full mx-auto mb-4 border-4 border-white"
-              src=""
-              alt="Profile"
-            />
             <h2 className="text-3xl font-semibold">John Middle Doe</h2>
             <p className="text-lg mt-1">Mofu Shopper</p>
           </div>
@@ -58,14 +91,14 @@ function Profile() {
             Past Order History
           </h3>
           <div className="border-t pt-4">
-            <OrderHistory />
+            <OrderHistory orders={orders} />
           </div>
         </div>
 
         <div className="flex justify-between p-6 border-t bg-gray-50">
           <button
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
-            onClick={() => console.log("Profile Saved")}
+            onClick={handleSave}
           >
             Save
           </button>
@@ -157,6 +190,11 @@ function Profile() {
           </div>
         </div>
       </Dialog>
+      {showSavedMessage && (
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded shadow-lg transition-opacity duration-300">
+          Changes Saved
+        </div>
+      )}
     </div>
   );
 }
