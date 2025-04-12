@@ -1,4 +1,4 @@
-import { Navbar, Footer } from "./components";
+import { Navbar, Footer, SalesBanner } from "./components";
 import { Route, Routes } from "react-router-dom";
 import {
   Cart,
@@ -13,7 +13,7 @@ import {
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Admin from "./pages/Admin";
-import {Adminlogin} from "./pages";
+import { Adminlogin } from "./pages";
 import Fpassword from "./pages/ForgotPassword";
 import Restock from "./pages/Restock";
 import CategoryChanges from "./pages/CategoryChanges";
@@ -43,6 +43,7 @@ function App() {
   return (
     <div className="bg-flamingo flex flex-col justify-between min-h-screen">
       <Navbar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
+      <SalesBanner />
       <Routes>
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
