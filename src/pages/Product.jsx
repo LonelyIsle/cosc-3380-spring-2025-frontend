@@ -108,23 +108,13 @@ function Product() {
                   <span className="bg-pink-200 px-2 py-1 rounded text-xs mr-2">
                     {product.category.join(", ")}
                   </span>
-                  <span className="text-sm text-gray-500">
-                    Color: {product.color}
-                  </span>
                 </div>
                 <p className="text-3xl font-bold text-pink-600 mb-4">
                   ${product.price}
                 </p>
-                <p className="text-gray-700 mb-4">{product.description}</p>
-
                 <div className="mb-4">
                   <h3 className="font-medium mb-2">Details:</h3>
-                  <ul className="list-disc pl-5 space-y-1 text-gray-600">
-                    <li>Size: {product.size} ft</li>
-                    <li>Color: {product.color}</li>
-                    <li>Categories: {product.category.join(", ")}</li>
-                    {/* Add more details as needed */}
-                  </ul>
+                  <p className="text-gray-700 mb-4">{product.description}</p>
                 </div>
               </div>
 
