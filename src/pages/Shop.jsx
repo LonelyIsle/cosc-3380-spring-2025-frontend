@@ -1,22 +1,25 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useShop } from "../context/ShopContext";
-import axios from "axios";
 
 function Shop() {
   const navigate = useNavigate();
-  const { getProductArray, productsLoaded, updateSelectedCategories } =
-    useShop();
+  const {
+    getProductArray,
+    productsLoaded,
+    updateSelectedCategories,
+    categories,
+    categoriesLoaded,
+  } = useShop();
+
   const products = getProductArray();
-  console.log(products, "Products from shop");
   const [filteredProducts, setFilteredProducts] = useState(products);
   const [sortOrder, setSortOrder] = useState("asc");
   const [searchTerm, setSearchTerm] = useState("");
 
   // Categories state
-  const [categories, setCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState({});
-  const [categoriesLoaded, setCategoriesLoaded] = useState(false);
+  const [selectedCategoryIdsLocal, setSelectedCategoryIdsLocal] = useState([]);
 
   // Pagination state
   const [page, setPage] = useState(1);
@@ -50,36 +53,17 @@ function Shop() {
     }
   }, [productsLoaded, products]);
 
-  // Fetch categories from backend
+  // Initialize selectedCategories when categories load from context
   useEffect(() => {
-    axios
-      .get(`${import.meta.env.VITE_API_URL}/category`)
-      .then((res) => {
-        const fetchedCategories = res.data.data.rows || [];
-
-        // Filter out deleted categories, not sure why this is in DB
-        const activeCategories = fetchedCategories.filter(
-          (category) => !category.is_deleted
-        );
-
-        setCategories(activeCategories);
-
-        // Initialize selectedCategories
-        const categoriesObj = {};
-        activeCategories.forEach((category) => {
-          categoriesObj[category.name] = false;
-        });
-        setSelectedCategories(categoriesObj);
-        setCategoriesLoaded(true);
-      })
-      .catch((err) => {
-        console.error(
-          "Failed to fetch categories:",
-          err.response?.data || err.message
-        );
-        setCategoriesLoaded(true);
+    if (categoriesLoaded && categories.length > 0) {
+      // Initialize selectedCategories
+      const categoriesObj = {};
+      categories.forEach((category) => {
+        categoriesObj[category.name] = false;
       });
-  }, []);
+      setSelectedCategories(categoriesObj);
+    }
+  }, [categoriesLoaded, categories]);
 
   // Update filtered products when products are loaded
   useEffect(() => {
@@ -130,7 +114,7 @@ function Shop() {
     products,
   ]);
 
-  // Update selected categories and fetch products when categories change
+  // Calculate selectedCategoryIds when selectedCategories change
   useEffect(() => {
     if (!categoriesLoaded) return;
 
@@ -148,9 +132,15 @@ function Shop() {
       });
     }
 
-    // Update selected category IDs
-    updateSelectedCategories(activeCategoryIds);
+    // Store locally first to avoid repeated calls
+    setSelectedCategoryIdsLocal(activeCategoryIds);
   }, [selectedCategories, categoriesLoaded, categories]);
+
+  // Update context's selectedCategoryIds only when local version changes
+  useEffect(() => {
+    // Only call updateSelectedCategories when the IDs actually change
+    updateSelectedCategories(selectedCategoryIdsLocal);
+  }, [selectedCategoryIdsLocal, updateSelectedCategories]);
 
   // Toggle category selection
   const toggleCategory = (category) => {
