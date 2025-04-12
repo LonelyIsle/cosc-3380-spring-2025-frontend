@@ -1,7 +1,7 @@
 function Validation(email, password, passwordcheck) {
   let error = {};
-  let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  let passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9]{8,}$/;
+  let emailPattern = /^.+@.+$/;
+  let passwordPattern = /^[a-zA-Z0-9]+$/;
 
   // Trim whitespace
   const trimmedPassword = password.trim();
@@ -16,8 +16,7 @@ function Validation(email, password, passwordcheck) {
   if (password === "") {
     error.password = "Password should not be empty";
   } else if (!passwordPattern.test(trimmedPassword)) {
-    error.password =
-      "Needs one digit, one lowercase letter, one uppercase letter, and at least 8 characters";
+    error.password = "Password should not be empty";
   } else {
     error.password = "";
   }

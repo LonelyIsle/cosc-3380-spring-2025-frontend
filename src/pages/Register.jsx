@@ -60,7 +60,7 @@ function Register() {
         <form action="" onSubmit={handleSubmit}>
           <div className="mb-2">
             <label htmlFor="Fname" className="block text-subtext0">
-              First Name:
+              First Name
             </label>
             <input
               name="passwordcheck"
@@ -74,7 +74,7 @@ function Register() {
           </div>
           <div className="mb-2">
             <label htmlFor="Mname" className="block text-subtext0">
-              Middle Name:
+              Middle Name
             </label>
             <input
               type="text" // Corrected type to text
@@ -87,7 +87,7 @@ function Register() {
           </div>
           <div className="mb-2">
             <label htmlFor="Lname" className="block text-subtext0">
-              Last Name:
+              Last Name
             </label>
             <input
               type="text" // Corrected type to text
@@ -100,7 +100,7 @@ function Register() {
           </div>
           <div className="mb-2">
             <label htmlFor="email" className="block text-subtext0">
-              Email:
+              Email
             </label>
             <input
               name="email"
@@ -122,7 +122,7 @@ function Register() {
           </div>
           <div className="mb-2">
             <label name="password" className="block text-subtext0">
-              Password:
+              Password
             </label>
             <input
               name="password"
@@ -144,7 +144,7 @@ function Register() {
           </div>
           <div className="mb-2">
             <label htmlFor="Cpassword" className="block text-subtext0">
-              Confirm Password:
+              Confirm Password
             </label>
             <input
               name="cpassword"
@@ -166,7 +166,7 @@ function Register() {
           </div>
           <div className="mb-2">
             <label htmlFor="question" className="block text-subtext0">
-              Secret question:
+              Secret question
             </label>
             <input
               name="question"
@@ -180,7 +180,7 @@ function Register() {
           </div>
           <div className="mb-2">
             <label htmlFor="Answer" className="block text-subtext0">
-              Answer:
+              Answer
             </label>
             <input
               name="answer"
