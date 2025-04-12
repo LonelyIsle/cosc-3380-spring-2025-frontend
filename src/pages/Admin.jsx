@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Inventory from "../components/Inventory";
 import Employee from "../components/Employee";
+import Sales from "../components/Sales";
+import Config from "../components/Config";
 
 const mockOrders = [
   { id: 101, customer: "Customer A", tracking_info: "Shipped", employeeId: 2 },
@@ -100,11 +102,8 @@ const Admin = () => {
         )}
         {activeSection === "Product Management" && <Inventory />}
         {activeSection === "employees" && <Employee />}
-        {activeSection === "products" && (
-          <h2>Product Management Coming Soon...</h2>
-        )}
-        {activeSection === "config" && <h2>Configuration Settings</h2>}
-        {activeSection === "sales" && <h2>Sales Events Overview</h2>}
+        {activeSection === "config" && <Config />}
+        {activeSection === "sales" && <Sales />}
       </div>
     </div>
   );
