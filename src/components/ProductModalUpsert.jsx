@@ -151,8 +151,9 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
         {loading ? (
           <p className="text-overlay1">Loading product...</p>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3">
             <div className="flex justify-center items-center gap-4">
+              <label className="font-semibold bl">Name</label>
               <input
                 type="text"
                 name="name"
@@ -161,6 +162,7 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
                 onChange={handleChange}
                 className="w-full p-2 rounded bg-surface1 text-text"
               />
+              <label className="font-semibold bl">SKU</label>
               <input
                 type="text"
                 name="sku"
@@ -170,14 +172,16 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
                 className="w-full p-2 rounded bg-surface1 text-text"
               />
             </div>
+            <label className="font-semibold bl">Description</label>
             <textarea
               name="description"
               placeholder="Description"
               value={product.description}
               onChange={handleChange}
-              className="w-full p-2 rounded bg-surface1 text-text"
+              className="w-full p-2 rounded bg-surface1 text-text mt-1"
             />
             <div className="flex justify-center items-center gap-4">
+              <label className="font-semibold bl">Price</label>
               <input
                 type="number"
                 name="price"
@@ -186,14 +190,17 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
                 onChange={handleChange}
                 className="w-full p-2 rounded bg-surface1 text-text"
               />
+              <label className="font-semibold bl">Quantity</label>
               <input
                 type="number"
                 name="quantity"
                 placeholder="Quantity"
+                disabled={productId === null ? false : true}
                 value={product.quantity}
                 onChange={handleChange}
                 className="w-full p-2 rounded bg-surface1 text-text"
               />
+              <label className="font-semibold bl">Threshold</label>
               <input
                 type="number"
                 name="threshold"
@@ -225,6 +232,7 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
               )}
             </div>
             <div className="flex flex-col gap-2">
+              <label className="font-semibold bl">Image</label>
               {product.image && (
                 <img
                   src={product.image}
@@ -236,14 +244,14 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
                 type="file"
                 accept="image/*"
                 onChange={handleImageChange}
-                className="w-full text-sm"
+                className="w-full text-sm p-2 rounded border border-overlay1"
               />
             </div>
             <div className="flex justify-between mt-6">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 bg-overlay1 rounded hover:bg-overlay2 transition"
+                className="px-4 py-2 bg-overlay1 rounded hover:bg-overlay2 transition text-black"
               >
                 Cancel
               </button>

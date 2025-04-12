@@ -39,7 +39,7 @@ const RestockProductModal = ({ product, onCancel, onConfirm }) => {
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2 bg-overlay1 rounded hover:bg-overlay2 transition"
+              className="px-4 py-2 bg-overlay1 rounded hover:bg-overlay2 transition text-black"
             >
               Cancel
             </button>

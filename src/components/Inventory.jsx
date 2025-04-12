@@ -56,7 +56,7 @@ const Inventory = () => {
   return (
     <div className="p-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold mb-4">Inventory Management</h2>
+        <h2 className="text-2xl font-bold mb-4">Product Management</h2>
 
         <button
           className="ml-2 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
@@ -85,13 +85,14 @@ const Inventory = () => {
       </div>
       <table className="w-full border border-black bg-gray-200">
         <thead>
-          <tr className="bg-gray-400 text-white">
-            <th className="p-2 border">Name</th>
-            <th className="p-2 border">Quantity</th>
-            <th className="p-2 border">Restock Threshold</th>
-            <th className="p-2 border">Price</th>
-            <th className="p-2 border">Category</th>
-            <th className="p-2 border">Manage</th>
+          <tr className="bg-gray-400 border-black text-black">
+            <th className="p-2 text-center border">ID</th>
+            <th className="p-2 text-center border">Name</th>
+            <th className="p-2 text-center border">Quantity</th>
+            <th className="p-2 text-center border">Restock Threshold</th>
+            <th className="p-2 text-center border">Price</th>
+            <th className="p-2 text-center border">Category</th>
+            <th className="p-2 text-center border">Manage</th>
           </tr>
         </thead>
         <tbody>
@@ -100,30 +101,30 @@ const Inventory = () => {
               key={item.id}
               className={index % 2 === 0 ? "bg-gray-300" : "bg-gray-100"}
             >
-              <td className="p-2 border">{item.name}</td>
-              <td className="p-2 border">{item.quantity}</td>
-              <td className="p-2 border">{item.threshold || 0}</td>
-              <td className="p-2 border">${item.price.toFixed(2)}</td>
-              <td className="p-2 border">{item.category?.[0] || "N/A"}</td>
-              <td className="p-2 border">
+              <td className="p-2 text-center border">{item.id}</td>
+              <td className="p-2 text-center border">{item.name}</td>
+              <td className="p-2 text-center border">{item.quantity}</td>
+              <td className="p-2 text-center border">{item.threshold || 0}</td>
+              <td className="p-2 text-center border">${item.price.toFixed(2)}</td>
+              <td className="p-2 text-center border">{item.category ? item.category.join(", ") : "N/A"}</td>
+              <td className="p-2 text-center border">
                 <button
                   className="ml-2 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
                   onClick={() => openUpsertModal(item.id)}
                 >
-                  Edit Product
+                  Edit
+                </button>
+                <button
+                  className="ml-2 px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+                  onClick={() => setRestockProductTarget(item)}
+                >
+                  Restock
                 </button>
                 <button
                   className="ml-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
                   onClick={() => setDeleteProductTarget(item)}
                 >
                   Delete
-                </button>
-
-                <button
-                  className="ml-2 px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700"
-                  onClick={() => setRestockProductTarget(item)}
-                >
-                  Restock
                 </button>
               </td>
             </tr>
