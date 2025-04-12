@@ -90,13 +90,30 @@ const ProductReport = () => {
     const chartData = {
         labels: filteredData.map(d => d.product_name),
         datasets: [{
-            label: 'Total Sale',
+            label: "Total Quantity",
+            data: filteredData.map(d => d.product_total_quantity),
+            backgroundColor: 'rgba(53, 162, 235, 1)'
+        }, {
+            label: "Total Sale",
             data: filteredData.map(d => d.product_total_price),
-            borderWidth: 1,
-            backgroundColor: 'rgba(255, 99, 132, 0.5)',
-            // backgroundColor: 'rgba(53, 162, 235, 0.5)',
+            backgroundColor: 'rgba(255, 99, 132, 1)'
         }]
     }
+
+    const chartOptions = {
+        plugins: {
+          title: {
+            display: true,
+            text: 'Chart.js Bar Chart - Stacked',
+          },
+        },
+        responsive: true,
+        scales: {
+          x: {
+            stacked: true
+          }
+        },
+      };
 
     return (
         <div className="p-4">
@@ -105,6 +122,7 @@ const ProductReport = () => {
             </div>
             <Bar
                 data={ chartData }
+                options={ chartOptions }
             />
             <div className="flex ml-0 mr-0 mb-3">
                 <div className="">
