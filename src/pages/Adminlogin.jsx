@@ -33,7 +33,6 @@ function Adminlogin() {
         localStorage.setItem("user", JSON.stringify(data));
 
         // Redirect based on role
-        const role = <data value="" className="role"></data>;
         console.log("👤 Logged in user role:", data.role);
 
         if (data.role === 1 || data.role === 0) {
@@ -55,6 +54,7 @@ function Adminlogin() {
         }
       }
     }
+    window.location.reload();
   };
 
   return (
