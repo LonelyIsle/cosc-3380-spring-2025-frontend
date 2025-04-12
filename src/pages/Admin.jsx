@@ -40,7 +40,7 @@ const Admin = () => {
       <div className="w-64 bg-gray-800 text-white p-5 flex flex-col">
         <h2 className="text-2xl font-bold mb-6">Admin Panel</h2>
         <nav>
-          {["orders", "Product Management", "employees", "Product Report", "Coupon Report", "Customer Report", "config", "sales"].map(
+          {["orders", "Product", "employees", "Product Report", "Coupon Report", "Customer Report", "config", "sales"].map(
             (section) => (
               <button
                 key={section}
@@ -103,7 +103,7 @@ const Admin = () => {
             </div>
           </div>
         )}
-        {activeSection === "Product Management" && <Inventory />}
+        {activeSection === "Product" && <Inventory />}
         {activeSection === "employees" && <Employee />}
         {activeSection === "Product Report" && <ProductReport />}
         {activeSection === "Coupon Report" && <CouponReport />}
