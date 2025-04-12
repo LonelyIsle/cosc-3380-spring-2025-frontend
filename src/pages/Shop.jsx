@@ -8,7 +8,7 @@ function Shop() {
   const { getProductArray, productsLoaded, updateSelectedCategories } =
     useShop();
   const products = getProductArray();
-  console.log(products, "Products from shop")
+  console.log(products, "Products from shop");
   const [filteredProducts, setFilteredProducts] = useState(products);
   const [sortOrder, setSortOrder] = useState("asc");
   const [searchTerm, setSearchTerm] = useState("");
@@ -21,6 +21,9 @@ function Shop() {
   // Pagination state
   const [page, setPage] = useState(1);
   const [productsPerPage] = useState(12);
+
+  // Dynamic price range state
+  const [maxPrice, setMaxPrice] = useState(50);
   const [priceRange, setPriceRange] = useState(50);
 
   // Calculate current products
@@ -33,6 +36,19 @@ function Shop() {
 
   // Calculate total pages
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+
+  // Set max price based on highest priced product (rounded to nearest $10)
+  useEffect(() => {
+    if (productsLoaded && products.length > 0) {
+      const highestPrice = Math.max(
+        ...products.map((product) => product.price)
+      );
+      // Round to nearest $10
+      const roundedPrice = Math.ceil(highestPrice / 10) * 10;
+      setMaxPrice(roundedPrice);
+      setPriceRange(roundedPrice); // Initialize price range to max price
+    }
+  }, [productsLoaded, products]);
 
   // Fetch categories from backend
   useEffect(() => {
@@ -257,7 +273,7 @@ function Shop() {
               </div>
             </div>
 
-            {/* Price Range Slider*/}
+            {/* Price Range Slider with Dynamic Max Value */}
             <div className="mb-4">
               <h2 className="font-medium mb-1">Price</h2>
               <div className="flex justify-between text-xs mb-1">
@@ -268,7 +284,7 @@ function Shop() {
                 type="range"
                 className="w-full"
                 min="0"
-                max="50"
+                max={maxPrice}
                 value={priceRange}
                 onChange={(e) => setPriceRange(parseInt(e.target.value))}
               />

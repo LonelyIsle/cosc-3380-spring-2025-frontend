@@ -17,7 +17,7 @@ export function ShopProvider({ children }) {
   // Fetch products based on category filter
   const fetchProducts = async (categoryIds = []) => {
     setProductsLoaded(false);
-    let url = `${import.meta.env.VITE_API_URL}/product?limit=999`;
+    let url = `${import.meta.env.VITE_API_URL}/product?`;
     if (categoryIds.length > 0) {
       url += `&category_id=[${categoryIds.join(",")}]`;
     }
