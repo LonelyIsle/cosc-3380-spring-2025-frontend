@@ -22,12 +22,12 @@ ChartJS.register(
 
 const ProductReport = () => {
     const [data, setData] = useState([]);
-    const [startDate, setStartDate] = useState(1743483600000); 
-    const [endDate, setEndDate] = useState(1745989200000); 
-    const [nameSearchTerm, setNameSearchTerm] = useState("");
-    const [skuSearchTerm, setSKUSearchTerm] = useState("");
+    const [startDate, setStartDate] = useState(1743483600000); // 04/01/2025
+    const [endDate, setEndDate] = useState(1745989200000); // 04/30/2025
+    const [nameSearch, setNameSearch] = useState("");
+    const [skuSearch, setSKUSearch] = useState("");
     const [sortKey, setSortKey] = useState("");
-    const [categorySearchTerm, setCategorySearchTerm] = useState("");
+    const [categorySearch, setCategorySearch] = useState("");
 
     useEffect(() => {
         getData(startDate, endDate);
@@ -55,9 +55,9 @@ const ProductReport = () => {
     }
 
     const filteredData = data.filter(d => {
-        return d.product_name.toLowerCase().includes(nameSearchTerm.toLowerCase())
-            && d.product_sku.toLowerCase().includes(skuSearchTerm.toLowerCase())
-            && d.product_category_index.toLowerCase().includes(categorySearchTerm.toLowerCase());
+        return (nameSearch.trim() === "" ? true : d.product_name.toLowerCase().includes(nameSearch.toLowerCase()))
+            && (skuSearch.trim() === "" ? true : d.product_sku.toLowerCase().includes(skuSearch.toLowerCase()))
+            && (categorySearch.trim() === "" ? true : d.product_category_index.toLowerCase().includes(categorySearch.toLowerCase()));
     }).sort((a, b) => {
         let result = -1;
         if (sortKey.trim() === "") {
@@ -85,35 +85,29 @@ const ProductReport = () => {
                 break;
         }
         return order === "desc" ? -result : result;
-    });;
+    });
 
     const chartData = {
         labels: filteredData.map(d => d.product_name),
         datasets: [{
             label: "Total Quantity",
             data: filteredData.map(d => d.product_total_quantity),
-            backgroundColor: 'rgba(53, 162, 235, 1)'
+            backgroundColor: "rgba(53, 162, 235, 1)"
         }, {
             label: "Total Sale",
             data: filteredData.map(d => d.product_total_price),
-            backgroundColor: 'rgba(255, 99, 132, 1)'
+            backgroundColor: "rgba(255, 99, 132, 1)"
         }]
-    }
+    };
 
     const chartOptions = {
-        plugins: {
-          title: {
-            display: true,
-            text: 'Chart.js Bar Chart - Stacked',
-          },
-        },
         responsive: true,
         scales: {
-          x: {
-            stacked: true
-          }
-        },
-      };
+            x: {
+                stacked: true
+            }
+        }
+    };
 
     return (
         <div className="p-4">
@@ -124,7 +118,7 @@ const ProductReport = () => {
                 data={ chartData }
                 options={ chartOptions }
             />
-            <div className="flex ml-0 mr-0 mb-3">
+            <div className="flex ml-0 mr-0 mb-1">
                 <div className="">
                     <label className="block font-semibold">Start Date</label>
                     <input
@@ -158,8 +152,8 @@ const ProductReport = () => {
                         <option value="product_price-desc">Price Desc</option>
                         <option value="product_quantity-asc">Quantity Asc</option>
                         <option value="product_quantity-desc">Quantity Desc</option>
-                        <option value="product_order_count-asc">Order Count Asc</option>
-                        <option value="product_order_count-desc">Order Count Desc</option>
+                        <option value="product_order_count-asc">Total Order Asc</option>
+                        <option value="product_order_count-desc">Total Order Desc</option>
                         <option value="product_total_quantity-asc">Total Quantity Asc</option>
                         <option value="product_total_quantity-desc">Total Quantity Desc</option>
                         <option value="product_total_price-asc">Total Sale Asc</option>
@@ -175,8 +169,8 @@ const ProductReport = () => {
                         type="text"
                         name="name"
                         placeholder="Name"
-                        value={ nameSearchTerm } 
-                        onChange={ (e) => setNameSearchTerm(e.target.value) }
+                        value={ nameSearch } 
+                        onChange={ (e) => setNameSearch(e.target.value) }
                     />
                 </div>
                 <div className="ml-4">
@@ -186,8 +180,8 @@ const ProductReport = () => {
                         type="text"
                         name="sku"
                         placeholder="SKU"
-                        value={ skuSearchTerm } 
-                        onChange={ (e) => setSKUSearchTerm(e.target.value) }
+                        value={ skuSearch } 
+                        onChange={ (e) => setSKUSearch(e.target.value) }
                     />
                 </div>
                 <div className="ml-4">
@@ -197,8 +191,8 @@ const ProductReport = () => {
                         type="text"
                         name="category"
                         placeholder="Category"
-                        value={ categorySearchTerm } 
-                        onChange={ (e) => setCategorySearchTerm(e.target.value) }
+                        value={ categorySearch } 
+                        onChange={ (e) => setCategorySearch(e.target.value) }
                     />
                 </div>
             </div>
@@ -211,7 +205,7 @@ const ProductReport = () => {
                         <th className="p-2 text-center border">Price</th>
                         <th className="p-2 text-center border">Quantity</th>
                         <th className="p-2 text-center border">Threshold</th>
-                        <th className="p-2 text-center border">Order Count</th>
+                        <th className="p-2 text-center border">Total Order</th>
                         <th className="p-2 text-center border">Total Quantity</th>
                         <th className="p-2 text-center border">Total Sale</th>
                         <th className="p-2 text-center border">Category</th>
@@ -224,18 +218,18 @@ const ProductReport = () => {
                                 <td className="p-2 text-center border">{ d.product_id }</td>
                                 <td className="p-2 text-center border">{ d.product_sku }</td>
                                 <td className="p-2 text-center border">{ d.product_name }</td>
-                                <td className="p-2 text-center border">{ d.product_price.toFixed(2) }</td>
+                                <td className="p-2 text-center border">{ `$${d.product_price.toFixed(2)}` }</td>
                                 <td className="p-2 text-center border">{ d.product_quantity }</td>
                                 <td className="p-2 text-center border">{ d.product_threshold }</td>
                                 <td className="p-2 text-center border">{ d.product_order_count }</td>
                                 <td className="p-2 text-center border">{ d.product_total_quantity }</td>
-                                <td className="p-2 text-center border">{ d.product_total_price.toFixed(2) }</td>
+                                <td className="p-2 text-center border">{ `$${d.product_total_price.toFixed(2)}` }</td>
                                 <td className="p-2 text-center border">{ d.product_category.map((c) => c.name).join(", ") }</td>
                             </tr>
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="6" className="p-2 text-center text-gray-500">
+                            <td colSpan="10" className="p-2 text-center text-gray-500">
                                 No Data
                             </td>
                         </tr>
