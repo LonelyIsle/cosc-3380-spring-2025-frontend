@@ -63,3 +63,34 @@ body {
     @apply flex justify-center items-center;
   }
 }
+
+.scrolling-text-container {
+  width: 100%;
+  overflow: hidden;
+  height: 1.5rem;
+}
+
+.scrolling-text {
+  display: inline-block;
+  white-space: nowrap;
+  animation: scroll-left 70s linear infinite;
+}
+
+.announcement-segment {
+  display: inline-block;
+  margin-right: 4rem;
+}
+
+.separator {
+  display: inline-block;
+  margin: 0 2rem;
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(calc(-100%));
+  }
+}
