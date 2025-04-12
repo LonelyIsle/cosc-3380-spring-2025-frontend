@@ -72,10 +72,10 @@ function Fpassword() {
   return (
     <div className="center-container">
       <div className="p-6 bg-mantle text-text rounded-xl shadow-lg">
-        <div className="flex justify-center mb-4">
-          <img src={logo} alt="Logo" className="w-64 h-64" />
+        <div className="flex justify-center">
+          <img src={logo} alt="Logo" className="w-40 h-40" />
         </div>
-        <h1 className="text-lg font-bold mb-4 text-subtext1">Reset Password</h1>
+        <h1 className="text-lg font-bold mb-3 text-subtext1">Reset Password</h1>
         <form onSubmit={handleSubmit}>
           <div className="mb-2">
             <label htmlFor="email" className="block text-subtext0">
@@ -125,7 +125,7 @@ function Fpassword() {
               )}
               <p className="mb-2"> New Password</p>
               <input
-                type="text"
+                type="password"
                 className="border p-2 w-full rounded mb-4 bg-surface2 text-text"
                 placeholder="Enter your answer"
                 value={password}
