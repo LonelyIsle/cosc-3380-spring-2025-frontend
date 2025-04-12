@@ -3,6 +3,9 @@ import Inventory from "../components/Inventory";
 import Employee from "../components/Employee";
 import Sales from "../components/Sales";
 import Config from "../components/Config";
+import ProductReport from "../components/ProductReport";
+import CouponReport from "../components/CouponReport";
+import CustomerReport from "../components/CustomerReport";
 
 const mockOrders = [
   { id: 101, customer: "Customer A", tracking_info: "Shipped", employeeId: 2 },
@@ -37,7 +40,7 @@ const Admin = () => {
       <div className="w-64 bg-gray-800 text-white p-5 flex flex-col">
         <h2 className="text-2xl font-bold mb-6">Admin Panel</h2>
         <nav>
-          {["orders", "Product Management", "employees", "config", "sales"].map(
+          {["orders", "Product Management", "employees", "Product Report", "Coupon Report", "Customer Report", "config", "sales"].map(
             (section) => (
               <button
                 key={section}
@@ -102,6 +105,9 @@ const Admin = () => {
         )}
         {activeSection === "Product Management" && <Inventory />}
         {activeSection === "employees" && <Employee />}
+        {activeSection === "Product Report" && <ProductReport />}
+        {activeSection === "Coupon Report" && <CouponReport />}
+        {activeSection === "Customer Report" && <CustomerReport />}
         {activeSection === "config" && <Config />}
         {activeSection === "sales" && <Sales />}
       </div>
