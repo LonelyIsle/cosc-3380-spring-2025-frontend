@@ -60,11 +60,11 @@ function Login() {
 
   return (
     <div className="center-container">
-      <div className="p-6 bg-mantle text-text rounded-xl shadow-lg">
-        <div className="flex justify-center mb-4">
-          <img src={logo} alt="Logo" className="w-64 h-64" />
+      <div className="p-6 pt-3 bg-mantle text-text rounded-xl shadow-lg">
+        <div className="flex justify-center">
+          <img src={logo} alt="Logo" className="w-40 h-40" />
         </div>
-        <h1 className="text-lg font-bold mb-4 text-subtext1">Please sign in</h1>
+        <h1 className="text-lg font-bold mb-3 text-subtext1">Please sign in</h1>
         <form action="" onSubmit={handleSubmit}>
           <div className="mb-2">
             <label htmlFor="email" className="block text-subtext0">
@@ -98,9 +98,9 @@ function Login() {
             </button>
           </div>
         </form>
-        <div className="grid grid-cols-2 mt-6 text-center">
-          <div className=" mt-6 text-center">
-            <p className="text-subtext0">Don't have an account?</p>
+        <div className="grid grid-cols-2 mt-3 text-center">
+          <div className="text-center">
+            <p className="text-subtext0 mb-2">Don't have an account?</p>
             <button
               className="bg-green text-base py-2 px-4 rounded hover:bg-teal"
               onClick={(e) => {
@@ -111,8 +111,8 @@ function Login() {
               Register
             </button>
           </div>
-          <div className=" mt-6 text-center">
-            <p className="text-subtext0">Forgot Password?</p>
+          <div className="text-center">
+            <p className="text-subtext0 mb-2">Forgot Password?</p>
             <button
               className="bg-green text-base py-2 px-4 rounded hover:bg-teal"
               onClick={(e) => {
