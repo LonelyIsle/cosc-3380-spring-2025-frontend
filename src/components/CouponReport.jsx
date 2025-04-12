@@ -90,10 +90,6 @@ const ProductReport = () => {
     const chartData = {
         labels: filteredData.map(d => d.coupon_code),
         datasets: [{
-            label: "Total Order",
-            data: filteredData.map(d => d.coupon_order_count),
-            backgroundColor: "rgba(255, 159, 64, 1)"
-        }, {
             label: "Total Value",
             data: filteredData.map(d => d.coupon_total_coupon),
             backgroundColor: "rgba(53, 162, 235, 1)"
