@@ -17,7 +17,7 @@ export function ShopProvider({ children }) {
   // Fetch products based on category filter
   const fetchProducts = async (categoryIds = []) => {
     setProductsLoaded(false);
-    let url = `${import.meta.env.VITE_API_URL}/product?limit=999`;
+    let url = `${import.meta.env.VITE_API_URL}/product?`;
     if (categoryIds.length > 0) {
       url += `&category_id=[${categoryIds.join(",")}]`;
     }
@@ -42,7 +42,7 @@ export function ShopProvider({ children }) {
     } catch (err) {
       console.error(
         "Failed to fetch products:",
-        err.response?.data || err.message,
+        err.response?.data || err.message
       );
       setProductsLoaded(true);
     }
@@ -55,9 +55,7 @@ export function ShopProvider({ children }) {
 
   // Fetch products when selected categories change
   useEffect(() => {
-    if (selectedCategoryIds.length > 0) {
-      fetchProducts(selectedCategoryIds);
-    }
+    fetchProducts(selectedCategoryIds);
   }, [selectedCategoryIds]);
 
   // Build a product map for quick lookup
@@ -127,7 +125,7 @@ export function ShopProvider({ children }) {
     } catch (err) {
       console.error(
         "Failed to add product:",
-        err.response?.data || err.message,
+        err.response?.data || err.message
       );
       throw err;
     }
@@ -162,15 +160,15 @@ export function ShopProvider({ children }) {
                   ? `data:image/${updated.image_extension};base64,${updated.image}`
                   : "",
               }
-            : p,
-        ),
+            : p
+        )
       );
 
       return updated;
     } catch (err) {
       console.error(
         "Failed to update product:",
-        err.response?.data || err.message,
+        err.response?.data || err.message
       );
       throw err;
     }
@@ -207,15 +205,15 @@ export function ShopProvider({ children }) {
                   ? `data:image/${updated.image_extension};base64,${updated.image}`
                   : "",
               }
-            : p,
-        ),
+            : p
+        )
       );
 
       return updated;
     } catch (err) {
       console.error(
         "Failed to upload image:",
-        err.response?.data || err.message,
+        err.response?.data || err.message
       );
       throw err;
     }
@@ -240,7 +238,7 @@ export function ShopProvider({ children }) {
     } catch (err) {
       console.error(
         "Failed to delete product:",
-        err.response?.data || err.message,
+        err.response?.data || err.message
       );
       throw err;
     }
@@ -259,18 +257,18 @@ export function ShopProvider({ children }) {
           headers: {
             Authorization: token,
           },
-        },
+        }
       );
       // Update frontend state
       setProducts((prev) =>
         prev.map((p) =>
-          p.id === id ? { ...p, quantity: p.quantity + quantity } : p,
-        ),
+          p.id === id ? { ...p, quantity: p.quantity + quantity } : p
+        )
       );
     } catch (err) {
       console.error(
         "Failed to restock product:",
-        err.response?.data || err.message,
+        err.response?.data || err.message
       );
       throw err;
     }
@@ -306,7 +304,7 @@ export function ShopProvider({ children }) {
         const newQuantity = existing.quantity + quantity;
         const limitedQuantity = Math.min(newQuantity, product.quantity);
         return prev.map((item) =>
-          item.id === productId ? { ...item, quantity: limitedQuantity } : item,
+          item.id === productId ? { ...item, quantity: limitedQuantity } : item
         );
       }
 
@@ -361,7 +359,7 @@ export function ShopProvider({ children }) {
       } catch (err) {
         console.error(
           "Failed to fetch categories:",
-          err.response?.data || err.message,
+          err.response?.data || err.message
         );
       } finally {
         setCategoriesLoaded(true);
