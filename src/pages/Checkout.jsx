@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useShop } from "../context/ShopContext";
 import axios from "axios";
 
 const Checkout = () => {
+  const navigate = useNavigate();
   const {
     cartItems,
     getProduct,
@@ -12,11 +14,29 @@ const Checkout = () => {
     clearCart,
   } = useShop();
 
+  const [isSubscription, setIsSubscription] = useState(false);
+
+  const [coupon, setCoupon] = useState({
+    input: "",
+    code: "",
+    id: null,
+    value: 0,
+    type: 0,
+  });
+
+  const [config, setConfig] = useState({
+    subscriptionDiscountPercentage: 0,
+    shippingFee: 0,
+    saleTax: 0
+  });
+
   const [shippingInfo, setShippingInfo] = useState({
     firstName: "",
+    middleName: "",
     lastName: "",
     email: "",
-    address: "",
+    address1: "",
+    address2: "",
     city: "",
     state: "",
     zipCode: "",
@@ -29,19 +49,52 @@ const Checkout = () => {
     cvv: "",
   });
 
-  // Load user data from localStorage on component mount
+  const getConfig = async () => {
+    try {
+      let res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/config`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setConfig((prev) => ({
+        ...prev,
+        ["shippingFee"]: res.data.data.shipping_fee,
+        ["saleTax"]: res.data.data.sale_tax,
+        ["subscriptionDiscountPercentage"]: res.data.data.subscription_discount_percentage
+      }));
+    } catch(err) {
+      if (err.response) {
+        alert(err.response.data.message || "Error getting config");
+      } else {
+        alert("Network error. Please try again.");
+      }
+    }
+  }
+
+  // Load user data from localStorage and other data on component mount
   useEffect(() => {
+    getConfig();
+    
     const userData = localStorage.getItem("user");
     if (userData) {
       try {
         const parsedUserData = JSON.parse(userData);
 
+        if (parsedUserData.subscription && parsedUserData.subscription.id) {
+          setIsSubscription(true);
+        }
+
         // Prefill shipping information from localStorage data
         setShippingInfo({
           firstName: parsedUserData.first_name || "",
+          middleName: parsedUserData.middle_name || "",
           lastName: parsedUserData.last_name || "",
           email: parsedUserData.email || "",
-          address: parsedUserData.shipping_address_1 || "",
+          address1: parsedUserData.shipping_address_1 || "",
+          address2: parsedUserData.shipping_address_2 || "",
           city: parsedUserData.shipping_address_city || "",
           state: parsedUserData.shipping_address_state || "",
           zipCode: parsedUserData.shipping_address_zip || "",
@@ -118,29 +171,72 @@ const Checkout = () => {
     }));
   };
 
+  const handleSubmitCouponCode = async (e) => {
+    const resetCoupon = () => {
+      setCoupon({
+        input: "",
+        code: "",
+        id: null,
+        type: 0,
+        value: 0
+      });
+    }
+    try {
+      e.preventDefault();
+      let code = coupon.input;
+      let res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/coupon/${code}/active`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      let data = res.data.data;
+      if (!data) {
+        alert("Invalid Code.");
+        resetCoupon();
+      } else {
+        setCoupon({
+          input: "",
+          code: data.code,
+          id: data.id,
+          type: data.type,
+          value: data.value
+        });
+      }
+    } catch(err) {
+      if (err.response) {
+        alert(err.response.data.message || "Error getting config");
+      } else {
+        alert("Network error. Please try again.");
+      }
+      resetCoupon();
+    }
+  };
+
   const handleSubmitOrder = async (e) => {
     e.preventDefault();
     console.log("🛒 Submitting order...");
 
     const token = localStorage.getItem("token");
-    const userData = JSON.parse(localStorage.getItem("user") || "{}");
 
     const [expMonth, expYearShort] = paymentInfo.expiryDate.split("/");
     const expYear = expYearShort ? `20${expYearShort}` : "";
 
     const orderData = {
       customer_first_name: shippingInfo.firstName,
-      customer_middle_name: null,
+      customer_middle_name: shippingInfo.middleName,
       customer_last_name: shippingInfo.lastName,
-      customer_email: shippingInfo.email || null, // can be null if token present
-      coupon_id: null,
-      shipping_address_1: shippingInfo.address,
-      shipping_address_2: null,
+      customer_email: shippingInfo.email,
+      coupon_id: coupon.id,
+      shipping_address_1: shippingInfo.address1,
+      shipping_address_2: shippingInfo.address2,
       shipping_address_city: shippingInfo.city,
       shipping_address_state: shippingInfo.state,
       shipping_address_zip: shippingInfo.zipCode,
-      billing_address_1: shippingInfo.address,
-      billing_address_2: null,
+      billing_address_1: shippingInfo.address1,
+      billing_address_2: shippingInfo.address2,
       billing_address_city: shippingInfo.city,
       billing_address_state: shippingInfo.state,
       billing_address_zip: shippingInfo.zipCode,
@@ -169,31 +265,9 @@ const Checkout = () => {
 
       const result = response.data;
       console.log("✅ Order response:", result);
-
-      // Update user info only if not previously stored
-      const shouldUpdateUser =
-        !userData.shipping_address_1 || !userData.card_number;
-
-      if (shouldUpdateUser) {
-        const updatedUserData = {
-          ...userData,
-          first_name: shippingInfo.firstName,
-          last_name: shippingInfo.lastName,
-          email: shippingInfo.email,
-          shipping_address_1: shippingInfo.address,
-          shipping_address_city: shippingInfo.city,
-          shipping_address_state: shippingInfo.state,
-          shipping_address_zip: shippingInfo.zipCode,
-          card_name: paymentInfo.cardHolder,
-          card_number: paymentInfo.cardNumber.replace(/\s/g, ""),
-          card_expire_month: expMonth,
-          card_expire_year: parseInt(expYear),
-        };
-        localStorage.setItem("user", JSON.stringify(updatedUserData));
-      }
-
       alert("✅ Order submitted successfully!");
       clearCart();
+      navigate(`/`);
     } catch (err) {
       console.error("❌ Order submission failed:", err);
 
@@ -228,30 +302,51 @@ const Checkout = () => {
           </div>
 
           <div className="flex items-center space-x-2">
-            <button
-              className="border rounded p-1 hover:bg-gray-100"
-              onClick={() => updateQuantity(cartItem.id, -1)}
-            >
-              -
-            </button>
-            <span>{cartItem.quantity}</span>
-            <button
-              className="border rounded p-1 hover:bg-gray-100"
-              onClick={() => updateQuantity(cartItem.id, 1)}
-            >
-              +
-            </button>
-            <button
-              className="border rounded p-1 text-red-500 hover:bg-red-50"
-              onClick={() => removeItem(cartItem.id)}
-            >
-              ×
-            </button>
+            <span>&times; {cartItem.quantity}</span>
           </div>
         </div>
       );
     });
   };
+
+  // calculate total
+  let total = {
+    origin: 0,
+    subscription: 0,
+    coupon: 0,
+    shipping: 0,
+    saleTax: 0,
+    final: 0
+  };
+  total.origin = parseFloat(getCartAmount());
+  total.final = parseFloat(getCartAmount());
+  // subscription
+  if (isSubscription) {
+    total.subscription = total.final * config.subscriptionDiscountPercentage;
+    total.final = total.final - total.subscription;
+  } else {
+    total.subscription = 0;
+  }
+  // coupon
+  switch(coupon.type) {
+    case 0:
+      total.coupon = total.final * coupon.value;
+      total.final = total.final - total.coupon; 
+      break;
+    case 1:
+      total.coupon = coupon.value;
+      total.final = total.final - total.coupon; 
+      break;
+  }
+  if (total.final < 0) {
+    total.coupon = total.coupon + total.final;
+    total.final = 0;
+  }
+  // shipping fee and sale tax
+  total.shipping = config.shippingFee;
+  total.final = total.final + total.shipping;
+  total.saleTax = total.final * config.saleTax;
+  total.final = total.final + total.saleTax;
 
   return (
     <div className="container mx-auto px-4 py-8 bg-white">
@@ -269,7 +364,27 @@ const Checkout = () => {
                 {renderCartItems()}
                 <div className="flex justify-between mt-4 font-bold">
                   <span>Total</span>
-                  <span>${getCartAmount()}</span>
+                  <span>${total.origin.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between mt-4 font-bold">
+                  <span>Subscription</span>
+                  <span>${total.subscription.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between mt-4 font-bold">
+                  <span>Coupon</span>
+                  <span>${total.coupon.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between mt-4 font-bold">
+                  <span>Shipping Fee</span>
+                  <span>${total.shipping.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between mt-4 font-bold">
+                  <span>Sale Tax</span>
+                  <span>${total.saleTax.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between mt-4 font-bold">
+                  <span>Total Final</span>
+                  <span>${total.final.toFixed(2)}</span>
                 </div>
               </>
             )}
@@ -285,7 +400,7 @@ const Checkout = () => {
             </div>
             <div className="p-4">
               <form className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-3 gap-4">
                   <div>
                     <label
                       htmlFor="firstName"
@@ -300,6 +415,21 @@ const Checkout = () => {
                       value={shippingInfo.firstName}
                       onChange={handleShippingInputChange}
                       required
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="firstName"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      Middle Name
+                    </label>
+                    <input
+                      id="middleName"
+                      name="middleName"
+                      className="w-full border rounded-md px-3 py-2"
+                      value={shippingInfo.middleName}
+                      onChange={handleShippingInputChange}
                     />
                   </div>
                   <div>
@@ -340,16 +470,33 @@ const Checkout = () => {
 
                 <div>
                   <label
-                    htmlFor="address"
+                    htmlFor="address1"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
-                    Address
+                    Address 1
                   </label>
                   <input
-                    id="address"
-                    name="address"
+                    id="address1"
+                    name="address1"
                     className="w-full border rounded-md px-3 py-2"
-                    value={shippingInfo.address}
+                    value={shippingInfo.address1}
+                    onChange={handleShippingInputChange}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="address2"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Address 2
+                  </label>
+                  <input
+                    id="address2"
+                    name="address2"
+                    className="w-full border rounded-md px-3 py-2"
+                    value={shippingInfo.address2}
                     onChange={handleShippingInputChange}
                     required
                   />
@@ -406,6 +553,41 @@ const Checkout = () => {
                   </div>
                 </div>
               </form>
+            </div>
+          </div>
+
+          {/* Coupon Section */}
+          <div className="border rounded-lg shadow-sm mb-6">
+            <div className="p-4 border-b">
+              <h2 className="text-xl font-bold">Coupon Information</h2>
+            </div>
+            <div className="p-4">
+              <form onSubmit={handleSubmitCouponCode} className="flex mb-3">
+                <div>
+                  <input
+                    id="couponCode"
+                    name="couponCode"
+                    placeholder="Code"
+                    className="border rounded-md px-3 py-2"
+                    value={coupon.input}
+                    onChange={(e) => setCoupon((prev) => ({ ...prev, input: e.target.value}))}
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="bg-blue-500 text-white p-2 ml-3 rounded-md hover:bg-blue-600 transition-colors disabled:bg-gray-300"
+                >
+                  Apply
+                </button>
+              </form>
+              <div className="">
+                {
+                  coupon.code.trim() !== "" &&
+                    <span className="bg-pink-200 p-2 rounded mr-2 text-md font-bold">
+                      {coupon.code}
+                    </span>
+                }
+              </div>
             </div>
           </div>
 
