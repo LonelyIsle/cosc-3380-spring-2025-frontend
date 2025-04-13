@@ -409,13 +409,13 @@ export function ShopProvider({ children }) {
       setCategories((prev) => [
         ...prev,
         {
-          id: updatedCategory.id,
-          name: updatedCategory.name,
-          description: updatedCategory.description,
-          created_at: updatedCategory.created_at,
-          updated_at: updatedCategory.updated_at,
-          deleted_at: updatedCategory.deleted_at,
-          is_deleted: updatedCategory.is_deleted,
+          id: newCategory.id,
+          name: newCategory.name,
+          description: newCategory.description,
+          created_at: newCategory.created_at,
+          updated_at: newCategory.updated_at,
+          deleted_at: newCategory.deleted_at,
+          is_deleted: newCategory.is_deleted,
         },
       ]);
 
