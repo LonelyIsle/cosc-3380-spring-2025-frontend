@@ -3,6 +3,7 @@ import axios from "axios";
 
 const ProductContext = createContext();
 export const useProduct = () => useContext(ProductContext);
+const getToken = () => localStorage.getItem("token");
 
 export function ProductProvider({ children }) {
   const [products, setProducts] = useState([]);
@@ -40,7 +41,7 @@ export function ProductProvider({ children }) {
   const getProduct = (id) => products.find((p) => p.id === parseInt(id));
   const getProductArray = () => products;
 
-  const token = localStorage.getItem("token");
+  const token = getToken();
   const authHeader = { headers: { Authorization: token } };
 
   const addProduct = async (data) => {

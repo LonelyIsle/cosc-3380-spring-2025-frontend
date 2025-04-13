@@ -44,6 +44,9 @@ export function CartProvider({ children }) {
     }
   };
 
+  // Build a product map for quick lookup
+  const productMap = new Map(products.map((p) => [p.id, p]));
+
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem(CART_KEY)) || [];
     setCartItems(stored);
