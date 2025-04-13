@@ -7,20 +7,28 @@ const EmployeeContext = createContext();
 // Custom hook to access EmployeeContext
 export const useEmployee = () => useContext(EmployeeContext);
 
+// Helper function to get the token from localStorage
+const getToken = () => localStorage.getItem("token");
+
 // Provider component
 export function EmployeeProvider({ children }) {
   const [employees, setEmployees] = useState([]);
   const [employeesLoaded, setEmployeesLoaded] = useState(false);
 
   ///////////////////////////
-  // EMPLOYEE API CALLS   //
+  // EMPLOYEE API CALLS    //
   ///////////////////////////
 
   // 1. GET /employee - Fetch list of employees
   const fetchEmployees = async () => {
     try {
       const url = `${import.meta.env.VITE_API_URL}/employee`;
-      const res = await axios.get(url);
+      const token = getToken();
+      const res = await axios.get(url, {
+        headers: {
+          Authorization: token,
+        },
+      });
       const mappedEmployees = res.data.data.rows.map((emp) => ({
         id: emp.id,
         first_name: emp.first_name,
@@ -37,7 +45,10 @@ export function EmployeeProvider({ children }) {
       setEmployees(mappedEmployees);
       setEmployeesLoaded(true);
     } catch (err) {
-      console.error("Failed to fetch employees:", err.response?.data || err.message);
+      console.error(
+        "Failed to fetch employees:",
+        err.response?.data || err.message,
+      );
       setEmployeesLoaded(true);
     }
   };
@@ -51,10 +62,18 @@ export function EmployeeProvider({ children }) {
   const getEmployeeById = async (id) => {
     try {
       const url = `${import.meta.env.VITE_API_URL}/employee/${id}`;
-      const res = await axios.get(url);
+      const token = getToken();
+      const res = await axios.get(url, {
+        headers: {
+          Authorization: token,
+        },
+      });
       return res.data.data;
     } catch (err) {
-      console.error("Failed to fetch employee:", err.response?.data || err.message);
+      console.error(
+        "Failed to fetch employee:",
+        err.response?.data || err.message,
+      );
       throw err;
     }
   };
@@ -64,15 +83,18 @@ export function EmployeeProvider({ children }) {
     try {
       const url = `${import.meta.env.VITE_API_URL}/employee/login`;
       const res = await axios.post(url, { email, password });
-      
-      // If the response contains an auth token, you may want to store it
+
+      // If the response contains an auth token, store it in localStorage
       const token = res.data.data?.token;
       if (token) {
         localStorage.setItem("token", token);
       }
       return res.data.data;
     } catch (err) {
-      console.error("Employee login failed:", err.response?.data || err.message);
+      console.error(
+        "Employee login failed:",
+        err.response?.data || err.message,
+      );
       throw err;
     }
   };
@@ -81,13 +103,21 @@ export function EmployeeProvider({ children }) {
   const createEmployee = async (employeeData) => {
     try {
       const url = `${import.meta.env.VITE_API_URL}/employee`;
-      const res = await axios.post(url, employeeData);
+      const token = getToken();
+      const res = await axios.post(url, employeeData, {
+        headers: {
+          Authorization: token,
+        },
+      });
       const newEmployee = res.data.data;
       // Update local state by adding the new employee
       setEmployees((prev) => [...prev, newEmployee]);
       return newEmployee;
     } catch (err) {
-      console.error("Failed to create employee:", err.response?.data || err.message);
+      console.error(
+        "Failed to create employee:",
+        err.response?.data || err.message,
+      );
       throw err;
     }
   };
@@ -96,7 +126,7 @@ export function EmployeeProvider({ children }) {
   const updateEmployee = async (id, employeeData) => {
     try {
       const url = `${import.meta.env.VITE_API_URL}/employee/${id}`;
-      const token = localStorage.getItem("token");
+      const token = getToken();
       const res = await axios.patch(url, employeeData, {
         headers: {
           Authorization: token,
@@ -105,11 +135,16 @@ export function EmployeeProvider({ children }) {
       const updatedEmployee = res.data.data;
       // Update local state with the updated employee information
       setEmployees((prev) =>
-        prev.map((emp) => (emp.id === updatedEmployee.id ? updatedEmployee : emp))
+        prev.map((emp) =>
+          emp.id === updatedEmployee.id ? updatedEmployee : emp,
+        ),
       );
       return updatedEmployee;
     } catch (err) {
-      console.error("Failed to update employee:", err.response?.data || err.message);
+      console.error(
+        "Failed to update employee:",
+        err.response?.data || err.message,
+      );
       throw err;
     }
   };
@@ -118,7 +153,7 @@ export function EmployeeProvider({ children }) {
   const updateEmployeePassword = async (id, password) => {
     try {
       const url = `${import.meta.env.VITE_API_URL}/employee/${id}/password`;
-      const token = localStorage.getItem("token");
+      const token = getToken();
       const res = await axios.patch(
         url,
         { password },
@@ -126,11 +161,14 @@ export function EmployeeProvider({ children }) {
           headers: {
             Authorization: token,
           },
-        }
+        },
       );
       return res.data.data;
     } catch (err) {
-      console.error("Failed to update employee password:", err.response?.data || err.message);
+      console.error(
+        "Failed to update employee password:",
+        err.response?.data || err.message,
+      );
       throw err;
     }
   };
@@ -139,7 +177,7 @@ export function EmployeeProvider({ children }) {
   const deleteEmployee = async (id) => {
     try {
       const url = `${import.meta.env.VITE_API_URL}/employee/${id}`;
-      const token = localStorage.getItem("token");
+      const token = getToken();
       await axios.delete(url, {
         headers: {
           Authorization: token,
@@ -148,7 +186,10 @@ export function EmployeeProvider({ children }) {
       // Remove deleted employee from state
       setEmployees((prev) => prev.filter((emp) => emp.id !== id));
     } catch (err) {
-      console.error("Failed to delete employee:", err.response?.data || err.message);
+      console.error(
+        "Failed to delete employee:",
+        err.response?.data || err.message,
+      );
       throw err;
     }
   };
