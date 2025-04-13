@@ -37,7 +37,7 @@ const Admin = () => {
         "Customer Report",
         "Config",
       ]);
-      setActiveSection("Notifcation");
+      setActiveSection("Notification");
     } else {
       setItems([
         "Profile",
