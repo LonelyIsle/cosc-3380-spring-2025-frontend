@@ -43,12 +43,24 @@ const Category = () => {
   }, [upsertModalOpen, deleteModalOpen]);
 
   const filteredCategories = categories.filter((cat) =>
-    cat.name.toLowerCase().includes(searchTerm.toLowerCase()),
+    cat.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const selectedCategory = categories.find(
-    (cat) => cat.id === selectedCategoryId,
+    (cat) => cat.id === selectedCategoryId
   );
+
+  // Helper function to format date and time
+  const formatDateTime = (dateString) => {
+    const date = new Date(dateString);
+    const optionsDate = { month: 'short', day: 'numeric', year: 'numeric' };
+    const optionsTime = { hour: 'numeric', minute: 'numeric', hour12: true };
+    
+    const datePart = date.toLocaleDateString('en-US', optionsDate);
+    // Formats the time (e.g., "7:51 PM") and converts it to lowercase (e.g., "7:51pm")
+    const timePart = date.toLocaleTimeString('en-US', optionsTime).replace(' ', '').toLowerCase();
+    return `${datePart} - ${timePart}`;
+  };
 
   return (
     <div className="p-4">
@@ -77,6 +89,8 @@ const Category = () => {
             <th className="p-2 text-center border">ID</th>
             <th className="p-2 text-center border">Name</th>
             <th className="p-2 text-center border">Description</th>
+            <th className="p-2 text-center border">Created At</th>
+            <th className="p-2 text-center border">Updated At</th>
             <th className="p-2 text-center border">Manage</th>
           </tr>
         </thead>
@@ -89,6 +103,12 @@ const Category = () => {
               <td className="p-2 text-center border">{cat.id}</td>
               <td className="p-2 text-center border">{cat.name}</td>
               <td className="p-2 text-center border">{cat.description}</td>
+              <td className="p-2 text-center border">
+                {formatDateTime(cat.created_at)}
+              </td>
+              <td className="p-2 text-center border">
+                {formatDateTime(cat.updated_at)}
+              </td>
               <td className="p-2 text-center border space-x-2">
                 <button
                   className="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
