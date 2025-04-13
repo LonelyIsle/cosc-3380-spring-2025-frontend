@@ -25,16 +25,16 @@ const Admin = () => {
           {[
             "Notification",
             "Profile",
-            "orders",
             "Product",
             "Category",
+            "Coupon",
+            "Sale Event",
+            "orders",
             "employees",
-            "Coupon Management",
             "Product Report",
             "Coupon Report",
             "Customer Report",
             "Config",
-            "sales",
           ].map((section) => (
             <button
               key={section}
@@ -62,7 +62,7 @@ const Admin = () => {
         {activeSection === "Coupon Report" && <CouponReport />}
         {activeSection === "Customer Report" && <CustomerReport />}
         {activeSection === "Config" && <Config />}
-        {activeSection === "sales" && <Sales />}
+        {activeSection === "Sale Event" && <Sales />}
         {activeSection === "Notification" && <Notification />}
       </div>
     </div>
