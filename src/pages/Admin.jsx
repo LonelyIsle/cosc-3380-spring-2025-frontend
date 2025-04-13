@@ -10,8 +10,6 @@ import Orders from "../components/Orders.jsx";
 import Category from "../components/Category";
 import Notification from "../components/Notification";
 
-const Admin = () => {
-  const [activeSection, setActiveSection] = useState("Orders");
 
 const Admin = () => {
   const [activeSection, setActiveSection] = useState("Notification");

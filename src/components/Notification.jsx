@@ -53,7 +53,7 @@ const Notification = () => {
                         <th className="p-2 text-center border">Content</th>
                         <th className="p-2 text-center border">Status</th>
                         <th className="p-2 text-center border">Created At</th>
-                        <th className="p-2 text-center border">Action</th>
+                        <th className="p-2 tex-center border">Action</th>
                     </tr>
                 </thead>
                 <tbody>
