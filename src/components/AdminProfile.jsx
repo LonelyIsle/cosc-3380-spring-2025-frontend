@@ -89,7 +89,7 @@ const AdminProfile = () => {
   return (
     <div className="p-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Config</h2>
+        <h2 className="text-2xl font-bold">Profile</h2>
       </div>
       <div className="grid grid-cols-4">
         <div className="mt-4 col-span-2">

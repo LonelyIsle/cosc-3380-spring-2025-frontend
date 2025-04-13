@@ -2,15 +2,16 @@ import React, { useState, useEffect } from "react";
 import Inventory from "../components/Inventory";
 import Employee from "../components/Employee";
 import Sales from "../components/Sales";
-import Config from "../components/Config";
-import ProductReport from "../components/ProductReport";
-import CouponReport from "../components/CouponReport";
-import CustomerReport from "../components/CustomerReport";
+import AdminConfig from "../components/AdminConfig";
+import AdminProductReport from "../components/AdminProductReport";
+import AdminCouponReport from "../components/AdminCouponReport";
+import AdminCustomerReport from "../components/AdminCustomerReport";
 import CouponManagement from "../components/CouponManagement";
 import Orders from "../components/Orders.jsx";
 import Category from "../components/Category";
-import Notification from "../components/Notification";
+import AdminNotification from "../components/AdminNotification";
 import AdminProfile from "../components/AdminProfile";
+import AdminCustomer from "../components/AdminCustomer";
 
 const Admin = () => {
   const [activeSection, setActiveSection] = useState("Notification");
@@ -31,6 +32,7 @@ const Admin = () => {
             "Sale Event",
             "orders",
             "employees",
+            "Customer",
             "Product Report",
             "Coupon Report",
             "Customer Report",
@@ -58,12 +60,13 @@ const Admin = () => {
         {activeSection === "orders" && <Orders />}
         {activeSection === "employees" && <Employee />}
         {activeSection === "Coupon" && <CouponManagement />}
-        {activeSection === "Product Report" && <ProductReport />}
-        {activeSection === "Coupon Report" && <CouponReport />}
-        {activeSection === "Customer Report" && <CustomerReport />}
-        {activeSection === "Config" && <Config />}
+        {activeSection === "Product Report" && <AdminProductReport />}
+        {activeSection === "Coupon Report" && <AdminCouponReport />}
+        {activeSection === "Customer Report" && <AdminCustomerReport />}
+        {activeSection === "Config" && <AdminConfig />}
         {activeSection === "Sale Event" && <Sales />}
-        {activeSection === "Notification" && <Notification />}
+        {activeSection === "Notification" && <AdminNotification />}
+        {activeSection === "Customer" && <AdminCustomer />}
       </div>
     </div>
   );
