@@ -98,7 +98,7 @@ function Cart() {
             <div className="mt-6 flex justify-between items-center">
               <div></div>
               <h3 className="text-xl font-bold">
-                Subtotal: ${totalCartAmount}
+                Total: ${totalCartAmount}
               </h3>
             </div>
           </>
