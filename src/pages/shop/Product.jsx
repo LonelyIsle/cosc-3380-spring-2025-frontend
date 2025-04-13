@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-
-import { useCart } from "../context/CartContext";
-import { useProduct } from "../context/ProductContext";
+import { useCart } from "@context/CartContext";
+import { useProduct } from "@context/ProductContext";
 
 function Product() {
   const { addToCart, cartItems } = useCart();

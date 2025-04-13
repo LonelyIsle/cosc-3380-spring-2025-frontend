@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import CustomerModal from "./AdminCustomerModal";
+import CustomerModal from "@modal/AdminCustomerModal";
 
 const AdminCustomer = () => {
     const [data, setData] = useState([]);

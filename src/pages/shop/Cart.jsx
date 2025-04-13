@@ -1,5 +1,5 @@
-import { useCart } from "../context/CartContext";
-import { useProduct } from "../context/ProductContext";
+import { useCart } from "@context/CartContext";
+import { useProduct } from "@context/ProductContext";
 import { Link } from "react-router-dom";
 
 function Cart() {

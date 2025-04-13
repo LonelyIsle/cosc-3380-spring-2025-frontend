@@ -1,9 +1,9 @@
 import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
-import { useCart } from "../context/CartContext";
 import { useEffect, useState } from "react";
-import logo from "../assets/navbar-logo.svg";
+import { useCart } from "@context/CartContext";
+import logo from "@assets/navbar-logo.svg";
 
-const svgs = import.meta.glob("../assets/cart-assets/*.svg", { eager: true });
+const svgs = import.meta.glob("../../assets/cart-assets/*.svg", { eager: true });
 const cartSvgs = Object.entries(svgs).reduce((acc, [path, module]) => {
   const key = path.split("/").pop().replace(".svg", "");
   acc[key] = module.default;

@@ -1,8 +1,8 @@
-import { useEmployee } from "../context/EmployeeContext";
+import { useEmployee } from "@context/EmployeeContext";
 import { useState, useEffect } from "react";
-import EmployeeModalUpsert from "./EmployeeModalUpsert";
-import DeleteEmployeeModal from "./DeleteEmployeeModal";
-import EmployeePasswordModal from "./EmployeePasswordModal";
+import EmployeeModalUpsert from "@modal/EmployeeModalUpsert";
+import DeleteEmployeeModal from "@modal/DeleteEmployeeModal";
+import EmployeePasswordModal from "@modal/EmployeePasswordModal";
 
 const Employee = () => {
   const { employees, deleteEmployee } = useEmployee();

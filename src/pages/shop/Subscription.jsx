@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useProduct } from "../context/ProductContext";
-import { useCart } from "../context/CartContext";
+import { useCart } from "@context/CartContext";
+import { useProduct } from "@context/ProductContext";
 import axios from "axios";
 
 const Checkout = () => {
@@ -11,19 +11,9 @@ const Checkout = () => {
 
   const { getProduct } = useProduct();
 
-  const [isSubscription, setIsSubscription] = useState(false);
-
-  const [coupon, setCoupon] = useState({
-    input: "",
-    code: "",
-    id: null,
-    value: 0,
-    type: 0,
-  });
-
   const [config, setConfig] = useState({
     subscriptionDiscountPercentage: 0,
-    shippingFee: 0,
+    subscriptionPrice: 0,
     saleTax: 0,
   });
 
@@ -55,7 +45,7 @@ const Checkout = () => {
       });
       setConfig((prev) => ({
         ...prev,
-        ["shippingFee"]: res.data.data.shipping_fee,
+        ["subscriptionPrice"]: res.data.data.subscription_price,
         ["saleTax"]: res.data.data.sale_tax,
         ["subscriptionDiscountPercentage"]:
           res.data.data.subscription_discount_percentage,
@@ -77,10 +67,6 @@ const Checkout = () => {
     if (userData) {
       try {
         const parsedUserData = JSON.parse(userData);
-
-        if (parsedUserData.subscription && parsedUserData.subscription.id) {
-          setIsSubscription(true);
-        }
 
         // Prefill shipping information from localStorage data
         setShippingInfo({
@@ -166,70 +152,18 @@ const Checkout = () => {
     }));
   };
 
-  const handleSubmitCouponCode = async (e) => {
-    const resetCoupon = () => {
-      setCoupon({
-        input: "",
-        code: "",
-        id: null,
-        type: 0,
-        value: 0,
-      });
-    };
-    try {
-      e.preventDefault();
-      let code = coupon.input;
-      let res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/coupon/${code}/active`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      );
-      let data = res.data.data;
-      if (!data) {
-        alert("Invalid Code.");
-        resetCoupon();
-      } else {
-        setCoupon({
-          input: "",
-          code: data.code,
-          id: data.id,
-          type: data.type,
-          value: data.value,
-        });
-      }
-    } catch (err) {
-      if (err.response) {
-        alert(err.response.data.message || "Error getting config");
-      } else {
-        alert("Network error. Please try again.");
-      }
-      resetCoupon();
-    }
-  };
-
   const handleSubmitOrder = async (e) => {
     e.preventDefault();
     console.log("🛒 Submitting order...");
 
     const token = localStorage.getItem("token");
+    const userData = localStorage.getItem("user");
+    const parsedUserData = JSON.parse(userData);
 
     const [expMonth, expYearShort] = paymentInfo.expiryDate.split("/");
     const expYear = expYearShort ? `20${expYearShort}` : "";
 
     const orderData = {
-      customer_first_name: shippingInfo.firstName,
-      customer_middle_name: shippingInfo.middleName,
-      customer_last_name: shippingInfo.lastName,
-      customer_email: shippingInfo.email,
-      coupon_id: coupon.id,
-      shipping_address_1: shippingInfo.address1,
-      shipping_address_2: shippingInfo.address2,
-      shipping_address_city: shippingInfo.city,
-      shipping_address_state: shippingInfo.state,
-      shipping_address_zip: shippingInfo.zipCode,
       billing_address_1: shippingInfo.address1,
       billing_address_2: shippingInfo.address2,
       billing_address_city: shippingInfo.city,
@@ -248,7 +182,7 @@ const Checkout = () => {
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/order`,
+        `${import.meta.env.VITE_API_URL}/customer/subscription`,
         orderData,
         {
           headers: {
@@ -261,7 +195,11 @@ const Checkout = () => {
       const result = response.data;
       console.log("✅ Order response:", result);
       alert("✅ Order submitted successfully!");
-      clearCart();
+
+      // set user.subscription
+      parsedUserData.subscription = result.data;
+      localStorage.setItem("user", JSON.stringify(parsedUserData));
+
       navigate(`/`);
     } catch (err) {
       console.error("❌ Order submission failed:", err);
@@ -274,72 +212,14 @@ const Checkout = () => {
     }
   };
 
-  const renderCartItems = () => {
-    return cartItems.map((cartItem) => {
-      const product = getProduct(cartItem.id);
-      if (!product) return null;
-
-      return (
-        <div
-          key={cartItem.id}
-          className="flex items-center justify-between border-b py-4"
-        >
-          <div className="flex items-center space-x-4">
-            <img
-              src={product.image}
-              alt={product.name}
-              className="w-16 h-16 object-cover rounded"
-            />
-            <div>
-              <h3 className="font-medium">{product.name}</h3>
-              <p className="text-gray-500">${product.price.toFixed(2)}</p>
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <span>&times; {cartItem.quantity}</span>
-          </div>
-        </div>
-      );
-    });
-  };
-
   // calculate total
   let total = {
     origin: 0,
-    subscription: 0,
-    coupon: 0,
-    shipping: 0,
     saleTax: 0,
     final: 0,
   };
-  total.origin = parseFloat(getCartAmount());
-  total.final = parseFloat(getCartAmount());
-  // subscription
-  if (isSubscription) {
-    total.subscription = total.final * config.subscriptionDiscountPercentage;
-    total.final = total.final - total.subscription;
-  } else {
-    total.subscription = 0;
-  }
-  // coupon
-  switch (coupon.type) {
-    case 0:
-      total.coupon = total.final * coupon.value;
-      total.final = total.final - total.coupon;
-      break;
-    case 1:
-      total.coupon = coupon.value;
-      total.final = total.final - total.coupon;
-      break;
-  }
-  if (total.final < 0) {
-    total.coupon = total.coupon + total.final;
-    total.final = 0;
-  }
-  // shipping fee and sale tax
-  total.shipping = config.shippingFee;
-  total.final = total.final + total.shipping;
+  total.origin = config.subscriptionPrice;
+  total.final = config.subscriptionPrice;
   total.saleTax = total.final * config.saleTax;
   total.final = total.final + total.saleTax;
 
@@ -352,37 +232,34 @@ const Checkout = () => {
             <h2 className="text-xl font-bold">Your Cart</h2>
           </div>
           <div className="p-4">
-            {cartItems.length === 0 ? (
-              <p className="text-center text-gray-500">Your cart is empty</p>
-            ) : (
-              <>
-                {renderCartItems()}
-                <div className="flex justify-between mt-4 font-bold">
-                  <span>Total</span>
-                  <span>${total.origin.toFixed(2)}</span>
+            <>
+              <div className="flex items-center justify-between border-b py-4">
+                <div className="flex items-center space-x-4">
+                  <div>
+                    <h3 className="font-medium">1 Month Subscription</h3>
+                    <p className="text-gray-500">
+                      ${config.subscriptionPrice.toFixed(2)}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex justify-between mt-4 font-bold">
-                  <span>Subscription</span>
-                  <span>${total.subscription.toFixed(2)}</span>
+
+                <div className="flex items-center space-x-2">
+                  <span>&times; 1</span>
                 </div>
-                <div className="flex justify-between mt-4 font-bold">
-                  <span>Coupon</span>
-                  <span>${total.coupon.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between mt-4 font-bold">
-                  <span>Shipping Fee</span>
-                  <span>${total.shipping.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between mt-4 font-bold">
-                  <span>Sale Tax</span>
-                  <span>${total.saleTax.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between mt-4 font-bold">
-                  <span>Total Final</span>
-                  <span>${total.final.toFixed(2)}</span>
-                </div>
-              </>
-            )}
+              </div>
+              <div className="flex justify-between mt-4 font-bold">
+                <span>Total</span>
+                <span>${total.origin.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between mt-4 font-bold">
+                <span>Sale Tax</span>
+                <span>${total.saleTax.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between mt-4 font-bold">
+                <span>Total Final</span>
+                <span>${total.final.toFixed(2)}</span>
+              </div>
+            </>
           </div>
         </div>
 
@@ -551,42 +428,6 @@ const Checkout = () => {
             </div>
           </div>
 
-          {/* Coupon Section */}
-          <div className="border rounded-lg shadow-sm mb-6">
-            <div className="p-4 border-b">
-              <h2 className="text-xl font-bold">Coupon Information</h2>
-            </div>
-            <div className="p-4">
-              <form onSubmit={handleSubmitCouponCode} className="flex mb-3">
-                <div>
-                  <input
-                    id="couponCode"
-                    name="couponCode"
-                    placeholder="Code"
-                    className="border rounded-md px-3 py-2"
-                    value={coupon.input}
-                    onChange={(e) =>
-                      setCoupon((prev) => ({ ...prev, input: e.target.value }))
-                    }
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="bg-blue-500 text-white p-2 ml-3 rounded-md hover:bg-blue-600 transition-colors disabled:bg-gray-300"
-                >
-                  Apply
-                </button>
-              </form>
-              <div className="">
-                {coupon.code.trim() !== "" && (
-                  <span className="bg-pink-200 p-2 rounded mr-2 text-md font-bold">
-                    {coupon.code}
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-
           {/* Payment Information Section */}
           <div className="border rounded-lg shadow-sm mb-6">
             <div className="p-4 border-b">
@@ -674,7 +515,6 @@ const Checkout = () => {
                 <button
                   type="submit"
                   className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition-colors disabled:bg-gray-300"
-                  disabled={cartItems.length === 0}
                 >
                   Complete Order
                 </button>

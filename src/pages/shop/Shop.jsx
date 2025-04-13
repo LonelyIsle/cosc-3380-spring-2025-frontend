@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useProduct } from "../context/ProductContext";
-import { useCategory } from "../context/CategoryContext";
+import { useProduct } from "@context/ProductContext";
+import { useCategory } from "@context/CategoryContext";
 
 function Shop() {
   const navigate = useNavigate();

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import SalesBanner from "./components/SalesBanner";
-import UserRoutes from "./routes/UserRoutes";
-import AdminRoutes from "./routes/AdminRoutes";
+import Navbar from "@ui/Navbar";
+import Footer from "@ui/Footer";
+import SalesBanner from "@ui/SalesBanner";
+import UserRoutes from "@routes/UserRoutes";
+import AdminRoutes from "@routes/AdminRoutes";
 
 function RedirectToHome() {
   const navigate = useNavigate();

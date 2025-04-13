@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useCategory } from "../context/CategoryContext";
+import { useCategory } from "@context/CategoryContext";
 
 const CategoryModalUpsert = ({ categoryId = null, onClose }) => {
   const [category, setCategory] = useState({ name: "", description: "" });

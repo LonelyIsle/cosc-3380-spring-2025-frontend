@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useEmployee } from "../context/EmployeeContext";
+import { useEmployee } from "@context/EmployeeContext";
 
 const EmployeePasswordModal = ({ employee, onCancel, onConfirm }) => {
   const [newPassword, setNewPassword] = useState("");

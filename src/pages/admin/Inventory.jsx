@@ -1,8 +1,8 @@
-import { useProduct } from "../context/ProductContext";
+import { useProduct } from "@context/ProductContext";
 import { useState, useEffect } from "react";
-import ProductModalUpsert from "./ProductModalUpsert";
-import DeleteProductModal from "./DeleteProductModal";
-import RestockProductModal from "./RestockProductModal";
+import ProductModalUpsert from "@modal/ProductModalUpsert";
+import DeleteProductModal from "@modal/DeleteProductModal";
+import RestockProductModal from "@modal/RestockProductModal";
 
 const Inventory = () => {
   const { getProductArray, deleteProduct, restockProduct } = useProduct();

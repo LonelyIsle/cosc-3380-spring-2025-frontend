@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useProduct } from "../context/ProductContext";
-import { useCategory } from "../context/CategoryContext";
+import { useProduct } from "@context/ProductContext";
+import { useCategory } from "@context/CategoryContext";
 
 const ProductModalUpsert = ({ productId = null, onClose }) => {
   const [product, setProduct] = useState({});

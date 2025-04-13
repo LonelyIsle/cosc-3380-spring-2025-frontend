@@ -1,19 +1,19 @@
 import { Route, Navigate } from "react-router-dom";
-import Admin from "../pages/Admin";
-import AdminNotification from "../components/AdminNotification";
-import AdminProfile from "../components/AdminProfile";
-import Inventory from "../components/Inventory";
-import Category from "../components/Category";
-import Orders from "../components/Orders";
-import Employee from "../components/Employee";
-import CouponManagement from "../components/CouponManagement";
-import Sales from "../components/Sales";
-import AdminCustomer from "../components/AdminCustomer";
-import AdminProductReport from "../components/AdminProductReport";
-import AdminCouponReport from "../components/AdminCouponReport";
-import AdminCustomerReport from "../components/AdminCustomerReport";
-import AdminConfig from "../components/AdminConfig";
-import Adminlogin from "../pages/Adminlogin";
+import Admin from "@admin/Admin";
+import AdminNotification from "@admin/AdminNotification";
+import AdminProfile from "@admin/AdminProfile";
+import Inventory from "@admin/Inventory";
+import Category from "@admin/Category";
+import Orders from "@admin/Orders";
+import Employee from "@admin/Employee";
+import CouponManagement from "@admin/CouponManagement";
+import Sales from "@admin/Sales";
+import AdminCustomer from "@admin/AdminCustomer";
+import AdminProductReport from "@admin/AdminProductReport";
+import AdminCouponReport from "@admin/AdminCouponReport";
+import AdminCustomerReport from "@admin/AdminCustomerReport";
+import AdminConfig from "@admin/AdminConfig";
+import Adminlogin from "@admin/Adminlogin";
 
 const AdminRoutes = () => (
   <>

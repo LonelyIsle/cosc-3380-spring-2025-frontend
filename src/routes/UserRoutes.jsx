@@ -1,16 +1,14 @@
-import {
-  Route
-} from "react-router-dom";
-import LandingPage from "../pages/LandingPage";
-import Login from "../pages/Login";
-import Fpassword from "../pages/ForgotPassword";
-import Profile from "../pages/Profile";
-import Register from "../pages/Register";
-import Product from "../pages/Product";
-import Shop from "../pages/Shop";
-import Cart from "../pages/Cart";
-import Checkout from "../pages/Checkout";
-import Subscription from "../pages/Subscription";
+import { Route } from "react-router-dom";
+import LandingPage from "@pages/LandingPage";
+import Login from "@auth/Login";
+import Fpassword from "@auth/ForgotPassword";
+import Profile from "@user/Profile";
+import Register from "@auth/Register";
+import Product from "@shop/Product";
+import Shop from "@shop/Shop";
+import Cart from "@shop/Cart";
+import Checkout from "@shop/Checkout";
+import Subscription from "@shop/Subscription";
 
 const UserRoutes = () => (
   <>
