@@ -24,7 +24,12 @@ const ProductReport = () => {
   const [data, setData] = useState([]);
   const [startDate, setStartDate] = useState(1743483600000); // 04/01/2025
   const [endDate, setEndDate] = useState(1745989200000); // 04/30/2025
-  const [emailSeach, setEmailSearch] = useState("");
+  const [codeSearch, setCodeSearch] = useState("");
+  const [typeSearch, setTypeSearch] = useState("");
+  const [startAtSearch, setStartAtSearch] = useState(1743483600000); // 04/01/2025
+  const [endAtSearch, setEndAtSearch] = useState(
+    1745989200000 + 30 * 24 * 60 * 60 * 1000,
+  ); // 05/30/2025
   const [sortKey, setSortKey] = useState("");
 
   useEffect(() => {
@@ -33,7 +38,7 @@ const ProductReport = () => {
 
   const getData = async (_startDate, _endDate) => {
     try {
-      let url = `${import.meta.env.VITE_API_URL}/report/order-customer`;
+      let url = `${import.meta.env.VITE_API_URL}/report/order-coupon`;
       if (_startDate && _endDate) {
         url += `?start_at=${_startDate}&end_at=${_endDate}`;
       }
@@ -44,6 +49,14 @@ const ProductReport = () => {
         },
       });
       let _data = res.data.data;
+      setStartAtSearch(
+        Math.min(..._data.map((d) => new Date(d.coupon_start_at).getTime())) -
+          24 * 60 * 60 * 1000,
+      );
+      setEndAtSearch(
+        Math.max(..._data.map((d) => new Date(d.coupon_end_at).getTime())) +
+          24 * 60 * 60 * 1000,
+      );
       setData(_data);
     } catch (e) {
       alert(e.message);
@@ -52,9 +65,18 @@ const ProductReport = () => {
 
   const filteredData = data
     .filter((d) => {
-      return emailSeach.trim() === ""
-        ? true
-        : d.customer_email.toLowerCase().includes(emailSeach.toLowerCase());
+      let _startAt = new Date(d.coupon_start_at).getTime();
+      let _endAt = new Date(d.coupon_end_at).getTime();
+      return (
+        (codeSearch.trim() === ""
+          ? true
+          : d.coupon_code.toLowerCase().includes(codeSearch.toLowerCase())) &&
+        (typeSearch.trim() === ""
+          ? true
+          : d.coupon_type === parseInt(typeSearch)) &&
+        _endAt <= endAtSearch &&
+        startAtSearch <= _startAt
+      );
     })
     .sort((a, b) => {
       let result = -1;
@@ -63,36 +85,17 @@ const ProductReport = () => {
       }
       let [attr, order] = sortKey.split("-");
       switch (attr) {
-        case "customer_order_no_subscription_count":
-          result =
-            a.customer_order_no_subscription_count -
-            b.customer_order_no_subscription_count;
+        case "coupon_value":
+          result = a.coupon_value - b.coupon_value;
           break;
-        case "customer_order_subscription_count":
-          result =
-            a.customer_order_subscription_count -
-            b.customer_order_subscription_count;
+        case "coupon_order_count":
+          result = a.coupon_order_count - b.coupon_order_count;
           break;
-        case "customer_order_count":
-          result = a.customer_order_count - b.customer_order_count;
+        case "coupon_total_coupon":
+          result = a.coupon_total_coupon - b.coupon_total_coupon;
           break;
-        case "customer_order_subscription_total_subscription":
-          result =
-            a.customer_order_subscription_total_subscription -
-            b.customer_order_subscription_total_subscription;
-          break;
-        case "customer_order_no_subscription_total_final":
-          result =
-            a.customer_order_no_subscription_total_final -
-            b.customer_order_no_subscription_total_final;
-          break;
-        case "customer_order_subscription_total_final":
-          result =
-            a.customer_order_subscription_total_final -
-            b.customer_order_subscription_total_final;
-          break;
-        case "customer_order_total_final":
-          result = a.customer_order_total_final - b.customer_order_total_final;
+        case "coupon_total_final":
+          result = a.coupon_total_final - b.coupon_total_final;
           break;
         default:
           order = "asc";
@@ -102,32 +105,16 @@ const ProductReport = () => {
     });
 
   const chartData = {
-    labels: filteredData.map((d) => d.customer_email.split("@")[0]),
+    labels: filteredData.map((d) => d.coupon_code),
     datasets: [
       {
-        label: "Total Sub",
-        data: filteredData.map(
-          (d) => d.customer_order_subscription_total_subscription,
-        ),
-        backgroundColor: "rgba(75, 192, 192, 1)",
-      },
-      {
-        label: "Total Sale (No Sub)",
-        data: filteredData.map(
-          (d) => d.customer_order_no_subscription_total_final,
-        ),
-        backgroundColor: "rgba(255, 159, 64, 1)",
-      },
-      {
-        label: "Total Sale (Sub)",
-        data: filteredData.map(
-          (d) => d.customer_order_subscription_total_final,
-        ),
+        label: "Total Value",
+        data: filteredData.map((d) => d.coupon_total_coupon),
         backgroundColor: "rgba(53, 162, 235, 1)",
       },
       {
         label: "Total Sale",
-        data: filteredData.map((d) => d.customer_order_total_final),
+        data: filteredData.map((d) => d.coupon_total_final),
         backgroundColor: "rgba(255, 99, 132, 1)",
       },
     ],
@@ -145,7 +132,7 @@ const ProductReport = () => {
   return (
     <div className="p-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Customer Report</h2>
+        <h2 className="text-2xl font-bold">Coupon Report</h2>
       </div>
       <Bar data={chartData} options={chartOptions} />
       <div className="flex ml-0 mr-0 mb-1">
@@ -178,57 +165,60 @@ const ProductReport = () => {
             className="block border pt-2 pb-2 rounded bg-white"
           >
             <option value="">Sort By</option>
-            <option value="customer_order_no_subscription_count-asc">
-              Total Order (No Sub) Asc
-            </option>
-            <option value="customer_order_no_subscription_count-desc">
-              Total Order (No Sub) Desc
-            </option>
-            <option value="customer_order_subscription_count-asc">
-              Total Order (Sub) Asc
-            </option>
-            <option value="customer_order_subscription_count-desc">
-              Total Order (Sub) Desc
-            </option>
-            <option value="customer_order_count-asc">Total Order Asc</option>
-            <option value="customer_order_count-desc">Total Order Desc</option>
-            <option value="customer_order_subscription_total_subscription-asc">
-              Total Sub Asc
-            </option>
-            <option value="customer_order_subscription_total_subscription-desc">
-              Total Sub Desc
-            </option>
-            <option value="customer_order_no_subscription_total_final-asc">
-              Total Sale (No Sub) Asc
-            </option>
-            <option value="customer_order_no_subscription_total_final-desc">
-              Total Sale (No Sub) Desc
-            </option>
-            <option value="customer_order_subscription_total_final-asc">
-              Total Sale (Sub) Asc
-            </option>
-            <option value="customer_order_subscription_total_final-desc">
-              Total Sale (Sub) Desc
-            </option>
-            <option value="customer_order_total_final-asc">
-              Total Sale Asc
-            </option>
-            <option value="customer_order_total_final-desc">
-              Total Sale Desc
-            </option>
+            <option value="coupon_value-asc">Value Asc</option>
+            <option value="coupon_value-desc">Value Desc</option>
+            <option value="coupon_order_count-asc">Total Order Asc</option>
+            <option value="coupon_order_count-desc">Total Order Desc</option>
+            <option value="coupon_total_coupon-asc">Total Value Asc</option>
+            <option value="coupon_total_coupon-desc">Total Value Desc</option>
+            <option value="coupon_total_final-asc">Total Sale Asc</option>
+            <option value="coupon_total_final-desc">Total Sale Desc</option>
           </select>
         </div>
       </div>
       <div className="flex ml-0 mr-0 mb-3">
         <div>
-          <label className="block font-semibold">Email</label>
+          <label className="block font-semibold">Code</label>
           <input
             className="block p-2 border rounded bg-white text-black"
             type="text"
-            name="email"
-            placeholder="Email"
-            value={emailSeach}
-            onChange={(e) => setEmailSearch(e.target.value)}
+            name="code"
+            placeholder="Code"
+            value={codeSearch}
+            onChange={(e) => setCodeSearch(e.target.value)}
+          />
+        </div>
+        <div className="ml-4">
+          <label className="block font-semibold">Type</label>
+          <select
+            onChange={(e) => setTypeSearch(e.target.value)}
+            className="block border pt-2 pb-2 rounded bg-white"
+          >
+            <option value="">Type</option>
+            <option value="0">%</option>
+            <option value="1">$</option>
+          </select>
+        </div>
+        <div className="ml-4">
+          <label className="block font-semibold">Start At</label>
+          <input
+            className="block p-2 border rounded bg-white text-black"
+            type="date"
+            name="start-at"
+            placeholder="Start At"
+            value={new Date(startAtSearch).toISOString().substring(0, 10)}
+            onChange={(e) => setStartAtSearch(e.target.valueAsNumber)}
+          />
+        </div>
+        <div className="ml-4">
+          <label className="block font-semibold">End At</label>
+          <input
+            className="block p-2 border rounded bg-white text-black"
+            type="date"
+            name="end-at"
+            placeholder="End At"
+            value={new Date(endAtSearch).toISOString().substring(0, 10)}
+            onChange={(e) => setEndAtSearch(e.target.valueAsNumber)}
           />
         </div>
       </div>
@@ -236,13 +226,13 @@ const ProductReport = () => {
         <thead>
           <tr className="bg-gray-400 border-black text-black">
             <th className="p-2 text-center border">ID</th>
-            <th className="p-2 text-center border">Email</th>
-            <th className="p-2 text-center border">Total Order (No Sub)</th>
-            <th className="p-2 text-center border">Total Order (Sub)</th>
+            <th className="p-2 text-center border">Code</th>
+            <th className="p-2 text-center border">Value</th>
+            <th className="p-2 text-center border">Type</th>
+            <th className="p-2 text-center border">Start At</th>
+            <th className="p-2 text-center border">End At</th>
             <th className="p-2 text-center border">Total Order</th>
-            <th className="p-2 text-center border">Total Sub</th>
-            <th className="p-2 text-center border">Total Sale (No Sub)</th>
-            <th className="p-2 text-center border">Total Sale (Sub)</th>
+            <th className="p-2 text-center border">Total Value</th>
             <th className="p-2 text-center border">Total Sale</th>
           </tr>
         </thead>
@@ -250,21 +240,27 @@ const ProductReport = () => {
           {Array.isArray(filteredData) && filteredData.length > 0 ? (
             filteredData.map((d) => (
               <tr key={d.coupon_id} className="bg-gray-100">
-                <td className="p-2 text-center border">{d.customer_id}</td>
-                <td className="p-2 text-center border">{d.customer_email}</td>
+                <td className="p-2 text-center border">{d.coupon_id}</td>
+                <td className="p-2 text-center border">{d.coupon_code}</td>
                 <td className="p-2 text-center border">
-                  {d.customer_order_no_subscription_count}
+                  {d.coupon_type === 0
+                    ? `${d.coupon_value * 100}%`
+                    : `$${d.coupon_value.toFixed(2)}`}
                 </td>
                 <td className="p-2 text-center border">
-                  {d.customer_order_subscription_count}
+                  {d.coupon_type === 0 ? "%" : "$"}
                 </td>
                 <td className="p-2 text-center border">
-                  {d.customer_order_count}
+                  {new Date(d.coupon_start_at).toLocaleDateString("en-US")}
                 </td>
-                <td className="p-2 text-center border">{`$${d.customer_order_subscription_total_subscription.toFixed(2)}`}</td>
-                <td className="p-2 text-center border">{`$${d.customer_order_no_subscription_total_final.toFixed(2)}`}</td>
-                <td className="p-2 text-center border">{`$${d.customer_order_subscription_total_final.toFixed(2)}`}</td>
-                <td className="p-2 text-center border">{`$${d.customer_order_total_final.toFixed(2)}`}</td>
+                <td className="p-2 text-center border">
+                  {new Date(d.coupon_end_at).toLocaleDateString("en-US")}
+                </td>
+                <td className="p-2 text-center border">
+                  {d.coupon_order_count}
+                </td>
+                <td className="p-2 text-center border">{`$${d.coupon_total_coupon.toFixed(2)}`}</td>
+                <td className="p-2 text-center border">{`$${d.coupon_total_final.toFixed(2)}`}</td>
               </tr>
             ))
           ) : (
