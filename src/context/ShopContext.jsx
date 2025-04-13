@@ -103,6 +103,73 @@ export function ShopProvider({ children }) {
     }
   }, [cartItems, cartLoaded]);
 
+  ////////////////////////////
+  // CART CONTEXT FUNCTIONS //
+  ////////////////////////////
+
+  const getCartAmount = () => {
+    return cartItems
+      .reduce((total, cartItem) => {
+        const product = productMap.get(cartItem.id);
+        return product ? total + product.price * cartItem.quantity : total;
+      }, 0)
+      .toFixed(2);
+  };
+
+  const getCartQuantity = () =>
+    cartLoaded
+      ? cartItems.reduce((total, item) => total + item.quantity, 0)
+      : 0;
+
+  const addToCart = (productId, quantity = 1) => {
+    setCartItems((prev) => {
+      const existing = prev.find((item) => item.id === productId);
+      const product = productMap.get(productId);
+
+      if (!product || typeof product.quantity !== "number") {
+        return prev;
+      }
+
+      if (existing) {
+        const newQuantity = existing.quantity + quantity;
+        const limitedQuantity = Math.min(newQuantity, product.quantity);
+        return prev.map((item) =>
+          item.id === productId ? { ...item, quantity: limitedQuantity } : item,
+        );
+      }
+
+      const limitedQuantity = Math.min(quantity, product.quantity);
+      if (limitedQuantity > 0) {
+        return [...prev, { id: productId, quantity: limitedQuantity }];
+      }
+
+      return prev;
+    });
+  };
+
+  const updateQuantity = (id, delta) => {
+    setCartItems((prev) => {
+      const product = productMap.get(id);
+      if (!product || typeof product.quantity !== "number") {
+        return prev;
+      }
+      return prev.map((item) => {
+        if (item.id === id) {
+          const newQuantity = Math.max(1, item.quantity + delta);
+          const limitedQuantity = Math.min(newQuantity, product.quantity);
+          return { ...item, quantity: limitedQuantity };
+        }
+        return item;
+      });
+    });
+  };
+
+  const removeItem = (id) => {
+    setCartItems((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const clearCart = () => setCartItems([]);
+
   ///////////////////////////////
   // PRODUCT CONTEXT FUNCTIONS //
   ///////////////////////////////
@@ -293,73 +360,6 @@ export function ShopProvider({ children }) {
       throw err;
     }
   };
-
-  ////////////////////////////
-  // CART CONTEXT FUNCTIONS //
-  ////////////////////////////
-
-  const getCartAmount = () => {
-    return cartItems
-      .reduce((total, cartItem) => {
-        const product = productMap.get(cartItem.id);
-        return product ? total + product.price * cartItem.quantity : total;
-      }, 0)
-      .toFixed(2);
-  };
-
-  const getCartQuantity = () =>
-    cartLoaded
-      ? cartItems.reduce((total, item) => total + item.quantity, 0)
-      : 0;
-
-  const addToCart = (productId, quantity = 1) => {
-    setCartItems((prev) => {
-      const existing = prev.find((item) => item.id === productId);
-      const product = productMap.get(productId);
-
-      if (!product || typeof product.quantity !== "number") {
-        return prev;
-      }
-
-      if (existing) {
-        const newQuantity = existing.quantity + quantity;
-        const limitedQuantity = Math.min(newQuantity, product.quantity);
-        return prev.map((item) =>
-          item.id === productId ? { ...item, quantity: limitedQuantity } : item,
-        );
-      }
-
-      const limitedQuantity = Math.min(quantity, product.quantity);
-      if (limitedQuantity > 0) {
-        return [...prev, { id: productId, quantity: limitedQuantity }];
-      }
-
-      return prev;
-    });
-  };
-
-  const updateQuantity = (id, delta) => {
-    setCartItems((prev) => {
-      const product = productMap.get(id);
-      if (!product || typeof product.quantity !== "number") {
-        return prev;
-      }
-      return prev.map((item) => {
-        if (item.id === id) {
-          const newQuantity = Math.max(1, item.quantity + delta);
-          const limitedQuantity = Math.min(newQuantity, product.quantity);
-          return { ...item, quantity: limitedQuantity };
-        }
-        return item;
-      });
-    });
-  };
-
-  const removeItem = (id) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
-  };
-
-  const clearCart = () => setCartItems([]);
 
   ///////////////////////////////
   // CATEGORY CONTEXT FUNCTIONS //
