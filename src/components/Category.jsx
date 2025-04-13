@@ -1,9 +1,48 @@
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { useShop } from "../context/ShopContext";
+import CategoryModalUpsert from "./CategoryModalUpsert";
+import CategoryModalDelete from "./CategoryModalDelete";
 
 const Config = () => {
-  const { categories } = useShop();
+  const { categories, categoriesLoaded } = useShop();
+  // using categoriesLoaded for loading categories pages. will implement
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState(null);
+  const [createCategoryTarget, setCreateCategoryTarget] = useState(null);
+  const [editCategoryTarget, setEditCategoryTarget] = useState(null);
+
+  const openEditModal = (productId = null) => {
+    setSelectedProductId(productId);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setSelectedProductId(null);
+  };
+
+  const formatDate = (date) => {
+    try {
+      return format(new Date(date), "MMM dd, yyyy - h:mm a");
+    } catch {
+      return "N/A";
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") closeModal();
+    };
+
+    if (modalOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [modalOpen]);
 
   return (
     <div>
@@ -11,7 +50,7 @@ const Config = () => {
       <div className="flex justify-end mb-2">
         <button
           className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-4 rounded"
-          onClick={() => alert("Create new category functionality coming soon")}
+          onClick={() => openEditModal(null)}
         >
           Create New Category
         </button>
@@ -35,16 +74,10 @@ const Config = () => {
                 <td className="p-2 border">{category.name}</td>
                 <td className="p-2 border">{category.description}</td>
                 <td className="p-2 border">
-                  {format(
-                    new Date(category.created_at),
-                    "MMM dd, yyyy - h:mm a",
-                  )}
+                  {formatDate(category.created_at)}
                 </td>
                 <td className="p-2 border">
-                  {format(
-                    new Date(category.updated_at),
-                    "MMM dd, yyyy - h:mm a",
-                  )}
+                  {formatDate(category.updated_at)}
                 </td>
                 <td className="p-2 border">
                   <button
@@ -67,6 +100,12 @@ const Config = () => {
           )}
         </tbody>
       </table>
+      {modalOpen && (
+        <CategoryModalUpsert
+          productId={selectedProductId}
+          onClose={closeModal}
+        />
+      )}
     </div>
   );
 };
