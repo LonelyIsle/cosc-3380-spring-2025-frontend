@@ -21,7 +21,6 @@ const Orders = () => {
             headers: {
               Authorization: token,
             },
-            credentials: "include",
           },
         );
         if (!response.ok) throw new Error("Failed to fetch orders");
