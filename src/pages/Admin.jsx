@@ -57,7 +57,7 @@ const Admin = () => {
         {activeSection === "Category" && <Category />}
         {activeSection === "orders" && <Orders />}
         {activeSection === "employees" && <Employee />}
-        {activeSection === "Coupon Management" && <CouponManagement />}
+        {activeSection === "Coupon" && <CouponManagement />}
         {activeSection === "Product Report" && <ProductReport />}
         {activeSection === "Coupon Report" && <CouponReport />}
         {activeSection === "Customer Report" && <CustomerReport />}
