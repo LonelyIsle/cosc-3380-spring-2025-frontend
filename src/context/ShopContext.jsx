@@ -105,6 +105,26 @@ export function ShopProvider({ children }) {
     }
   }, [cartItems, cartLoaded]);
 
+  // Sync cart with updated product list
+  useEffect(() => {
+    if (!cartLoaded || products.length === 0) return;
+
+    setCartItems((prevCart) => {
+      const updatedCart = prevCart
+        .map((item) => {
+          const product = productMap.get(item.id);
+          if (!product) return null; // product no longer exists (deleted)
+          const quantity = Math.min(item.quantity, product.quantity);
+          return { id: item.id, quantity };
+        })
+        .filter(Boolean); // remove nulls
+
+      // Save to localStorage
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+      return updatedCart;
+    });
+  }, [products, cartLoaded]);
+
   ////////////////////////////
   // CART CONTEXT FUNCTIONS //
   ////////////////////////////
