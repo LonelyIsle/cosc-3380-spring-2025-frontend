@@ -1,113 +1,137 @@
 import { useEffect, useState } from "react";
-import { format } from "date-fns";
 import { useShop } from "../context/ShopContext";
 import CategoryModalUpsert from "./CategoryModalUpsert";
 import CategoryModalDelete from "./CategoryModalDelete";
 
-const Config = () => {
-  const { categories, categoriesLoaded } = useShop();
-  // using categoriesLoaded for loading categories pages. will implement
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedProductId, setSelectedProductId] = useState(null);
-  const [createCategoryTarget, setCreateCategoryTarget] = useState(null);
-  const [editCategoryTarget, setEditCategoryTarget] = useState(null);
+const Category = () => {
+  const { categories, deleteCategory } = useShop();
 
-  const openEditModal = (productId = null) => {
-    setSelectedProductId(productId);
-    setModalOpen(true);
+  const [upsertModalOpen, setUpsertModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const openUpsertModal = (categoryId = null) => {
+    setSelectedCategoryId(categoryId);
+    setUpsertModalOpen(true);
   };
 
-  const closeModal = () => {
-    setModalOpen(false);
-    setSelectedProductId(null);
+  const openDeleteModal = (categoryId) => {
+    setSelectedCategoryId(categoryId);
+    setDeleteModalOpen(true);
   };
 
-  const formatDate = (date) => {
-    try {
-      return format(new Date(date), "MMM dd, yyyy - h:mm a");
-    } catch {
-      return "N/A";
-    }
+  const closeModals = () => {
+    setSelectedCategoryId(null);
+    setUpsertModalOpen(false);
+    setDeleteModalOpen(false);
   };
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === "Escape") closeModal();
+      if (e.key === "Escape") closeModals();
     };
 
-    if (modalOpen) {
+    if (upsertModalOpen || deleteModalOpen) {
       window.addEventListener("keydown", handleKeyDown);
     }
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [modalOpen]);
+  }, [upsertModalOpen, deleteModalOpen]);
+
+  const filteredCategories = categories.filter((cat) =>
+    cat.name.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
+
+  const selectedCategory = categories.find(
+    (cat) => cat.id === selectedCategoryId,
+  );
 
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-4">Categories</h2>
-      <div className="flex justify-end mb-2">
+    <div className="p-4">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold mb-4">Category Management</h2>
         <button
-          className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-4 rounded"
-          onClick={() => openEditModal(null)}
+          className="ml-2 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+          onClick={() => openUpsertModal(null)}
         >
-          Create New Category
+          + Add New Category
         </button>
       </div>
+
+      <div className="flex justify-start items-center mb-4">
+        <input
+          type="text"
+          placeholder="Search by name..."
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="border p-2 rounded w-1/3"
+        />
+      </div>
+
       <table className="w-full border border-black bg-gray-200">
         <thead>
-          <tr className="bg-gray-400 text-white">
-            <th className="p-2 border">ID</th>
-            <th className="p-2 border">Name</th>
-            <th className="p-2 border">Description</th>
-            <th className="p-2 border">Created At</th>
-            <th className="p-2 border">Updated At</th>
-            <th className="p-2 border">Manage</th>
+          <tr className="bg-gray-400 border-black text-black">
+            <th className="p-2 text-center border">ID</th>
+            <th className="p-2 text-center border">Name</th>
+            <th className="p-2 text-center border">Description</th>
+            <th className="p-2 text-center border">Manage</th>
           </tr>
         </thead>
         <tbody>
-          {Array.isArray(categories) && categories.length > 0 ? (
-            categories.map((category) => (
-              <tr key={category.id} className="bg-gray-100">
-                <td className="p-2 border">{category.id}</td>
-                <td className="p-2 border">{category.name}</td>
-                <td className="p-2 border">{category.description}</td>
-                <td className="p-2 border">
-                  {formatDate(category.created_at)}
-                </td>
-                <td className="p-2 border">
-                  {formatDate(category.updated_at)}
-                </td>
-                <td className="p-2 border">
-                  <button
-                    className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
-                    onClick={() =>
-                      (window.location.href = `/edit-category/${category.id}`)
-                    }
-                  >
-                    Edit
-                  </button>
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="6" className="p-2 text-center text-gray-500">
-                No categories found.
+          {filteredCategories.map((cat, index) => (
+            <tr
+              key={cat.id}
+              className={index % 2 === 0 ? "bg-gray-300" : "bg-gray-100"}
+            >
+              <td className="p-2 text-center border">{cat.id}</td>
+              <td className="p-2 text-center border">{cat.name}</td>
+              <td className="p-2 text-center border">{cat.description}</td>
+              <td className="p-2 text-center border space-x-2">
+                <button
+                  className="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                  onClick={() => openUpsertModal(cat.id)}
+                >
+                  Edit
+                </button>
+                <button
+                  className="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+                  onClick={() => openDeleteModal(cat.id)}
+                >
+                  Delete
+                </button>
               </td>
             </tr>
-          )}
+          ))}
         </tbody>
       </table>
-      {modalOpen && (
+
+      {upsertModalOpen && (
         <CategoryModalUpsert
-          productId={selectedProductId}
-          onClose={closeModal}
+          categoryId={selectedCategoryId}
+          onClose={closeModals}
+        />
+      )}
+
+      {deleteModalOpen && selectedCategory && (
+        <CategoryModalDelete
+          category={selectedCategory}
+          onCancel={closeModals}
+          onConfirm={async () => {
+            try {
+              await deleteCategory(selectedCategory.id);
+              closeModals();
+            } catch (err) {
+              console.error("Failed to delete category:", err);
+              alert("Failed to delete category.");
+            }
+          }}
         />
       )}
     </div>
   );
 };
 
-export default Config;
+export default Category;
