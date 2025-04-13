@@ -6,6 +6,7 @@ import Config from "../components/Config";
 import ProductReport from "../components/ProductReport";
 import CouponReport from "../components/CouponReport";
 import CustomerReport from "../components/CustomerReport";
+import Notification from "../components/Notification";
 
 const mockOrders = [
   { id: 101, customer: "Customer A", tracking_info: "Shipped", employeeId: 2 },
@@ -25,7 +26,7 @@ const mockOrders = [
 ];
 
 const Admin = () => {
-  const [activeSection, setActiveSection] = useState("orders");
+  const [activeSection, setActiveSection] = useState("Notification");
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
@@ -40,7 +41,7 @@ const Admin = () => {
       <div className="w-64 bg-gray-800 text-white p-5 flex flex-col">
         <h2 className="text-2xl font-bold mb-6">Admin Panel</h2>
         <nav>
-          {["orders", "Product", "employees", "Product Report", "Coupon Report", "Customer Report", "Config", "sales"].map(
+          {["Notification", "orders", "Product", "employees", "Product Report", "Coupon Report", "Customer Report", "Config", "sales"].map(
             (section) => (
               <button
                 key={section}
@@ -110,6 +111,7 @@ const Admin = () => {
         {activeSection === "Customer Report" && <CustomerReport />}
         {activeSection === "Config" && <Config />}
         {activeSection === "sales" && <Sales />}
+        {activeSection === "Notification" && <Notification />}
       </div>
     </div>
   );
