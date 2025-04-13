@@ -109,7 +109,9 @@ const Inventory = () => {
                 ${item.price.toFixed(2)}
               </td>
               <td className="p-2 text-center border">
-                {item.category ? item.category.join(", ") : "N/A"}
+                {item.category && item.category.length > 0
+                  ? item.category.join(", ")
+                  : "N/A"}
               </td>
               <td className="p-2 text-center border">
                 <button

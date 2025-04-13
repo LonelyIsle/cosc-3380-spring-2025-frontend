@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useShop } from "../context/ShopContext";
+
 const ProductModalUpsert = ({ productId = null, onClose }) => {
   const [product, setProduct] = useState({});
   const [loading, setLoading] = useState(false);
@@ -28,7 +29,7 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
       };
       fetchProduct();
     }
-  }, [productId, getProduct]);
+  }, [productId]);
   // Convert product categories from names to full objects if needed
   useEffect(() => {
     if (

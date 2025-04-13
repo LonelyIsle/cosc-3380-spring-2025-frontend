@@ -89,6 +89,8 @@ export function ShopProvider({ children }) {
   // Build a product map for quick lookup
   const productMap = new Map(products.map((p) => [p.id, p]));
 
+  const categoryMap = new Map(categories.map((c) => [c.id, c]));
+
   // Load cart from localStorage on initial app render
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -386,8 +388,11 @@ export function ShopProvider({ children }) {
       setCategories((prev) => [
         ...prev,
         {
+          id: newCategory.id,
           name: newCategory.name,
           description: newCategory.description,
+          created_at: newCategory.created_at,
+          updated_at: newCategory.updated_at,
         },
       ]);
 
@@ -420,6 +425,7 @@ export function ShopProvider({ children }) {
                 id: updatedCategory.id,
                 name: updatedCategory.name,
                 description: updatedCategory.description,
+                updated_at: updatedCategory.updated_at,
               }
             : c,
         ),
@@ -436,29 +442,32 @@ export function ShopProvider({ children }) {
   };
 
   const getCategory = async (id) => {
-    try {
-      const url = `${import.meta.env.VITE_API_URL}/category/${id}`;
-      const token = localStorage.getItem("token");
-      const res = await axios.get(url, {
-        headers: {
-          Authorization: token,
-        },
-      });
-      return res.data.data;
-    } catch (err) {
-      console.error(
-        "Failed to fetch category:",
-        err.response?.data || err.message,
-      );
-      throw err;
-    }
+    // try {
+    //   const url = `${import.meta.env.VITE_API_URL}/category/${id}`;
+    //   const token = localStorage.getItem("token");
+    //   const res = await axios.get(url, {
+    //     headers: {
+    //       Authorization: token,
+    //     },
+    //   });
+    //   return res.data.data;
+    // } catch (err) {
+    //   console.error(
+    //     "Failed to fetch category:",
+    //     err.response?.data || err.message,
+    //   );
+    //   throw err;
+    // }
+
+    // Switched to this method for a quick lookup time..
+    return categories.find((c) => c.id === id);
   };
 
   const deleteCategory = async (id) => {
     try {
       const url = `${import.meta.env.VITE_API_URL}/category/${id}`;
       const token = localStorage.getItem("token");
-      const res = await axios.get(url, {
+      await axios.delete(url, {
         headers: {
           Authorization: token,
         },
