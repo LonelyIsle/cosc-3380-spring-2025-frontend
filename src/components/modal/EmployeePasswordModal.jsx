@@ -23,7 +23,11 @@ const EmployeePasswordModal = ({ employee, onCancel, onConfirm }) => {
       onConfirm(); // Close modal on success
     } catch (err) {
       console.error("Failed to update password:", err);
-      alert("Failed to update password.");
+      if (err.response) {
+        alert(err.response.data.message); 
+      } else {
+        alert("Failed to update password.");
+      }
     } finally {
       setLoading(false);
     }

@@ -26,7 +26,7 @@ const Admin = () => {
         "config",
       ]);
     } else {
-      setItems(["profile", "product", "category", "order"]);
+      setItems(["notification", "profile", "product", "category", "order"]);
     }
   }, []);
 

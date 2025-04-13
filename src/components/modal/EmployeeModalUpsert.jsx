@@ -62,7 +62,11 @@ const EmployeeModalUpsert = ({ employeeId = null, onClose }) => {
       onClose();
     } catch (err) {
       console.error("Submit failed:", err);
-      alert("Operation failed. Please try again.");
+      if (err.response) {
+        alert(err.response.data.message); 
+      } else {
+        alert("Operation failed. Please try again.");
+      }
     }
   };
 
