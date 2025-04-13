@@ -14,6 +14,9 @@ export function ShopProvider({ children }) {
   const [categories, setCategories] = useState([]);
   const [categoriesLoaded, setCategoriesLoaded] = useState(false);
 
+  const userId = JSON.parse(localStorage.getItem("user"))?.id || "guest";
+  const CART_KEY = `cart-${userId}`;
+
   // Fetch products based on category filter
   const fetchProducts = async (categoryIds = []) => {
     setProductsLoaded(false);
@@ -89,21 +92,19 @@ export function ShopProvider({ children }) {
   // Build a product map for quick lookup
   const productMap = new Map(products.map((p) => [p.id, p]));
 
-  const categoryMap = new Map(categories.map((c) => [c.id, c]));
-
   // Load cart from localStorage on initial app render
   useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    const storedCart = JSON.parse(localStorage.getItem(CART_KEY)) || [];
     setCartItems(storedCart);
     setCartLoaded(true);
-  }, []);
+  }, [CART_KEY]);
 
   // Update localStorage when cartItems change
   useEffect(() => {
     if (cartLoaded) {
-      localStorage.setItem("cart", JSON.stringify(cartItems));
+      localStorage.setItem(CART_KEY, JSON.stringify(cartItems));
     }
-  }, [cartItems, cartLoaded]);
+  }, [cartItems, cartLoaded, CART_KEY]);
 
   // Sync cart with updated product list
   useEffect(() => {
@@ -113,17 +114,17 @@ export function ShopProvider({ children }) {
       const updatedCart = prevCart
         .map((item) => {
           const product = productMap.get(item.id);
-          if (!product) return null; // product no longer exists (deleted)
+          if (!product) return null;
           const quantity = Math.min(item.quantity, product.quantity);
           return { id: item.id, quantity };
         })
-        .filter(Boolean); // remove nulls
+        .filter(Boolean);
 
-      // Save to localStorage
-      localStorage.setItem("cart", JSON.stringify(updatedCart));
+      // Save to localStorage using the dynamic CART_KEY
+      localStorage.setItem(CART_KEY, JSON.stringify(updatedCart));
       return updatedCart;
     });
-  }, [products, cartLoaded]);
+  }, [products, cartLoaded, CART_KEY]);
 
   ////////////////////////////
   // CART CONTEXT FUNCTIONS //
