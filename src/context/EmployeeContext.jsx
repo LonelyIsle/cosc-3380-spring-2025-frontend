@@ -61,14 +61,15 @@ export function EmployeeProvider({ children }) {
   // 2. GET /employee/:id - Get a single employee's details
   const getEmployeeById = async (id) => {
     try {
-      const url = `${import.meta.env.VITE_API_URL}/employee/${id}`;
-      const token = getToken();
-      const res = await axios.get(url, {
-        headers: {
-          Authorization: token,
-        },
-      });
-      return res.data.data;
+      // const url = `${import.meta.env.VITE_API_URL}/employee/${id}`;
+      // const token = getToken();
+      // const res = await axios.get(url, {
+      //   headers: {
+      //     Authorization: token,
+      //   },
+      // });
+      // return res.data.data;
+      return employees.find((emp) => emp.id === id);
     } catch (err) {
       console.error(
         "Failed to fetch employee:",
@@ -110,8 +111,26 @@ export function EmployeeProvider({ children }) {
         },
       });
       const newEmployee = res.data.data;
+
+      console.log(newEmployee);
       // Update local state by adding the new employee
-      setEmployees((prev) => [...prev, newEmployee]);
+      const formatEmployee = (emp) => ({
+        id: emp.id,
+        first_name: emp.first_name || "",
+        middle_name: emp.middle_name || "",
+        last_name: emp.last_name || "",
+        email: emp.email || "",
+        hourly_rate: emp.hourly_rate || 0,
+        role: emp.role || 0,
+        created_at: emp.created_at,
+        updated_at: emp.updated_at,
+        deleted_at: emp.deleted_at,
+        is_deleted: emp.is_deleted || 0,
+      });
+
+      const formattedEmployee = formatEmployee(res);
+      setEmployees((prev) => [...prev, formattedEmployee]);
+
       return newEmployee;
     } catch (err) {
       console.error(
