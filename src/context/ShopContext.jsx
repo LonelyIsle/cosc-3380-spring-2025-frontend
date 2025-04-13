@@ -78,24 +78,21 @@ export function ShopProvider({ children }) {
   ///////////////////////////////
   // PRODUCT CONTEXT FUNCTIONS //
   ///////////////////////////////
+
+  // Get array of all products
   const getProductArray = () => products;
+
+  // Get a single product by ID
   const getProduct = (id) => {
     return products.find((p) => p.id === parseInt(id, 10));
   };
 
-  // Update selected categories (for filtering products, if needed)
-  const updateSelectedCategories = (categoryIds) => {
-    setSelectedCategoryIds(categoryIds);
-  };
-
   // POST request to add a new product
-
   const addProduct = async (productData) => {
     try {
       const url = `${import.meta.env.VITE_API_URL}/product`;
       const token = localStorage.getItem("token");
 
-      console.log("Token:", token);
       const res = await axios.post(url, productData, {
         headers: {
           Authorization: token,
@@ -130,8 +127,8 @@ export function ShopProvider({ children }) {
       throw err;
     }
   };
-  // PATCH request to update an existing product
 
+  // PATCH request to update an existing product
   const updateProduct = async (id, productData) => {
     try {
       const url = `${import.meta.env.VITE_API_URL}/product/${id}`;
@@ -175,7 +172,6 @@ export function ShopProvider({ children }) {
   };
 
   // PATCH request to update an existing product image
-
   const uploadProductImage = async (productId, file) => {
     if (!file) return;
 
@@ -220,12 +216,9 @@ export function ShopProvider({ children }) {
   };
 
   // DELETE request to delete an existing product
-
   const deleteProduct = async (id) => {
     const url = `${import.meta.env.VITE_API_URL}/product/${id}`;
     const token = localStorage.getItem("token");
-
-    console.log(url);
 
     try {
       await axios.delete(url, {
@@ -245,7 +238,6 @@ export function ShopProvider({ children }) {
   };
 
   // PATCH request to add/restock products
-
   const restockProduct = async (id, quantity) => {
     const url = `${import.meta.env.VITE_API_URL}/product/${id}/restock`;
     const token = localStorage.getItem("token");
@@ -277,6 +269,7 @@ export function ShopProvider({ children }) {
   ////////////////////////////
   // CART CONTEXT FUNCTIONS //
   ////////////////////////////
+
   const getCartAmount = () => {
     return cartItems
       .reduce((total, cartItem) => {
@@ -340,33 +333,13 @@ export function ShopProvider({ children }) {
 
   const clearCart = () => setCartItems([]);
 
-  // Fetch and store categories globally on first render
-  useEffect(() => {
-    const fetchCategories = async () => {
-      const url = `${import.meta.env.VITE_API_URL}/category`;
-      try {
-        const res = await axios.get(url);
-        const mappedCategories = res.data.data.rows
-          .filter((p) => p.is_deleted !== 1)
-          .map((p) => ({
-            id: p.id,
-            name: p.name,
-            description: p.description,
-            created_at: p.created_at,
-            updated_at: p.updated_at,
-          }));
-        setCategories(mappedCategories);
-      } catch (err) {
-        console.error(
-          "Failed to fetch categories:",
-          err.response?.data || err.message,
-        );
-      } finally {
-        setCategoriesLoaded(true);
-      }
-    };
-    fetchCategories();
-  }, []);
+  ///////////////////////////////
+  // CATEGORY CONTEXT FUNCTIONS //
+  ///////////////////////////////
+
+  const updateSelectedCategories = (categoryIds) => {
+    setSelectedCategoryIds(categoryIds);
+  };
 
   return (
     <ShopContext.Provider
