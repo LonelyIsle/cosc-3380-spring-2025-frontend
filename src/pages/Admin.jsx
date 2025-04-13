@@ -44,7 +44,7 @@ const Admin = () => {
         {/* Added overflow-y-auto to enable vertical scrolling in the main content */}
         {activeSection === "Product" && <Inventory />}
         {activeSection === "Category" && <Category />}
-        {activeSection === "Orders" && <Orders />}
+        {activeSection === "orders" && <Orders />}
         {activeSection === "employees" && <Employee />}
         {activeSection === "Product Report" && <ProductReport />}
         {activeSection === "Coupon Report" && <CouponReport />}
