@@ -9,6 +9,7 @@ import CustomerReport from "../components/CustomerReport";
 import Orders from "../components/Orders.jsx";
 import Category from "../components/Category";
 import Notification from "../components/Notification";
+import AdminProfile from "../components/AdminProfile";
 
 
 const Admin = () => {
@@ -23,7 +24,7 @@ const Admin = () => {
       <div className="w-64 bg-gray-800 text-white p-5 flex flex-col">
         <h2 className="text-2xl font-bold mb-6">Admin Panel</h2>
         <nav>
-          {["Notification", "orders", "Product", "Category", "employees", "Product Report", "Coupon Report", "Customer Report", "Config", "sales"].map(
+          {["Notification", "Profile", "orders", "Product", "Category", "employees", "Product Report", "Coupon Report", "Customer Report", "Config", "sales"].map(
             (section) => (
               <button
                 key={section}
@@ -43,6 +44,7 @@ const Admin = () => {
         {" "}
         {/* Added overflow-y-auto to enable vertical scrolling in the main content */}
         {activeSection === "Product" && <Inventory />}
+        {activeSection === "Profile" && <AdminProfile />}
         {activeSection === "Category" && <Category />}
         {activeSection === "orders" && <Orders />}
         {activeSection === "employees" && <Employee />}
