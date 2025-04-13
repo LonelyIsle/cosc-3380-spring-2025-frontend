@@ -3,6 +3,7 @@ import axios from "axios";
 
 const CategoryContext = createContext();
 export const useCategory = () => useContext(CategoryContext);
+const getToken = () => localStorage.getItem("token");
 
 export function CategoryProvider({ children }) {
   const [categories, setCategories] = useState([]);
@@ -33,7 +34,7 @@ export function CategoryProvider({ children }) {
     fetchCategories();
   }, []);
 
-  const token = localStorage.getItem("token");
+  const token = getToken();
   const authHeader = { headers: { Authorization: token } };
 
   const updateSelectedCategories = (categoryIds) => {
