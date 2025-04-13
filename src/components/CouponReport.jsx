@@ -20,7 +20,7 @@ ChartJS.register(
   Legend,
 );
 
-const ProductReport = () => {
+const CouponReport = () => {
   const [data, setData] = useState([]);
   const [startDate, setStartDate] = useState(1743483600000); // 04/01/2025
   const [endDate, setEndDate] = useState(1745989200000); // 04/30/2025
@@ -276,4 +276,4 @@ const ProductReport = () => {
   );
 };
 
-export default ProductReport;
+export default CouponReport;

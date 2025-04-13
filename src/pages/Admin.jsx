@@ -15,10 +15,6 @@ const Admin = () => {
   const [activeSection, setActiveSection] = useState("Notification");
   const [orders, setOrders] = useState([]);
 
-  useEffect(() => {
-    setOrders(mockOrders);
-  }, []);
-
   return (
     <div className="flex h-screen overflow-hidden">
       {" "}
