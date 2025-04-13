@@ -128,7 +128,7 @@ export function EmployeeProvider({ children }) {
         is_deleted: emp.is_deleted || 0,
       });
 
-      const formattedEmployee = formatEmployee(res);
+      const formattedEmployee = formatEmployee(newEmployee);
       setEmployees((prev) => [...prev, formattedEmployee]);
 
       return newEmployee;
