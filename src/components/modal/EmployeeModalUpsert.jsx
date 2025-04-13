@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useEmployee } from "../context/EmployeeContext";
+import { useEmployee } from "@context/EmployeeContext";
 
 const EmployeeModalUpsert = ({ employeeId = null, onClose }) => {
   const { createEmployee, updateEmployee, getEmployeeById } = useEmployee();

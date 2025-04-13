@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { useShop } from "../context/ShopContext";
-import CategoryModalUpsert from "./CategoryModalUpsert";
-import CategoryModalDelete from "./CategoryModalDelete";
+import { useCategory } from "@context/CategoryContext";
+import CategoryModalUpsert from "@modal/CategoryModalUpsert";
+import CategoryModalDelete from "@modal/CategoryModalDelete";
 
 const Category = () => {
-  const { categories, deleteCategory } = useShop();
+  const { categories, deleteCategory } = useCategory();
 
   const [upsertModalOpen, setUpsertModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);

@@ -1,23 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useShop } from "../context/ShopContext";
+import { useCart } from "@context/CartContext";
+import { useProduct } from "@context/ProductContext";
 import axios from "axios";
 
 const Checkout = () => {
   const navigate = useNavigate();
-  const {
-    cartItems,
-    getProduct,
-    getCartAmount,
-    updateQuantity,
-    removeItem,
-    clearCart,
-  } = useShop();
+  const { cartItems, getCartAmount, updateQuantity, removeItem, clearCart } =
+    useCart();
+
+  const { getProduct } = useProduct();
 
   const [config, setConfig] = useState({
     subscriptionDiscountPercentage: 0,
     subscriptionPrice: 0,
-    saleTax: 0
+    saleTax: 0,
   });
 
   const [shippingInfo, setShippingInfo] = useState({
@@ -41,33 +38,31 @@ const Checkout = () => {
 
   const getConfig = async () => {
     try {
-      let res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/config`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      let res = await axios.get(`${import.meta.env.VITE_API_URL}/config`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       setConfig((prev) => ({
         ...prev,
         ["subscriptionPrice"]: res.data.data.subscription_price,
         ["saleTax"]: res.data.data.sale_tax,
-        ["subscriptionDiscountPercentage"]: res.data.data.subscription_discount_percentage
+        ["subscriptionDiscountPercentage"]:
+          res.data.data.subscription_discount_percentage,
       }));
-    } catch(err) {
+    } catch (err) {
       if (err.response) {
         alert(err.response.data.message || "Error getting config");
       } else {
         alert("Network error. Please try again.");
       }
     }
-  }
+  };
 
   // Load user data from localStorage and other data on component mount
   useEffect(() => {
     getConfig();
-    
+
     const userData = localStorage.getItem("user");
     if (userData) {
       try {
@@ -194,17 +189,17 @@ const Checkout = () => {
             "Content-Type": "application/json",
             Authorization: token,
           },
-        }
+        },
       );
 
       const result = response.data;
       console.log("✅ Order response:", result);
       alert("✅ Order submitted successfully!");
-      
+
       // set user.subscription
       parsedUserData.subscription = result.data;
       localStorage.setItem("user", JSON.stringify(parsedUserData));
-      
+
       navigate(`/`);
     } catch (err) {
       console.error("❌ Order submission failed:", err);
@@ -221,7 +216,7 @@ const Checkout = () => {
   let total = {
     origin: 0,
     saleTax: 0,
-    final: 0
+    final: 0,
   };
   total.origin = config.subscriptionPrice;
   total.final = config.subscriptionPrice;
@@ -238,34 +233,36 @@ const Checkout = () => {
           </div>
           <div className="p-4">
             <>
-                <div className="flex items-center justify-between border-b py-4">
+              <div className="flex items-center justify-between border-b py-4">
                 <div className="flex items-center space-x-4">
-                    <div>
-                        <h3 className="font-medium">1 Month Subscription</h3>
-                        <p className="text-gray-500">${config.subscriptionPrice.toFixed(2)}</p>
-                    </div>
+                  <div>
+                    <h3 className="font-medium">1 Month Subscription</h3>
+                    <p className="text-gray-500">
+                      ${config.subscriptionPrice.toFixed(2)}
+                    </p>
+                  </div>
                 </div>
 
                 <div className="flex items-center space-x-2">
-                    <span>&times; 1</span>
+                  <span>&times; 1</span>
                 </div>
-                </div>
-                <div className="flex justify-between mt-4 font-bold">
-                    <span>Total</span>
-                    <span>${total.origin.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between mt-4 font-bold">
-                    <span>Sale Tax</span>
-                    <span>${total.saleTax.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between mt-4 font-bold">
-                    <span>Total Final</span>
-                    <span>${total.final.toFixed(2)}</span>
-                </div>
+              </div>
+              <div className="flex justify-between mt-4 font-bold">
+                <span>Total</span>
+                <span>${total.origin.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between mt-4 font-bold">
+                <span>Sale Tax</span>
+                <span>${total.saleTax.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between mt-4 font-bold">
+                <span>Total Final</span>
+                <span>${total.final.toFixed(2)}</span>
+              </div>
             </>
           </div>
         </div>
-        
+
         {/* Checkout Information Sections */}
         <div>
           {/* Shipping Information Section */}
@@ -430,7 +427,6 @@ const Checkout = () => {
               </form>
             </div>
           </div>
-
 
           {/* Payment Information Section */}
           <div className="border rounded-lg shadow-sm mb-6">

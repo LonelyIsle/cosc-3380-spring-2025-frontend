@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import OrderModal from "./OrderModal";
+import OrderModal from "@modal/OrderModal";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);

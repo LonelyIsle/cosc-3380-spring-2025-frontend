@@ -1,18 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useShop } from "../context/ShopContext";
 import axios from "axios";
+import { useProduct } from "@context/ProductContext";
+import { useCart } from "@context/CartContext";
 
 const Checkout = () => {
   const navigate = useNavigate();
-  const {
-    cartItems,
-    getProduct,
-    getCartAmount,
-    updateQuantity,
-    removeItem,
-    clearCart,
-  } = useShop();
+  const { cartItems, getCartAmount, updateQuantity, removeItem, clearCart } =
+    useCart();
+
+  const { getProduct } = useProduct();
 
   const [isSubscription, setIsSubscription] = useState(false);
 
@@ -27,7 +24,7 @@ const Checkout = () => {
   const [config, setConfig] = useState({
     subscriptionDiscountPercentage: 0,
     shippingFee: 0,
-    saleTax: 0
+    saleTax: 0,
   });
 
   const [shippingInfo, setShippingInfo] = useState({
@@ -51,33 +48,31 @@ const Checkout = () => {
 
   const getConfig = async () => {
     try {
-      let res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/config`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      let res = await axios.get(`${import.meta.env.VITE_API_URL}/config`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       setConfig((prev) => ({
         ...prev,
         ["shippingFee"]: res.data.data.shipping_fee,
         ["saleTax"]: res.data.data.sale_tax,
-        ["subscriptionDiscountPercentage"]: res.data.data.subscription_discount_percentage
+        ["subscriptionDiscountPercentage"]:
+          res.data.data.subscription_discount_percentage,
       }));
-    } catch(err) {
+    } catch (err) {
       if (err.response) {
         alert(err.response.data.message || "Error getting config");
       } else {
         alert("Network error. Please try again.");
       }
     }
-  }
+  };
 
   // Load user data from localStorage and other data on component mount
   useEffect(() => {
     getConfig();
-    
+
     const userData = localStorage.getItem("user");
     if (userData) {
       try {
@@ -178,9 +173,9 @@ const Checkout = () => {
         code: "",
         id: null,
         type: 0,
-        value: 0
+        value: 0,
       });
-    }
+    };
     try {
       e.preventDefault();
       let code = coupon.input;
@@ -190,7 +185,7 @@ const Checkout = () => {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       let data = res.data.data;
       if (!data) {
@@ -202,10 +197,10 @@ const Checkout = () => {
           code: data.code,
           id: data.id,
           type: data.type,
-          value: data.value
+          value: data.value,
         });
       }
-    } catch(err) {
+    } catch (err) {
       if (err.response) {
         alert(err.response.data.message || "Error getting config");
       } else {
@@ -260,7 +255,7 @@ const Checkout = () => {
             "Content-Type": "application/json",
             Authorization: token,
           },
-        }
+        },
       );
 
       const result = response.data;
@@ -316,7 +311,7 @@ const Checkout = () => {
     coupon: 0,
     shipping: 0,
     saleTax: 0,
-    final: 0
+    final: 0,
   };
   total.origin = parseFloat(getCartAmount());
   total.final = parseFloat(getCartAmount());
@@ -328,14 +323,14 @@ const Checkout = () => {
     total.subscription = 0;
   }
   // coupon
-  switch(coupon.type) {
+  switch (coupon.type) {
     case 0:
       total.coupon = total.final * coupon.value;
-      total.final = total.final - total.coupon; 
+      total.final = total.final - total.coupon;
       break;
     case 1:
       total.coupon = coupon.value;
-      total.final = total.final - total.coupon; 
+      total.final = total.final - total.coupon;
       break;
   }
   if (total.final < 0) {
@@ -570,7 +565,9 @@ const Checkout = () => {
                     placeholder="Code"
                     className="border rounded-md px-3 py-2"
                     value={coupon.input}
-                    onChange={(e) => setCoupon((prev) => ({ ...prev, input: e.target.value}))}
+                    onChange={(e) =>
+                      setCoupon((prev) => ({ ...prev, input: e.target.value }))
+                    }
                   />
                 </div>
                 <button
@@ -581,12 +578,11 @@ const Checkout = () => {
                 </button>
               </form>
               <div className="">
-                {
-                  coupon.code.trim() !== "" &&
-                    <span className="bg-pink-200 p-2 rounded mr-2 text-md font-bold">
-                      {coupon.code}
-                    </span>
-                }
+                {coupon.code.trim() !== "" && (
+                  <span className="bg-pink-200 p-2 rounded mr-2 text-md font-bold">
+                    {coupon.code}
+                  </span>
+                )}
               </div>
             </div>
           </div>

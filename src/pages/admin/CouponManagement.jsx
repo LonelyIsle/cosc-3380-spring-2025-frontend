@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import CouponModal from "./CouponModal";
+import CouponModal from "@modal/CouponModal";
 
 const CouponManagement = () => {
   const [coupons, setCoupons] = useState([]);
@@ -131,7 +131,7 @@ const CouponManagement = () => {
               Authorization: token,
               "Content-Type": "application/json",
             },
-          }
+          },
         );
       } else {
         // Creating new coupon
@@ -148,7 +148,8 @@ const CouponManagement = () => {
     } catch (err) {
       console.error("API Error:", err);
       setError(
-        "Failed to save coupon: " + (err.response?.data?.message || err.message)
+        "Failed to save coupon: " +
+          (err.response?.data?.message || err.message),
       );
     } finally {
       setIsLoading(false);
@@ -255,7 +256,9 @@ const CouponManagement = () => {
                 .filter(
                   (coupon) =>
                     searchTerm === "" ||
-                    coupon.code.toLowerCase().includes(searchTerm.toLowerCase())
+                    coupon.code
+                      .toLowerCase()
+                      .includes(searchTerm.toLowerCase()),
                 )
                 .sort((a, b) => {
                   if (sortBy === "code") {

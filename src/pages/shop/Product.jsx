@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-
-import { useShop } from "../context/ShopContext";
+import { useCart } from "@context/CartContext";
+import { useProduct } from "@context/ProductContext";
 
 function Product() {
-  const { addToCart, getProduct, cartItems } = useShop();
+  const { addToCart, cartItems } = useCart();
+  const { getProduct } = useProduct();
   const { id } = useParams();
   const [quantity, setQuantity] = useState(1);
   const [maxAvailable, setMaxAvailable] = useState(0);

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { useShop } from "../context/ShopContext";
+import { useCategory } from "@context/CategoryContext";
 
 const CategoryModalUpsert = ({ categoryId = null, onClose }) => {
   const [category, setCategory] = useState({ name: "", description: "" });
   const [loading, setLoading] = useState(false);
-  const { addCategory, updateCategory, getCategory } = useShop();
+  const { addCategory, updateCategory, getCategory } = useCategory();
 
   useEffect(() => {
     // only fetch if editing

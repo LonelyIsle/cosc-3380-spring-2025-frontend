@@ -1,15 +1,11 @@
-import { useShop } from "../context/ShopContext";
+import { useCart } from "@context/CartContext";
+import { useProduct } from "@context/ProductContext";
 import { Link } from "react-router-dom";
 
 function Cart() {
-  const {
-    cartItems,
-    cartLoaded,
-    updateQuantity,
-    removeItem,
-    getCartAmount,
-    getProduct,
-  } = useShop();
+  const { cartItems, cartLoaded, updateQuantity, removeItem, getCartAmount } =
+    useCart();
+  const { getProduct } = useProduct();
 
   if (!cartLoaded) {
     return (
@@ -97,9 +93,7 @@ function Cart() {
 
             <div className="mt-6 flex justify-between items-center">
               <div></div>
-              <h3 className="text-xl font-bold">
-                Total: ${totalCartAmount}
-              </h3>
+              <h3 className="text-xl font-bold">Total: ${totalCartAmount}</h3>
             </div>
           </>
         )}

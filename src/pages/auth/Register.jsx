@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/bag-full-logo.svg";
-import Validation from "../components/RegisterValidation";
+import logo from "@assets/bag-full-logo.svg";
+import Validation from "@auth/RegisterValidation";
 import axios from "axios";
 
 function Register() {

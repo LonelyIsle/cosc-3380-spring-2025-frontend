@@ -1,17 +1,12 @@
 import { useEffect, useState } from "react";
-import { useShop } from "../context/ShopContext";
+import { useProduct } from "@context/ProductContext";
+import { useCategory } from "@context/CategoryContext";
 
 const ProductModalUpsert = ({ productId = null, onClose }) => {
   const [product, setProduct] = useState({});
   const [loading, setLoading] = useState(false);
-  const {
-    addProduct,
-    updateProduct,
-    getProduct,
-    categories,
-    categoriesLoaded,
-    uploadProductImage,
-  } = useShop();
+  const { categories, categoriesLoaded, uploadProductImage } = useCategory();
+  const { getProduct, addProduct, updateProduct } = useProduct();
   // Fetch product info if updating product
   useEffect(() => {
     if (productId !== null) {

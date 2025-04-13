@@ -1,5 +1,5 @@
 import { useState } from "react";
-import OrderHistory from "../components/OrderHistory";
+import OrderHistory from "@ui/OrderHistory";
 import { useNavigate } from "react-router-dom";
 import { Dialog } from "@headlessui/react";
 

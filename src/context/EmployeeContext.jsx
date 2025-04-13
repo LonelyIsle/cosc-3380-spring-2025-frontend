@@ -237,5 +237,3 @@ export function EmployeeProvider({ children }) {
     </EmployeeContext.Provider>
   );
 }
-
-export default EmployeeContext;
