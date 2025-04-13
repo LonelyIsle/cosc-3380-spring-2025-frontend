@@ -373,7 +373,8 @@ export function ShopProvider({ children }) {
   const addCategory = async (categoryData) => {
     try {
       const url = `${import.meta.env.VITE_API_URL}/category`;
-      const res = await axios.patch(url, categoryData, {
+      const token = localStorage.getItem("token");
+      const res = await axios.post(url, categoryData, {
         headers: {
           Authorization: token,
         },
@@ -434,6 +435,25 @@ export function ShopProvider({ children }) {
     }
   };
 
+  const getCategory = async (id) => {
+    try {
+      const url = `${import.meta.env.VITE_API_URL}/category/${id}`;
+      const token = localStorage.getItem("token");
+      const res = await axios.get(url, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      return res.data.data;
+    } catch (err) {
+      console.error(
+        "Failed to fetch category:",
+        err.response?.data || err.message,
+      );
+      throw err;
+    }
+  };
+
   return (
     <ShopContext.Provider
       value={{
@@ -462,6 +482,7 @@ export function ShopProvider({ children }) {
         categoriesLoaded,
         updateSelectedCategories,
         addCategory,
+        updateCategory,
         getCategory,
       }}
     >
