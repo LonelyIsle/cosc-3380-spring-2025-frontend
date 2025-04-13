@@ -48,6 +48,34 @@ export function ShopProvider({ children }) {
     }
   };
 
+  // Fetch and store categories globally on first render
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const url = `${import.meta.env.VITE_API_URL}/category`;
+      try {
+        const res = await axios.get(url);
+        const mappedCategories = res.data.data.rows
+          .filter((p) => p.is_deleted !== 1)
+          .map((p) => ({
+            id: p.id,
+            name: p.name,
+            description: p.description,
+            created_at: p.created_at,
+            updated_at: p.updated_at,
+          }));
+        setCategories(mappedCategories);
+      } catch (err) {
+        console.error(
+          "Failed to fetch categories:",
+          err.response?.data || err.message,
+        );
+      } finally {
+        setCategoriesLoaded(true);
+      }
+    };
+    fetchCategories();
+  }, []);
+
   // Fetch products on first render
   useEffect(() => {
     fetchProducts();
