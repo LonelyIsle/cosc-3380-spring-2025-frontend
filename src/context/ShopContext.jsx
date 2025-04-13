@@ -369,6 +369,37 @@ export function ShopProvider({ children }) {
     setSelectedCategoryIds(categoryIds);
   };
 
+  // POST request to create new category
+  const addCategory = async (categoryData) => {
+    try {
+      const url = `${import.meta.env.VITE_API_URL}/category`;
+      const res = await axios.patch(url, productData, {
+        headers: {
+          Authorization: token,
+        },
+      });
+
+      const newCategory = res.data.data;
+
+      // Update local state
+      setCategories((prev) => [
+        ...prev,
+        {
+          name: newCategory.name,
+          description: newCategory.description,
+        },
+      ]);
+
+      return newCategory;
+    } catch (err) {
+      console.error(
+        "Failed to add product:",
+        err.response?.data || err.message,
+      );
+      throw err;
+    }
+  };
+
   return (
     <ShopContext.Provider
       value={{
@@ -396,6 +427,7 @@ export function ShopProvider({ children }) {
         categories,
         categoriesLoaded,
         updateSelectedCategories,
+        addCategory
       }}
     >
       {children}
