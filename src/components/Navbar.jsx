@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
-import { useShop } from "../context/ShopContext";
+import { useCart } from "../context/CartContext";
 import { useEffect, useState } from "react";
 import logo from "../assets/navbar-logo.svg";
 
@@ -12,7 +12,7 @@ const cartSvgs = Object.entries(svgs).reduce((acc, [path, module]) => {
 
 function Navbar({ isLoggedIn, handleLogout }) {
   const [opacity, setOpacity] = useState(100);
-  const { getCartQuantity } = useShop();
+  const { getCartQuantity } = useCart();
   const navigate = useNavigate(); // Initialize useNavigate
 
   const cartQuantity = getCartQuantity();

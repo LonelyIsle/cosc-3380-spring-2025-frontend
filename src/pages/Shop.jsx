@@ -1,16 +1,14 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useShop } from "../context/ShopContext";
+import { useProduct } from "../context/ProductContext";
+import { useCategory } from "../context/CategoryContext";
 
 function Shop() {
   const navigate = useNavigate();
-  const {
-    getProductArray,
-    productsLoaded,
-    updateSelectedCategories,
-    categories,
-    categoriesLoaded,
-  } = useShop();
+  const { updateSelectedCategories, categories, categoriesLoaded } =
+    useCategory();
+
+  const { getProductArray, productsLoaded } = useProduct();
 
   const products = getProductArray();
   const [filteredProducts, setFilteredProducts] = useState(products);
@@ -34,7 +32,7 @@ function Shop() {
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = filteredProducts.slice(
     indexOfFirstProduct,
-    indexOfLastProduct
+    indexOfLastProduct,
   );
 
   // Calculate total pages
@@ -44,7 +42,7 @@ function Shop() {
   useEffect(() => {
     if (productsLoaded && products.length > 0) {
       const highestPrice = Math.max(
-        ...products.map((product) => product.price)
+        ...products.map((product) => product.price),
       );
       // Round to nearest $10
       const roundedPrice = Math.ceil(highestPrice / 10) * 10;
@@ -90,7 +88,7 @@ function Shop() {
       result = result.filter(
         (product) =>
           product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          product.description.toLowerCase().includes(searchTerm.toLowerCase())
+          product.description.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
 
@@ -99,7 +97,7 @@ function Shop() {
 
     // Apply sort
     const sorted = [...result].sort((a, b) =>
-      sortOrder === "asc" ? a.price - b.price : b.price - a.price
+      sortOrder === "asc" ? a.price - b.price : b.price - a.price,
     );
 
     setFilteredProducts(sorted);
@@ -119,7 +117,7 @@ function Shop() {
     if (!categoriesLoaded) return;
 
     const activeCategories = Object.keys(selectedCategories).filter(
-      (cat) => selectedCategories[cat]
+      (cat) => selectedCategories[cat],
     );
 
     // Get active category IDs
@@ -207,7 +205,7 @@ function Shop() {
 
   // Check if any categories are selected
   const anyCategoriesSelected = Object.values(selectedCategories).some(
-    (value) => value === true
+    (value) => value === true,
   );
 
   return (
