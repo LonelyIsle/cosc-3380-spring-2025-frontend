@@ -9,6 +9,7 @@ import { ProductProvider } from "@context/ProductContext.jsx";
 import { CartProvider } from "@context/CartContext.jsx";
 import { SaleProvider } from "@context/SalesContext";
 import { CouponProvider } from "@context/CouponContext.jsx";
+import { CustomerContextProvider } from "@context/CustomerContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -19,7 +20,9 @@ createRoot(document.getElementById("root")).render(
             <SaleProvider>
               <EmployeeProvider>
                 <CouponProvider>
-                  <App />
+                  <CustomerContextProvider>
+                    <App />
+                  </CustomerContextProvider>
                 </CouponProvider>
               </EmployeeProvider>
             </SaleProvider>
