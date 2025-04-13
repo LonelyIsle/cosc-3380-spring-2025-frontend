@@ -42,7 +42,7 @@ export function ShopProvider({ children }) {
     } catch (err) {
       console.error(
         "Failed to fetch products:",
-        err.response?.data || err.message
+        err.response?.data || err.message,
       );
       setProductsLoaded(true);
     }
@@ -125,7 +125,7 @@ export function ShopProvider({ children }) {
     } catch (err) {
       console.error(
         "Failed to add product:",
-        err.response?.data || err.message
+        err.response?.data || err.message,
       );
       throw err;
     }
@@ -160,15 +160,15 @@ export function ShopProvider({ children }) {
                   ? `data:image/${updated.image_extension};base64,${updated.image}`
                   : "",
               }
-            : p
-        )
+            : p,
+        ),
       );
 
       return updated;
     } catch (err) {
       console.error(
         "Failed to update product:",
-        err.response?.data || err.message
+        err.response?.data || err.message,
       );
       throw err;
     }
@@ -205,15 +205,15 @@ export function ShopProvider({ children }) {
                   ? `data:image/${updated.image_extension};base64,${updated.image}`
                   : "",
               }
-            : p
-        )
+            : p,
+        ),
       );
 
       return updated;
     } catch (err) {
       console.error(
         "Failed to upload image:",
-        err.response?.data || err.message
+        err.response?.data || err.message,
       );
       throw err;
     }
@@ -238,7 +238,7 @@ export function ShopProvider({ children }) {
     } catch (err) {
       console.error(
         "Failed to delete product:",
-        err.response?.data || err.message
+        err.response?.data || err.message,
       );
       throw err;
     }
@@ -257,18 +257,18 @@ export function ShopProvider({ children }) {
           headers: {
             Authorization: token,
           },
-        }
+        },
       );
       // Update frontend state
       setProducts((prev) =>
         prev.map((p) =>
-          p.id === id ? { ...p, quantity: p.quantity + quantity } : p
-        )
+          p.id === id ? { ...p, quantity: p.quantity + quantity } : p,
+        ),
       );
     } catch (err) {
       console.error(
         "Failed to restock product:",
-        err.response?.data || err.message
+        err.response?.data || err.message,
       );
       throw err;
     }
@@ -304,7 +304,7 @@ export function ShopProvider({ children }) {
         const newQuantity = existing.quantity + quantity;
         const limitedQuantity = Math.min(newQuantity, product.quantity);
         return prev.map((item) =>
-          item.id === productId ? { ...item, quantity: limitedQuantity } : item
+          item.id === productId ? { ...item, quantity: limitedQuantity } : item,
         );
       }
 
@@ -359,7 +359,7 @@ export function ShopProvider({ children }) {
       } catch (err) {
         console.error(
           "Failed to fetch categories:",
-          err.response?.data || err.message
+          err.response?.data || err.message,
         );
       } finally {
         setCategoriesLoaded(true);
@@ -371,25 +371,30 @@ export function ShopProvider({ children }) {
   return (
     <ShopContext.Provider
       value={{
+        // Cart
         cartItems,
         cartLoaded,
-        productsLoaded,
-        getProductArray,
-        getProduct,
         getCartAmount,
         getCartQuantity,
         addToCart,
         updateQuantity,
         removeItem,
         clearCart,
-        updateSelectedCategories,
-        categories,
-        categoriesLoaded,
+
+        // Products
+        productsLoaded,
+        getProductArray,
+        getProduct,
         addProduct,
         updateProduct,
         uploadProductImage,
         deleteProduct,
         restockProduct,
+
+        // Categories
+        categories,
+        categoriesLoaded,
+        updateSelectedCategories,
       }}
     >
       {children}
