@@ -14,7 +14,7 @@ import AdminProfile from "../components/AdminProfile";
 import AdminCustomer from "../components/AdminCustomer";
 
 const Admin = () => {
-  const [activeSection, setActiveSection] = useState("Notification");
+  const [activeSection, setActiveSection] = useState("");
   const [items, setItems] = useState([]);
 
   useEffect(() => {
@@ -29,7 +29,7 @@ const Admin = () => {
         "Category",
         "Coupon",
         "Sale Event",
-        "Orders",
+        "Order",
         "Employee",
         "Customer",
         "Product Report",
@@ -37,13 +37,15 @@ const Admin = () => {
         "Customer Report",
         "Config",
       ]);
+      setActiveSection("Notifcation");
     } else {
       setItems([
         "Profile",
         "Product",
         "Category",
-        "Orders",
+        "Order",
       ]);
+      setActiveSection("Order");
     }
   }, []);
 
