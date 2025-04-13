@@ -422,7 +422,7 @@ export function ShopProvider({ children }) {
       return newCategory;
     } catch (err) {
       console.error(
-        "Failed to add product:",
+        "Failed to add category:",
         err.response?.data || err.message,
       );
       throw err;
@@ -460,7 +460,7 @@ export function ShopProvider({ children }) {
       return updatedCategory;
     } catch (err) {
       console.error(
-        "Failed to update product:",
+        "Failed to update category:",
         err.response?.data || err.message,
       );
       throw err;
