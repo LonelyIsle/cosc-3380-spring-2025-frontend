@@ -8,3 +8,11 @@ const SalesContext = createContext();
 export const useSales = () => useContext(SalesContext);
 
 // helper function to get the token from localStorage
+const getToken = () => localStorage.getItem("token");
+
+const URL_PATH = `${import.meta.env.VITE_API_URL}`;
+
+export function SalesProvider({ children }) {
+  const [sales, setSales] = useState([]);
+  const [salesLoaded, setSalesLoaded] = useState(false);
+}

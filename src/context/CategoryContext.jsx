@@ -4,6 +4,7 @@ import axios from "axios";
 const CategoryContext = createContext();
 export const useCategory = () => useContext(CategoryContext);
 const getToken = () => localStorage.getItem("token");
+const URL_PATH = `${import.meta.env.VITE_API_URL}`;
 
 export function CategoryProvider({ children }) {
   const [categories, setCategories] = useState([]);

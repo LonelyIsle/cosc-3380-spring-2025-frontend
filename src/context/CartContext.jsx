@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 const CartContext = createContext();
 export const useCart = () => useContext(CartContext);
+const URL_PATH = `${import.meta.env.VITE_API_URL}`;
 
 export function CartProvider({ children }) {
   const userId = JSON.parse(localStorage.getItem("user"))?.id || "guest";
@@ -13,7 +14,7 @@ export function CartProvider({ children }) {
   // Fetch products based on category filter
   const fetchProducts = async (categoryIds = []) => {
     setProductsLoaded(false);
-    let url = `${import.meta.env.VITE_API_URL}/product?`;
+    let url = `${URL_PATH}/product?`;
     if (categoryIds.length > 0) {
       url += `&category_id=[${categoryIds.join(",")}]`;
     }
