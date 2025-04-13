@@ -409,11 +409,13 @@ export function ShopProvider({ children }) {
       setCategories((prev) => [
         ...prev,
         {
-          id: newCategory.id,
-          name: newCategory.name,
-          description: newCategory.description,
-          created_at: newCategory.created_at,
-          updated_at: newCategory.updated_at,
+          id: updatedCategory.id,
+          name: updatedCategory.name,
+          description: updatedCategory.description,
+          created_at: updatedCategory.created_at,
+          updated_at: updatedCategory.updated_at,
+          deleted_at: updatedCategory.deleted_at,
+          is_deleted: updatedCategory.is_deleted,
         },
       ]);
 
@@ -446,7 +448,10 @@ export function ShopProvider({ children }) {
                 id: updatedCategory.id,
                 name: updatedCategory.name,
                 description: updatedCategory.description,
+                created_at: updatedCategory.created_at,
                 updated_at: updatedCategory.updated_at,
+                deleted_at: updatedCategory.deleted_at,
+                is_deleted: updatedCategory.is_deleted,
               }
             : c,
         ),
