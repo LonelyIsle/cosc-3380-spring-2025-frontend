@@ -1,23 +1,9 @@
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
+import { useShop } from "../context/ShopContext";
 
 const Config = () => {
-  const [categories, setCategories] = useState([]);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/category`);
-        const data = await res.json();
-        console.log("Category response data:", data);
-        setCategories(Array.isArray(data?.data?.rows) ? data.data.rows : []);
-      } catch (err) {
-        console.error("Failed to fetch categories:", err);
-      }
-    };
-
-    fetchCategories();
-  }, []);
+  const { categories } = useShop();
 
   return (
     <div>
@@ -49,15 +35,23 @@ const Config = () => {
                 <td className="p-2 border">{category.name}</td>
                 <td className="p-2 border">{category.description}</td>
                 <td className="p-2 border">
-                  {format(new Date(category.created_at), "MMM dd, yyyy - h:mm a")}
+                  {format(
+                    new Date(category.created_at),
+                    "MMM dd, yyyy - h:mm a",
+                  )}
                 </td>
                 <td className="p-2 border">
-                  {format(new Date(category.updated_at), "MMM dd, yyyy - h:mm a")}
+                  {format(
+                    new Date(category.updated_at),
+                    "MMM dd, yyyy - h:mm a",
+                  )}
                 </td>
                 <td className="p-2 border">
                   <button
                     className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
-                    onClick={() => window.location.href = `/edit-category/${category.id}`}
+                    onClick={() =>
+                      (window.location.href = `/edit-category/${category.id}`)
+                    }
                   >
                     Edit
                   </button>
