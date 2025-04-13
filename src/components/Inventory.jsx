@@ -105,8 +105,12 @@ const Inventory = () => {
               <td className="p-2 text-center border">{item.name}</td>
               <td className="p-2 text-center border">{item.quantity}</td>
               <td className="p-2 text-center border">{item.threshold || 0}</td>
-              <td className="p-2 text-center border">${item.price.toFixed(2)}</td>
-              <td className="p-2 text-center border">{item.category ? item.category.join(", ") : "N/A"}</td>
+              <td className="p-2 text-center border">
+                ${item.price.toFixed(2)}
+              </td>
+              <td className="p-2 text-center border">
+                {item.category ? item.category.join(", ") : "N/A"}
+              </td>
               <td className="p-2 text-center border">
                 <button
                   className="ml-2 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
