@@ -89,8 +89,6 @@ const Category = () => {
             <th className="p-2 text-center border">ID</th>
             <th className="p-2 text-center border">Name</th>
             <th className="p-2 text-center border">Description</th>
-            <th className="p-2 text-center border">Created At</th>
-            <th className="p-2 text-center border">Updated At</th>
             <th className="p-2 text-center border">Manage</th>
           </tr>
         </thead>
@@ -103,12 +101,6 @@ const Category = () => {
               <td className="p-2 text-center border">{cat.id}</td>
               <td className="p-2 text-center border">{cat.name}</td>
               <td className="p-2 text-center border">{cat.description}</td>
-              <td className="p-2 text-center border">
-                {formatDateTime(cat.created_at)}
-              </td>
-              <td className="p-2 text-center border">
-                {formatDateTime(cat.updated_at)}
-              </td>
               <td className="p-2 text-center border space-x-2">
                 <button
                   className="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"

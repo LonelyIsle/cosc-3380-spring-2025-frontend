@@ -85,7 +85,7 @@ const Notification = () => {
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="4" className="p-2 text-center text-gray-500">
+                            <td colSpan="5" className="p-2 text-center text-gray-500">
                                 No Data
                             </td>
                         </tr>
