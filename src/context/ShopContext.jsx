@@ -454,6 +454,26 @@ export function ShopProvider({ children }) {
     }
   };
 
+  const deleteCategory = async (id) => {
+    try {
+      const url = `${import.meta.env.VITE_API_URL}/category/${id}`;
+      const token = localStorage.getItem("token");
+      const res = await axios.get(url, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      // filter out category
+      setCategories((prev) => prev.filter((p) => p.id !== id));
+    } catch (err) {
+      console.error(
+        "Failed to fetch category:",
+        err.response?.data || err.message,
+      );
+      throw err;
+    }
+  };
+
   return (
     <ShopContext.Provider
       value={{
@@ -484,6 +504,7 @@ export function ShopProvider({ children }) {
         addCategory,
         updateCategory,
         getCategory,
+        deleteCategory,
       }}
     >
       {children}
