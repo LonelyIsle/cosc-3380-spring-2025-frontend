@@ -6,24 +6,12 @@ import Config from "../components/Config";
 import ProductReport from "../components/ProductReport";
 import CouponReport from "../components/CouponReport";
 import CustomerReport from "../components/CustomerReport";
+import Orders from "../components/Orders.jsx";
+import Category from "../components/Category";
 import Notification from "../components/Notification";
 
-const mockOrders = [
-  { id: 101, customer: "Customer A", tracking_info: "Shipped", employeeId: 2 },
-  {
-    id: 102,
-    customer: "Customer B",
-    tracking_info: "Processing",
-    employeeId: 1,
-  },
-  {
-    id: 103,
-    customer: "Customer C",
-    tracking_info: "Delivered",
-    employeeId: 4,
-  },
-  { id: 104, customer: "Customer D", tracking_info: "Pending", employeeId: 1 },
-];
+const Admin = () => {
+  const [activeSection, setActiveSection] = useState("Orders");
 
 const Admin = () => {
   const [activeSection, setActiveSection] = useState("Notification");
@@ -41,7 +29,7 @@ const Admin = () => {
       <div className="w-64 bg-gray-800 text-white p-5 flex flex-col">
         <h2 className="text-2xl font-bold mb-6">Admin Panel</h2>
         <nav>
-          {["Notification", "orders", "Product", "employees", "Product Report", "Coupon Report", "Customer Report", "Config", "sales"].map(
+          {["Notification", "orders", "Product", "Category", "employees", "Product Report", "Coupon Report", "Customer Report", "Config", "sales"].map(
             (section) => (
               <button
                 key={section}
@@ -60,51 +48,9 @@ const Admin = () => {
       <div className="flex-1 p-6 overflow-y-auto">
         {" "}
         {/* Added overflow-y-auto to enable vertical scrolling in the main content */}
-        {activeSection === "orders" && (
-          <div>
-            <h2 className="text-xl font-semibold mb-2">Order Management</h2>
-            <div className="overflow-x-auto">
-              {" "}
-              {/* Added overflow-x-auto to enable horizontal scrolling if needed */}
-              <table className="min-w-full border border-black bg-gray-100 text-center">
-                <thead>
-                  <tr className="bg-gray-300">
-                    <th className="py-2 px-4 border border-black">ID</th>
-                    <th className="py-2 px-4 border border-black">Customer</th>
-                    <th className="py-2 px-4 border border-black">
-                      Tracking Info
-                    </th>
-                    <th className="py-2 px-4 border border-black">
-                      Employee ID
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {orders.map((order, index) => (
-                    <tr
-                      key={order.id}
-                      className={`${index % 2 === 0 ? "bg-gray-200" : "bg-white"} text-center`}
-                    >
-                      <td className="py-2 px-4 border border-black">
-                        {order.id}
-                      </td>
-                      <td className="py-2 px-4 border border-black">
-                        {order.customer}
-                      </td>
-                      <td className="py-2 px-4 border border-black">
-                        {order.tracking_info}
-                      </td>
-                      <td className="py-2 px-4 border border-black">
-                        {order.employeeId}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
         {activeSection === "Product" && <Inventory />}
+        {activeSection === "Category" && <Category />}
+        {activeSection === "Orders" && <Orders />}
         {activeSection === "employees" && <Employee />}
         {activeSection === "Product Report" && <ProductReport />}
         {activeSection === "Coupon Report" && <CouponReport />}
