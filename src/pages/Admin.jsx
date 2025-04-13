@@ -15,7 +15,37 @@ import AdminCustomer from "../components/AdminCustomer";
 
 const Admin = () => {
   const [activeSection, setActiveSection] = useState("Notification");
-  const [orders, setOrders] = useState([]);
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    const parsedUserData = JSON.parse(userData);
+
+    if (parsedUserData.role === 1) {
+      setItems([
+        "Notification",
+        "Profile",
+        "Product",
+        "Category",
+        "Coupon",
+        "Sale Event",
+        "Orders",
+        "Employee",
+        "Customer",
+        "Product Report",
+        "Coupon Report",
+        "Customer Report",
+        "Config",
+      ]);
+    } else {
+      setItems([
+        "Profile",
+        "Product",
+        "Category",
+        "Orders",
+      ]);
+    }
+  }, []);
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -23,21 +53,7 @@ const Admin = () => {
       <div className="w-64 bg-gray-800 text-white p-5 flex flex-col">
         <h2 className="text-2xl font-bold mb-6">Admin Panel</h2>
         <nav>
-          {[
-            "Notification",
-            "Profile",
-            "Product",
-            "Category",
-            "Coupon",
-            "Sale Event",
-            "orders",
-            "employees",
-            "Customer",
-            "Product Report",
-            "Coupon Report",
-            "Customer Report",
-            "Config",
-          ].map((section) => (
+          {items.map((section) => (
             <button
               key={section}
               onClick={() => setActiveSection(section)}
@@ -57,8 +73,8 @@ const Admin = () => {
         {activeSection === "Product" && <Inventory />}
         {activeSection === "Profile" && <AdminProfile />}
         {activeSection === "Category" && <Category />}
-        {activeSection === "orders" && <Orders />}
-        {activeSection === "employees" && <Employee />}
+        {activeSection === "Orders" && <Orders />}
+        {activeSection === "Employees" && <Employee />}
         {activeSection === "Coupon" && <CouponManagement />}
         {activeSection === "Product Report" && <AdminProductReport />}
         {activeSection === "Coupon Report" && <AdminCouponReport />}
