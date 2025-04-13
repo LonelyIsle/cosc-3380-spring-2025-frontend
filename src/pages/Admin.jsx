@@ -7,31 +7,14 @@ import ProductReport from "../components/ProductReport";
 import CouponReport from "../components/CouponReport";
 import CustomerReport from "../components/CustomerReport";
 import CouponManagement from "../components/CouponManagement";
-
-const mockOrders = [
-  { id: 101, customer: "Customer A", tracking_info: "Shipped", employeeId: 2 },
-  {
-    id: 102,
-    customer: "Customer B",
-    tracking_info: "Processing",
-    employeeId: 1,
-  },
-  {
-    id: 103,
-    customer: "Customer C",
-    tracking_info: "Delivered",
-    employeeId: 4,
-  },
-  { id: 104, customer: "Customer D", tracking_info: "Pending", employeeId: 1 },
-];
+import Orders from "../components/Orders.jsx";
+import Category from "../components/Category";
+import Notification from "../components/Notification";
+import AdminProfile from "../components/AdminProfile";
 
 const Admin = () => {
-  const [activeSection, setActiveSection] = useState("orders");
+  const [activeSection, setActiveSection] = useState("Notification");
   const [orders, setOrders] = useState([]);
-
-  useEffect(() => {
-    setOrders(mockOrders);
-  }, []);
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -40,8 +23,11 @@ const Admin = () => {
         <h2 className="text-2xl font-bold mb-6">Admin Panel</h2>
         <nav>
           {[
+            "Notification",
+            "Profile",
             "orders",
             "Product",
+            "Category",
             "employees",
             "Coupon Management",
             "Product Report",
@@ -64,49 +50,12 @@ const Admin = () => {
       </div>
       {/* Main Content */}
       <div className="flex-1 p-6 overflow-y-auto">
-        {activeSection === "orders" && (
-          <div>
-            <h2 className="text-xl font-semibold mb-2">Order Management</h2>
-            <div className="overflow-x-auto">
-              <table className="min-w-full border border-black bg-gray-100 text-center">
-                <thead>
-                  <tr className="bg-gray-300">
-                    <th className="py-2 px-4 border border-black">ID</th>
-                    <th className="py-2 px-4 border border-black">Customer</th>
-                    <th className="py-2 px-4 border border-black">
-                      Tracking Info
-                    </th>
-                    <th className="py-2 px-4 border border-black">
-                      Employee ID
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {orders.map((order, index) => (
-                    <tr
-                      key={order.id}
-                      className={`${index % 2 === 0 ? "bg-gray-200" : "bg-white"} text-center`}
-                    >
-                      <td className="py-2 px-4 border border-black">
-                        {order.id}
-                      </td>
-                      <td className="py-2 px-4 border border-black">
-                        {order.customer}
-                      </td>
-                      <td className="py-2 px-4 border border-black">
-                        {order.tracking_info}
-                      </td>
-                      <td className="py-2 px-4 border border-black">
-                        {order.employeeId}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
+        {" "}
+        {/* Added overflow-y-auto to enable vertical scrolling in the main content */}
         {activeSection === "Product" && <Inventory />}
+        {activeSection === "Profile" && <AdminProfile />}
+        {activeSection === "Category" && <Category />}
+        {activeSection === "orders" && <Orders />}
         {activeSection === "employees" && <Employee />}
         {activeSection === "Coupon Management" && <CouponManagement />}
         {activeSection === "Product Report" && <ProductReport />}
@@ -114,6 +63,7 @@ const Admin = () => {
         {activeSection === "Customer Report" && <CustomerReport />}
         {activeSection === "Config" && <Config />}
         {activeSection === "sales" && <Sales />}
+        {activeSection === "Notification" && <Notification />}
       </div>
     </div>
   );
