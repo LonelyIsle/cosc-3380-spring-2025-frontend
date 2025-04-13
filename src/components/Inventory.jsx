@@ -25,19 +25,28 @@ const Inventory = () => {
   };
 
   useEffect(() => {
-    // add esc as a valid way to close modal
     const handleKeyDown = (e) => {
-      if (e.key === "Escape") closeModal();
+      if (e.key === "Escape") {
+        setModalOpen(false);
+        setSelectedProductId(null);
+        setDeleteProductTarget(null);
+        setRestockProductTarget(null);
+      }
     };
 
-    if (modalOpen) {
+    const shouldListen =
+      modalOpen ||
+      deleteProductTarget !== null ||
+      restockProductTarget !== null;
+
+    if (shouldListen) {
       window.addEventListener("keydown", handleKeyDown);
     }
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [modalOpen]);
+  }, [modalOpen, deleteProductTarget, restockProductTarget]);
 
   const filteredInventory = inventory
     .filter((item) =>
@@ -109,7 +118,9 @@ const Inventory = () => {
                 ${item.price.toFixed(2)}
               </td>
               <td className="p-2 text-center border">
-                {item.category ? item.category.join(", ") : "N/A"}
+                {item.category && item.category.length > 0
+                  ? item.category.join(", ")
+                  : "N/A"}
               </td>
               <td className="p-2 text-center border">
                 <button

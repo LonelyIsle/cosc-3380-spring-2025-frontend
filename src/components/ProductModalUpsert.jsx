@@ -1,20 +1,8 @@
 import { useEffect, useState } from "react";
 import { useShop } from "../context/ShopContext";
 
-const defaultProduct = {
-  sku: "",
-  price: "",
-  quantity: "",
-  threshold: "",
-  name: "",
-  description: "",
-  image: null,
-  image_extension: "",
-  category: [],
-};
-
 const ProductModalUpsert = ({ productId = null, onClose }) => {
-  const [product, setProduct] = useState(defaultProduct);
+  const [product, setProduct] = useState({});
   const [loading, setLoading] = useState(false);
   const {
     addProduct,
@@ -24,7 +12,6 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
     categoriesLoaded,
     uploadProductImage,
   } = useShop();
-
   // Fetch product info if updating product
   useEffect(() => {
     if (productId !== null) {
@@ -42,14 +29,13 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
       };
       fetchProduct();
     }
-  }, [productId, getProduct]);
-
+  }, [productId]);
   // Convert product categories from names to full objects if needed
   useEffect(() => {
     if (
       productId !== null &&
       categoriesLoaded &&
-      product.category.length > 0 &&
+      product.category?.length > 0 &&
       typeof product.category[0] === "string"
     ) {
       const convertedCategories = product.category
@@ -58,12 +44,10 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
       setProduct((prev) => ({ ...prev, category: convertedCategories }));
     }
   }, [categoriesLoaded, product, productId, categories]);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProduct((prev) => ({ ...prev, [name]: value }));
   };
-
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -79,62 +63,54 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
       reader.readAsDataURL(file);
     }
   };
-
   // Handle toggling of category checkboxes
   const handleCategoryToggle = (e) => {
     const id = parseInt(e.target.value, 10);
     let updatedCategories;
     if (e.target.checked) {
-      // Find the complete category object from the global list
       const selectedCategory = categories.find((cat) => cat.id === id);
-      if (selectedCategory && !product.category.some((cat) => cat.id === id)) {
-        updatedCategories = [...product.category, selectedCategory];
+      if (selectedCategory && !product.category?.some((cat) => cat.id === id)) {
+        updatedCategories = [...(product.category || []), selectedCategory];
       } else {
-        updatedCategories = [...product.category];
+        updatedCategories = [...(product.category || [])];
       }
     } else {
-      updatedCategories = product.category.filter((cat) => cat.id !== id);
+      updatedCategories = (product.category || []).filter(
+        (cat) => cat.id !== id,
+      );
     }
     setProduct((prev) => ({ ...prev, category: updatedCategories }));
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const categoryIds = product.category.map((cat) => cat.id);
-
+    const categoryIds = (product.category || []).map((cat) => cat.id);
     const productData = {
-      sku: product.sku,
-      price: parseFloat(product.price),
-      quantity: parseInt(product.quantity),
-      threshold: parseInt(product.threshold),
-      name: product.name,
-      description: product.description,
+      sku: product.sku || "",
+      price: parseFloat(product.price) || 0,
+      quantity: parseInt(product.quantity) || 0,
+      threshold: parseInt(product.threshold) || 0,
+      name: product.name || "",
+      description: product.description || "",
       category_id: categoryIds,
     };
-
     try {
       let result;
       if (productId === null) {
         result = await addProduct(productData);
-
         if (product.imageFile instanceof File) {
           await uploadProductImage(result.id, product.imageFile);
         }
       } else {
         result = await updateProduct(productId, productData);
-
         if (product.imageFile instanceof File) {
           await uploadProductImage(productId, product.imageFile);
         }
       }
-
       onClose();
     } catch (err) {
       console.error("Submit failed:", err);
     }
   };
-
   return (
     <div
       className="fixed top-0 left-0 w-screen h-screen flex justify-center items-center z-50"
@@ -158,7 +134,7 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
                 type="text"
                 name="name"
                 placeholder="Product Name"
-                value={product.name}
+                value={product.name || ""}
                 onChange={handleChange}
                 className="w-full p-2 rounded bg-surface1 text-text"
               />
@@ -167,7 +143,7 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
                 type="text"
                 name="sku"
                 placeholder="SKU"
-                value={product.sku}
+                value={product.sku || ""}
                 onChange={handleChange}
                 className="w-full p-2 rounded bg-surface1 text-text"
               />
@@ -176,7 +152,7 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
             <textarea
               name="description"
               placeholder="Description"
-              value={product.description}
+              value={product.description || ""}
               onChange={handleChange}
               className="w-full p-2 rounded bg-surface1 text-text mt-1"
             />
@@ -186,7 +162,7 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
                 type="number"
                 name="price"
                 placeholder="Price"
-                value={product.price}
+                value={product.price || ""}
                 onChange={handleChange}
                 className="w-full p-2 rounded bg-surface1 text-text"
               />
@@ -196,7 +172,7 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
                 name="quantity"
                 placeholder="Quantity"
                 disabled={productId === null ? false : true}
-                value={product.quantity}
+                value={product.quantity || ""}
                 onChange={handleChange}
                 className="w-full p-2 rounded bg-surface1 text-text"
               />
@@ -205,7 +181,7 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
                 type="number"
                 name="threshold"
                 placeholder="Restock Threshold"
-                value={product.threshold}
+                value={product.threshold || ""}
                 onChange={handleChange}
                 className="w-full p-2 rounded bg-surface1 text-text"
               />
@@ -219,7 +195,10 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
                       <input
                         type="checkbox"
                         value={cat.id}
-                        checked={product.category.some((c) => c.id === cat.id)}
+                        checked={
+                          product.category?.some((c) => c.id === cat.id) ||
+                          false
+                        }
                         onChange={handleCategoryToggle}
                         className="mr-2"
                       />
@@ -268,5 +247,4 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
     </div>
   );
 };
-
 export default ProductModalUpsert;
