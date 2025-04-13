@@ -203,7 +203,7 @@ const ProductReport = () => {
                 <tbody>
                     { Array.isArray(filteredData) && filteredData.length > 0 ? (
                         filteredData.map((d) => (
-                            <tr key={d.coupon_id} className="bg-gray-100">
+                            <tr key={d.customer_id} className="bg-gray-100">
                                 <td className="p-2 text-center border">{ d.customer_id }</td>
                                 <td className="p-2 text-center border">{ d.customer_email }</td>
                                 <td className="p-2 text-center border">{ d.customer_order_no_subscription_count}</td>

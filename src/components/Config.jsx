@@ -1,78 +1,140 @@
 import { useEffect, useState } from "react";
-import { format } from "date-fns";
+import axios from "axios";
 
 const Config = () => {
-  const [categories, setCategories] = useState([]);
+  const [config, setConfig] = useState({
+    shippingFee: 0,
+		saleTax: 0,
+		subscriptionPrice: 0,
+    subscriptionDiscountPercentage: 0
+  });
+
+  const getConfig = async () => {
+    try {
+      let res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/config`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      let data = res.data.data;
+      setConfig({
+        shippingFee: data.shipping_fee,
+        saleTax: data.sale_tax,
+        subscriptionPrice: data.subscription_price,
+        subscriptionDiscountPercentage: data.subscription_discount_percentage
+      });
+    } catch(err) {
+      if (err.response) {
+        alert(err.response.data.message || "Error getting config");
+      } else {
+        alert("Network error. Please try again.");
+      }
+    }
+  }
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/category`);
-        const data = await res.json();
-        console.log("Category response data:", data);
-        setCategories(Array.isArray(data?.data?.rows) ? data.data.rows : []);
-      } catch (err) {
-        console.error("Failed to fetch categories:", err);
-      }
-    };
-
-    fetchCategories();
+    getConfig();
   }, []);
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setConfig((prev) => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+  const handleSaveConfig = async () => {
+    const token = localStorage.getItem("token");
+
+    try {
+      const response = await axios.patch(
+        `${import.meta.env.VITE_API_URL}/config`, {
+          shipping_fee: config.shippingFee,
+          sale_tax: config.saleTax,
+          subscription_price: config.subscriptionPrice,
+          subscription_discount_percentage: config.subscriptionDiscountPercentage
+        }, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+        }
+      );
+      alert("✅ Saved!");
+    } catch (err) {
+      if (err.response) {
+        alert(err.response.data.message || "Error saving config.");
+      } else {
+        alert("Network error. Please try again.");
+      }
+    }
+  }
+
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-4">Categories</h2>
-      <div className="flex justify-end mb-2">
-        <button
-          className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-1 px-4 rounded"
-          onClick={() => alert("Create new category functionality coming soon")}
-        >
-          Create New Category
-        </button>
+    <div className="p-4">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Config</h2>
       </div>
-      <table className="w-full border border-black bg-gray-200">
-        <thead>
-          <tr className="bg-gray-400 text-white">
-            <th className="p-2 border">ID</th>
-            <th className="p-2 border">Name</th>
-            <th className="p-2 border">Description</th>
-            <th className="p-2 border">Created At</th>
-            <th className="p-2 border">Updated At</th>
-            <th className="p-2 border">Manage</th>
-          </tr>
-        </thead>
-        <tbody>
-          {Array.isArray(categories) && categories.length > 0 ? (
-            categories.map((category) => (
-              <tr key={category.id} className="bg-gray-100">
-                <td className="p-2 border">{category.id}</td>
-                <td className="p-2 border">{category.name}</td>
-                <td className="p-2 border">{category.description}</td>
-                <td className="p-2 border">
-                  {format(new Date(category.created_at), "MMM dd, yyyy - h:mm a")}
-                </td>
-                <td className="p-2 border">
-                  {format(new Date(category.updated_at), "MMM dd, yyyy - h:mm a")}
-                </td>
-                <td className="p-2 border">
-                  <button
-                    className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
-                    onClick={() => window.location.href = `/edit-category/${category.id}`}
-                  >
-                    Edit
-                  </button>
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="6" className="p-2 text-center text-gray-500">
-                No categories found.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+      <div className="grid grid-cols-4">
+        <div className="mt-4 col-span-2">
+          <div>
+            <label className="font-semibold bl">Shipping Fee</label>
+            <input
+              type="number"
+              name="shippingFee"
+              placeholder="Shipping Fee"
+              value={config.shippingFee}
+              onChange={handleChange}
+              className="w-full p-2 border border-black rounded bg-white text-black mt-2 mb-2"
+            />
+          </div>
+          <div>
+            <label className="font-semibold bl">Sale Tax</label>
+            <input
+              type="number"
+              name="saleTax"
+              placeholder="Sale Tax"
+              value={config.saleTax}
+              onChange={handleChange}
+              className="w-full p-2 border border-black rounded bg-white text-black mt-2 mb-2"
+            />
+          </div>
+          <div>
+            <label className="font-semibold bl">Subscription Price</label>
+            <input
+              type="number"
+              name="subscriptionPrice"
+              placeholder="Subscription Price"
+              value={config.subscriptionPrice}
+              onChange={handleChange}
+              className="w-full p-2 border border-black rounded bg-white text-black mt-2 mb-2"
+            />
+          </div>
+          <div>
+            <label className="font-semibold bl">Subscription Discount</label>
+            <input
+              type="number"
+              name="subscriptionDiscountPercentage"
+              placeholder="Subscription Discount"
+              value={config.subscriptionDiscountPercentage}
+              onChange={handleChange}
+              className="w-full p-2 border border-black rounded bg-white text-black mt-2 mb-2"
+            />
+          </div>
+          <div className="text-center">
+            <button
+              className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 mt-2"
+              onClick={handleSaveConfig}
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
