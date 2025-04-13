@@ -7,13 +7,13 @@ const CategoryModalUpsert = ({ categoryId = null, onClose }) => {
   const { addCategory, updateCategory, getCategory } = useShop();
 
   useEffect(() => {
+    // only fetch if editing
     if (categoryId !== null) {
       setLoading(true);
       const fetchCategory = async () => {
         try {
           const data = await getCategory(categoryId);
           setCategory({ name: data.name, description: data.description });
-          console.log("Category fetched:", data);
         } catch (err) {
           console.error("Error fetching category:", err);
         } finally {
@@ -21,6 +21,9 @@ const CategoryModalUpsert = ({ categoryId = null, onClose }) => {
         }
       };
       fetchCategory();
+    } else {
+      // reset fields for creation
+      setCategory({ name: "", description: "" });
     }
   }, [categoryId]);
 
