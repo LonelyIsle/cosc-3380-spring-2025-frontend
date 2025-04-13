@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import CancelOrderModal from "src/components/modal/CancelOrderModal";
 
 export default function OrderModal({ order, onClose }) {
   if (!order) return null;
 
   const [editableOrder, setEditableOrder] = useState({ ...order });
+  const [showCancelModal, setShowCancelModal] = useState(false);
 
   useEffect(() => {
     setEditableOrder({ ...order });
@@ -16,13 +18,7 @@ export default function OrderModal({ order, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white rounded shadow-md w-full max-w-2xl p-6 overflow-y-auto max-h-[90vh] relative">
-        <button
-          onClick={onClose}
-          className="absolute top-2 right-2 text-gray-600 hover:text-black text-lg"
-        >
-          &times;
-        </button>
+      <div className="bg-gray-900 text-white rounded shadow-md w-full max-w-2xl p-6 overflow-y-auto max-h-[90vh] relative">
 
         <h2 className="text-xl font-bold mb-4">Order #{order.id}</h2>
 
@@ -56,27 +52,25 @@ export default function OrderModal({ order, onClose }) {
               name="tracking"
               value={editableOrder.tracking ?? ""}
               onChange={handleChange}
-              className="ml-2 border p-1 rounded"
+              className="ml-2 border border-gray-700 bg-gray-800 text-white p-2 rounded"
             />
           </div>
           <div>
-            <strong>Status:</strong>
-            <select
-              name="status"
-              value={editableOrder.status ?? ""}
-              onChange={handleChange}
-              className="ml-2 border p-1 rounded"
-            >
-              <option value="0">Pending</option>
-              <option value="1">Processing</option>
-              <option value="2">Shipped</option>
-              <option value="3">Delivered</option>
-              <option value="4">Cancelled</option>
-            </select>
+            <strong>Status:</strong> {editableOrder.status === 0
+              ? "Pending"
+              : editableOrder.status === 1
+              ? "Processing"
+              : editableOrder.status === 2
+              ? "Shipped"
+              : editableOrder.status === 3
+              ? "Delivered"
+              : editableOrder.status === 4
+              ? "Cancelled"
+              : "Unknown"}
           </div>
 
           <div className="mt-4">
-            <h3 className="font-semibold">Shipping Address</h3>
+            <h3 className="font-semibold text-lg text-gray-300">Shipping Address</h3>
             <div>{order.shipping_address_1}</div>
             <div>{order.shipping_address_2}</div>
             <div>
@@ -85,47 +79,84 @@ export default function OrderModal({ order, onClose }) {
             </div>
           </div>
 
-          <div className="mt-4">
-            <h3 className="font-semibold">Billing Address</h3>
-            <div>{order.billing_address_1}</div>
-            <div>{order.billing_address_2}</div>
-            <div>
-              {order.billing_address_city}, {order.billing_address_state}{" "}
-              {order.billing_address_zip}
+          {order.items?.length > 0 && (
+            <div className="mt-4">
+              <h3 className="font-semibold text-lg text-gray-300">Products Ordered</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+                {order.items.map((item, index) => (
+                  <div
+                    key={index}
+                    className="bg-gray-800 p-3 rounded shadow text-white"
+                  >
+                    <div>
+                      <div className="font-semibold">{item.product.name}</div>
+                      <div className="text-sm text-gray-400">
+                        Price: ${item.price?.toFixed(2) ?? "0.00"}
+                      </div>
+                      <div className="text-sm text-gray-400">
+                        Quantity: {item.quantity ?? 1}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="mt-4 text-gray-500 text-xs">
             Created at: {new Date(order.created_at).toLocaleString()}
           </div>
         </div>
 
-        <div className="mt-6 flex justify-end gap-3">
+        <div className="mt-6 flex justify-between items-center">
           <button
-            onClick={async () => {
-              await fetch(
-                `${import.meta.env.VITE_API_URL}/order/${editableOrder.id}`,
-                {
-                  method: "PATCH",
-                  headers: {
-                    "Content-Type": "application/json",
-                    Authorization: localStorage.getItem("token"),
-                  },
-                  credentials: "include",
-                  body: JSON.stringify({
-                    ...editableOrder,
-                    status: Number(editableOrder.status),
-                  }),
-                },
-              );
-              onClose();
-            }}
-            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+            onClick={onClose}
+            className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded"
           >
-            Save Changes
+            Exit
           </button>
-          <button
-            onClick={async () => {
+
+          <div className="flex gap-3">
+            <button
+              onClick={async () => {
+                try {
+                  const response = await fetch(
+                    `${import.meta.env.VITE_API_URL}/order/${editableOrder.id}`,
+                    {
+                      method: "PATCH",
+                      headers: {
+                        "Content-Type": "application/json",
+                        Authorization: localStorage.getItem("token"),
+                      },
+                      credentials: "include",
+                      body: JSON.stringify({
+                        tracking: editableOrder.tracking,
+                        status: Number(editableOrder.status),
+                      }),
+                    },
+                  );
+
+                  if (!response.ok) {
+                    throw new Error("Failed to update order");
+                  }
+
+                  onClose();
+                } catch (error) {
+                  console.error("Error saving order:", error);
+                }
+              }}
+              className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded"
+            >
+              Save Changes
+            </button>
+          </div>
+        </div>
+
+        {showCancelModal && (
+          <CancelOrderModal
+            order={order}
+            onCancel={() => setShowCancelModal(false)}
+            onConfirm={async () => {
               await fetch(
                 `${import.meta.env.VITE_API_URL}/order/${editableOrder.id}/cancel`,
                 {
@@ -137,13 +168,11 @@ export default function OrderModal({ order, onClose }) {
                   credentials: "include",
                 },
               );
+              setShowCancelModal(false);
               onClose();
             }}
-            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-          >
-            Cancel Order
-          </button>
-        </div>
+          />
+        )}
       </div>
     </div>
   );
