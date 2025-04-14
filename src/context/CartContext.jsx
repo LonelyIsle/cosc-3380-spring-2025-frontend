@@ -1,66 +1,40 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { useProduct } from "./ProductContext";
 
 const CartContext = createContext();
 export const useCart = () => useContext(CartContext);
 
 export function CartProvider({ children }) {
   const userId = JSON.parse(localStorage.getItem("user"))?.id || "guest";
-  const CART_KEY = `cart`;
-  const [products, setProducts] = useState([]);
+  const CART_KEY = `cart-${userId}`;
+
+  const { products } = useProduct();
   const [cartItems, setCartItems] = useState([]);
   const [cartLoaded, setCartLoaded] = useState(false);
 
-  // Fetch products based on category filter
-  const fetchProducts = async (categoryIds = []) => {
-    setProductsLoaded(false);
-    let url = `${import.meta.env.VITE_API_URL}/product?`;
-    if (categoryIds.length > 0) {
-      url += `&category_id=[${categoryIds.join(",")}]`;
-    }
-    try {
-      const res = await axios.get(url);
-      const mappedproducts = res.data.data.rows.map((p) => ({
-        id: p.id,
-        sku: p.sku,
-        name: p.name,
-        price: parseFloat(p.price),
-        threshold: p.threshold,
-        quantity: p.quantity,
-        description: p.description,
-        // Convert category array into an array of names for display
-        category: p.category?.map((c) => c.name) || [],
-        image: p.image
-          ? `data:image/${p.image_extension};base64,${p.image}`
-          : "",
-      }));
-      setProducts(mappedproducts);
-      setProductsLoaded(true);
-    } catch (err) {
-      console.error(
-        "Failed to fetch products:",
-        err.response?.data || err.message,
-      );
-      setProductsLoaded(true);
-    }
-  };
+  // Build product map from ProductContext data
+  const productMap = useMemo(
+    () => new Map(products.map((p) => [p.id, p])),
+    [products],
+  );
 
-  // Build a product map for quick lookup
-  const productMap = new Map(products.map((p) => [p.id, p]));
-
+  // Load cart from localStorage
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem(CART_KEY)) || [];
     setCartItems(stored);
     setCartLoaded(true);
   }, [CART_KEY]);
 
+  // Save cart to localStorage
   useEffect(() => {
     if (cartLoaded) {
       localStorage.setItem(CART_KEY, JSON.stringify(cartItems));
     }
   }, [cartItems, cartLoaded, CART_KEY]);
 
+  // Sync cart with available product stock (e.g., after restocking or product load)
   useEffect(() => {
-    if (!cartLoaded || products.length === 0) return;
+    if (!cartLoaded || productMap.size === 0) return;
     setCartItems((prev) =>
       prev
         .map((item) => {
@@ -124,6 +98,7 @@ export function CartProvider({ children }) {
 
   const removeItem = (id) =>
     setCartItems((prev) => prev.filter((item) => item.id !== id));
+
   const clearCart = () => setCartItems([]);
 
   return (
