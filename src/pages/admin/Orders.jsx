@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import OrderModal from "src/components/modal/OrderModal";
 import CancelOrderModal from "src/components/modal/CancelOrderModal";
 
@@ -12,7 +12,7 @@ const Orders = () => {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [orderToCancel, setOrderToCancel] = useState(null);
 
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
       const fetchPage = async (pageNum) => {
@@ -58,11 +58,14 @@ const Orders = () => {
     } catch (error) {
       console.error("Error fetching orders:", error);
     }
-  };
+  }, [limit, page, search, sort]);
 
   useEffect(() => {
-    fetchOrders();
-  }, [page, search, sort]);
+    const load = async () => {
+      await fetchOrders();
+    };
+    load();
+  }, [page, search, sort, fetchOrders]);
 
   const statusMap = {
     [-1]: "Cancelled",
@@ -132,10 +135,14 @@ const Orders = () => {
               <tr>
                 <th className="py-2 px-4 border border-black">ID</th>
                 <th className="py-2 px-4 border border-black">Customer ID</th>
-                <th className="py-2 px-4 border border-black">Customer Email</th>
+                <th className="py-2 px-4 border border-black">
+                  Customer Email
+                </th>
                 <th className="py-2 px-4 border border-black">Tracking</th>
                 <th className="py-2 px-4 border border-black">Status</th>
-                <th className="py-2 px-4 border border-black">Shipping Address</th>
+                <th className="py-2 px-4 border border-black">
+                  Shipping Address
+                </th>
                 <th className="py-2 px-4 border border-black">Total Final</th>
                 <th className="py-2 px-4 border border-black">Actions</th>
               </tr>
@@ -169,7 +176,7 @@ const Orders = () => {
                       { renderStatus(order.status) }
                     </td>
                     <td className="py-2 px-4 border border-black">
-                      {`${order.shipping_address_1 ?? ""}${order.shipping_address_2 ? ', ' + order.shipping_address_2 : ''}, ${order.shipping_address_city ?? ""}, ${order.shipping_address_state ?? ""} ${order.shipping_address_zip ?? ""}`}
+                      {`${order.shipping_address_1 ?? ""}${order.shipping_address_2 ? ", " + order.shipping_address_2 : ""}, ${order.shipping_address_city ?? ""}, ${order.shipping_address_state ?? ""} ${order.shipping_address_zip ?? ""}`}
                     </td>
                     <td className="py-2 px-4 border border-black">
                       ${order.total_final?.toFixed(2) ?? "0.00"}
