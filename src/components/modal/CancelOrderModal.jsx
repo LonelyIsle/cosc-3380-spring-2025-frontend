@@ -52,7 +52,7 @@ const CancelOrderModal = ({ order, onCancel, onConfirm }) => {
         <p className="text-gray-300 mb-6">
           Are you sure you want to cancel{" "}
           <span className="font-semibold">
-            {order.customer_email || `Order #${order.id}`}
+            {`Order #${order.id}`}
           </span>
           ?
         </p>

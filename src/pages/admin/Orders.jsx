@@ -7,7 +7,7 @@ const Orders = () => {
   const [page, setPage] = useState(0);
   const [limit] = useState(10);
   const [search, setSearch] = useState("");
-  const [sort, setSort] = useState("created_at_desc");
+  const [sort, setSort] = useState("created_at-desc");
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [orderToCancel, setOrderToCancel] = useState(null);
@@ -16,7 +16,7 @@ const Orders = () => {
     try {
       const token = localStorage.getItem("token");
       const fetchPage = async (pageNum) => {
-        let query = `limit=${limit}&offset=${pageNum * limit}&search=${encodeURIComponent(search)}&sort=${sort}`;
+        let query = `limit=${limit}&offset=${pageNum * limit}&sort_by=${sort === "guest_only" || sort === "customer_only" ? "" : sort}`;
         const response = await fetch(
           `${import.meta.env.VITE_API_URL}/order?${query}`,
           {
@@ -67,10 +67,35 @@ const Orders = () => {
   const statusMap = {
     [-1]: "Cancelled",
     0: "Pending",
-    1: "Processing",
-    2: "Shipped",
-    3: "Delivered",
+    1: "Shipped",
+    2: "Shipped"
   };
+
+  const renderStatus = (status) => {
+    switch(status) {
+      case -1:
+        return( 
+          <span className="bg-gray-300 p-2 rounded mr-2 text-md font-bold">
+            {statusMap[status]}
+          </span>
+        );
+        break;
+      case 0:
+        return ( 
+          <span className="bg-green-200 p-2 rounded mr-2 text-md font-bold">
+            {statusMap[status]}
+          </span>
+        );
+        break;
+      case 1:
+        return ( 
+          <span className="bg-gray-300 p-2 rounded mr-2 text-md font-bold">
+            {statusMap[status]}
+          </span>
+        );
+        break;
+    }
+  }
 
   return (
     <div>
@@ -95,8 +120,8 @@ const Orders = () => {
               setSort(e.target.value);
             }}
           >
-            <option value="created_at_desc">Newest</option>
-            <option value="created_at_asc">Oldest</option>
+            <option value="created_at-desc">Newest</option>
+            <option value="created_at-asc">Oldest</option>
             <option value="customer_only">Customer Orders</option>
             <option value="guest_only">Guest Orders</option>
           </select>
@@ -141,7 +166,7 @@ const Orders = () => {
                       {order.tracking ?? "N/A"}
                     </td>
                     <td className="py-2 px-4 border border-black">
-                      {statusMap[Number(order.status)] ?? "Unknown"}
+                      { renderStatus(order.status) }
                     </td>
                     <td className="py-2 px-4 border border-black">
                       {`${order.shipping_address_1 ?? ""}${order.shipping_address_2 ? ', ' + order.shipping_address_2 : ''}, ${order.shipping_address_city ?? ""}, ${order.shipping_address_state ?? ""} ${order.shipping_address_zip ?? ""}`}
@@ -193,7 +218,7 @@ const Orders = () => {
             order={selectedOrder}
             onClose={() => setSelectedOrder(null)}
             onSave={async (updatedOrder) => {
-              const newStatus = updatedOrder.tracking ? 2 : updatedOrder.status;
+              const newStatus = updatedOrder.tracking ? 1 : updatedOrder.status;
 
               try {
                 const response = await fetch(
