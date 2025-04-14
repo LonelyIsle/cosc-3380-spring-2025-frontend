@@ -95,8 +95,12 @@ function OrderHistory({ orders }) {
                     <strong>Email:</strong> {selectedOrder?.customer_email}
                   </div>
                   <div>
-                  <strong>Status:</strong>{" "}
+                    <strong>Status:</strong>{" "}
                     {renderStatus(selectedOrder?.status)}
+                  </div>
+                  <div className="mt-2">
+                    <strong>Tracking:</strong>{" "}
+                    {selectedOrder?.tracking ? selectedOrder?.tracking : "N/A"}
                   </div>
                   <div className="mt-4">
                     <h3 className="font-semibold text-lg">
