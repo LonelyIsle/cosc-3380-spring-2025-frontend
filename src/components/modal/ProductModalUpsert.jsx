@@ -5,9 +5,11 @@ import { useCategory } from "@context/CategoryContext";
 const ProductModalUpsert = ({ productId = null, onClose }) => {
   const [product, setProduct] = useState({});
   const [loading, setLoading] = useState(false);
-  const { categories, categoriesLoaded, uploadProductImage } = useCategory();
-  const { getProduct, addProduct, updateProduct } = useProduct();
-  // Fetch product info if updating product
+  const { categories, categoriesLoaded } = useCategory();
+  const { getProduct, addProduct, updateProduct, uploadProductImage } =
+    useProduct();
+
+  // If updating, fetch product info from the global array (or API) once.
   useEffect(() => {
     if (productId !== null) {
       setLoading(true);
@@ -24,8 +26,9 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
       };
       fetchProduct();
     }
-  }, [productId]);
-  // Convert product categories from names to full objects if needed
+  }, [productId, getProduct]);
+
+  // Convert product categories from names to full objects if needed.
   useEffect(() => {
     if (
       productId !== null &&
@@ -39,10 +42,12 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
       setProduct((prev) => ({ ...prev, category: convertedCategories }));
     }
   }, [categoriesLoaded, product, productId, categories]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProduct((prev) => ({ ...prev, [name]: value }));
   };
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -58,7 +63,8 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
       reader.readAsDataURL(file);
     }
   };
-  // Handle toggling of category checkboxes
+
+  // Handle toggling of category checkboxes.
   const handleCategoryToggle = (e) => {
     const id = parseInt(e.target.value, 10);
     let updatedCategories;
@@ -76,6 +82,7 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
     }
     setProduct((prev) => ({ ...prev, category: updatedCategories }));
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const categoryIds = (product.category || []).map((cat) => cat.id);
@@ -88,24 +95,38 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
       description: product.description || "",
       category_id: categoryIds,
     };
+
     try {
       let result;
       if (productId === null) {
         result = await addProduct(productData);
-        if (product.imageFile instanceof File) {
-          await uploadProductImage(result.id, product.imageFile);
-        }
       } else {
         result = await updateProduct(productId, productData);
-        if (product.imageFile instanceof File) {
-          await uploadProductImage(productId, product.imageFile);
+      }
+
+      // Try to upload the image separately — this can fail without affecting the rest
+      if (product.imageFile instanceof File) {
+        try {
+          const idToUse = productId || result.id;
+          await uploadProductImage(idToUse, product.imageFile);
+        } catch (imageErr) {
+          console.warn("Image upload failed:", imageErr);
+          alert("Product created, but image upload failed.");
         }
       }
+
+      alert("Product saved successfully.");
       onClose();
     } catch (err) {
       console.error("Submit failed:", err);
+      if (err.response?.data?.message) {
+        alert(`Error: ${err.response.data.message}`);
+      } else {
+        alert("Submit failed. Please try again.");
+      }
     }
   };
+
   return (
     <div
       className="fixed top-0 left-0 w-screen h-screen flex justify-center items-center z-50"
@@ -124,7 +145,7 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-3">
             <div className="flex justify-center items-center gap-4">
-              <label className="font-semibold bl">Name</label>
+              <label className="font-semibold">Name</label>
               <input
                 type="text"
                 name="name"
@@ -133,7 +154,7 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
                 onChange={handleChange}
                 className="w-full p-2 rounded bg-surface1 text-text"
               />
-              <label className="font-semibold bl">SKU</label>
+              <label className="font-semibold">SKU</label>
               <input
                 type="text"
                 name="sku"
@@ -143,7 +164,7 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
                 className="w-full p-2 rounded bg-surface1 text-text"
               />
             </div>
-            <label className="font-semibold bl">Description</label>
+            <label className="font-semibold">Description</label>
             <textarea
               name="description"
               placeholder="Description"
@@ -152,7 +173,7 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
               className="w-full p-2 rounded bg-surface1 text-text mt-1"
             />
             <div className="flex justify-center items-center gap-4">
-              <label className="font-semibold bl">Price</label>
+              <label className="font-semibold">Price</label>
               <input
                 type="number"
                 name="price"
@@ -161,7 +182,7 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
                 onChange={handleChange}
                 className="w-full p-2 rounded bg-surface1 text-text"
               />
-              <label className="font-semibold bl">Quantity</label>
+              <label className="font-semibold">Quantity</label>
               <input
                 type="number"
                 name="quantity"
@@ -171,7 +192,7 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
                 onChange={handleChange}
                 className="w-full p-2 rounded bg-surface1 text-text"
               />
-              <label className="font-semibold bl">Threshold</label>
+              <label className="font-semibold">Threshold</label>
               <input
                 type="number"
                 name="threshold"
@@ -206,7 +227,7 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
               )}
             </div>
             <div className="flex flex-col gap-2">
-              <label className="font-semibold bl">Image</label>
+              <label className="font-semibold">Image</label>
               {product.image && (
                 <img
                   src={product.image}
@@ -231,7 +252,7 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-green rounded hover:bg-teal text-black transition"
+                className="px-4 py-2 bg-green rounded hover:bg-teal transition text-black"
               >
                 {productId ? "Update" : "Create"}
               </button>
@@ -242,4 +263,5 @@ const ProductModalUpsert = ({ productId = null, onClose }) => {
     </div>
   );
 };
+
 export default ProductModalUpsert;
