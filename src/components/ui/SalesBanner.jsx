@@ -10,13 +10,13 @@ const SalesBanner = () => {
 
   const [saleEvent, setSaleEvent] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+    const [error, setError] = useState(null);
 
-  useEffect(() => {
-    setLoading(true);
-    axios
-      .get(`${import.meta.env.VITE_API_URL}/sale-event/one/active`)
-      .then((res) => {
+    useEffect(() => {
+      setLoading(true);
+      axios
+        .get(`${import.meta.env.VITE_API_URL}/sale-event/one/active`)
+        .then((res) => {
         if (res.data.message === "success" && res.data.data) {
           setSaleEvent(res.data.data);
         }

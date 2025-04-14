@@ -5,15 +5,15 @@ import Seperator from "../assets/header-seperator.svg";
 function LandingPage() {
   return (
     <>
-      <div className="bg-sky flex flex-col justify-end items-center h-[90vh]">
+      <div className="bg-sky flex flex-col justify-end items-center">
         <img
           src={Logo}
           alt="MofuMofuMart Logo"
-          className="h-[50vh] absolute top-[12vh]"
+          className="relative top-[12vh]"
         />
         <Link
           to="/shop"
-          className="header-box absolute top-[68vh] px-10 bg-mantle text-text"
+          className="header-box relative top-[18vh] px-10 bg-mantle text-text"
         >
           Shop
         </Link>

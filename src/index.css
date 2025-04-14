@@ -62,6 +62,10 @@ body {
   .center-container {
     @apply flex justify-center items-center;
   }
+
+  .shop-button {
+    @apply px-8 py-3 rounded-full text-mantle font-semibold shadow-md bg-gradient-to-r from-pink to-peach hover:from-peach hover:to-pink transition-all duration-300;
+  }
 }
 
 .scrolling-text-container {
@@ -93,4 +97,14 @@ body {
   100% {
     transform: translateX(calc(-100%));
   }
+}
+
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-1deg); }
+  50% { transform: rotate(1deg); }
+}
+
+.shop-button:hover {
+  animation: wiggle 0.2s ease-in-out;
 }
