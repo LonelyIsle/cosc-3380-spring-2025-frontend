@@ -5,7 +5,7 @@ export const useCart = () => useContext(CartContext);
 
 export function CartProvider({ children }) {
   const userId = JSON.parse(localStorage.getItem("user"))?.id || "guest";
-  const CART_KEY = `cart-${userId}`;
+  const CART_KEY = `cart`;
   const [products, setProducts] = useState([]);
   const [cartItems, setCartItems] = useState([]);
   const [cartLoaded, setCartLoaded] = useState(false);
