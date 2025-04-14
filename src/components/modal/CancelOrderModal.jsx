@@ -1,16 +1,34 @@
 import React, { useState } from "react";
+import CancelOrderConfirmationModal from "src/components/modal/CancelOrderModal";
 
 const CancelOrderModal = ({ order, onCancel, onConfirm }) => {
   const [confirmed, setConfirmed] = useState(false);
 
   if (confirmed) {
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" onClick={onCancel}>
-        <div className="bg-gray-900 text-white rounded p-6 w-full max-w-md shadow-lg" onClick={(e) => e.stopPropagation()}>
-          <h2 className="text-xl font-bold text-green-400 mb-4">Order Cancelled</h2>
-          <p className="text-gray-300 mb-6">The order has been successfully cancelled.</p>
+      <div
+        className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+        onClick={onCancel}
+      >
+        <div
+          className="bg-gray-900 text-white rounded p-6 w-full max-w-md shadow-lg"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <h2 className="text-xl font-bold text-green-400 mb-4">
+            Order Cancelled
+          </h2>
+          <p className="text-gray-300 mb-6">
+            The order has been successfully cancelled.
+          </p>
           <div className="flex justify-center">
-            <button onClick={onCancel} className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded">
+            <button
+              onClick={() => {
+                if (typeof onConfirm === "function") {
+                  onConfirm(); // Could navigate or show confirmation modal
+                }
+              }}
+              className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded"
+            >
               Back to Orders
             </button>
           </div>
@@ -47,6 +65,8 @@ const CancelOrderModal = ({ order, onCancel, onConfirm }) => {
           </button>
           <button
             onClick={async () => {
+              console.log("Cancelling order:", order);
+
               try {
                 const response = await fetch(
                   `${import.meta.env.VITE_API_URL}/order/${order.id}/cancel`,
@@ -56,22 +76,19 @@ const CancelOrderModal = ({ order, onCancel, onConfirm }) => {
                       "Content-Type": "application/json",
                       Authorization: localStorage.getItem("token"),
                     },
-                    credentials: "include",
-                  }
+                    body: JSON.stringify({ status: -1 }),
+                  },
                 );
 
                 if (!response.ok) {
                   throw new Error("Failed to cancel order");
                 }
 
-                setConfirmed(true);
-
                 if (typeof onConfirm === "function") {
-                  onConfirm(); // refresh and update list
+                  onConfirm(); // refresh list
                 }
-                if (typeof onCancel === "function") {
-                  onCancel(); // close the modal
-                }
+
+                setConfirmed(true); // show confirmation
               } catch (error) {
                 console.error("Cancel order failed:", error);
               }
