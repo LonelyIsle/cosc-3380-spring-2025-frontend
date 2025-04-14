@@ -84,7 +84,7 @@ function Profile() {
               "Content-Type": "application/json",
               Authorization: token,
             },
-          }
+          },
         );
         console.log(res);
         setProfileData(res.data.data); // Assuming the API returns the profile data
@@ -143,9 +143,7 @@ function Profile() {
               <span className="text-gray-600">{profileData.email}</span>
             </div>
             <div>
-              <strong className="block mb-1 text-gray-700">
-                Subscribed :
-              </strong>
+              <strong className="block mb-1 text-gray-700">Subscribed :</strong>
               <span className="text-gray-600">
                 {profileData.subscription &&
                 Object.keys(profileData.subscription).length > 0

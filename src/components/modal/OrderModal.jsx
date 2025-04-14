@@ -20,34 +20,34 @@ export default function OrderModal({ order, onClose, onSave }) {
     [-1]: "Cancelled",
     0: "Pending",
     1: "Shipped",
-    2: "Shipped"
+    2: "Shipped",
   };
 
   const renderStatus = (status) => {
-    switch(status) {
+    switch (status) {
       case -1:
-        return( 
+        return (
           <span className="bg-gray-300 p-1 rounded mr-2 text-sm text-black">
             {statusMap[status]}
           </span>
         );
         break;
       case 0:
-        return ( 
+        return (
           <span className="bg-green-200 p-1 rounded mr-2 text-sm text-black">
             {statusMap[status]}
           </span>
         );
         break;
       case 1:
-        return ( 
+        return (
           <span className="bg-gray-300 p-1 rounded mr-2 text-sm text-black">
             {statusMap[status]}
           </span>
         );
         break;
     }
-  }
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -66,8 +66,7 @@ export default function OrderModal({ order, onClose, onSave }) {
                 {(order.total_subscription ?? 0).toFixed(2)}
               </div>
               <div className="mb-2">
-                <strong>Coupon:</strong> $
-                {(order.total_coupon ?? 0).toFixed(2)}
+                <strong>Coupon:</strong> ${(order.total_coupon ?? 0).toFixed(2)}
               </div>
               <div className="mb-2">
                 <strong>Shipping Fee:</strong> ${order.shipping_fee?.toFixed(2)}
@@ -88,8 +87,7 @@ export default function OrderModal({ order, onClose, onSave }) {
                 <strong>Email:</strong> {order.customer_email}
               </div>
               <div>
-              <strong>Status:</strong>{" "}
-                {renderStatus(editableOrder.status)}
+                <strong>Status:</strong> {renderStatus(editableOrder.status)}
               </div>
               <div className="mt-4">
                 <h3 className="font-semibold text-lg text-gray-300">
@@ -126,7 +124,9 @@ export default function OrderModal({ order, onClose, onSave }) {
                     className="bg-gray-800 p-3 rounded shadow text-white"
                   >
                     <div>
-                      <div className="font-semibold">{item.product ? item.product.name : "N/A"}</div>
+                      <div className="font-semibold">
+                        {item.product ? item.product.name : "N/A"}
+                      </div>
                       <div className="text-sm text-gray-400">
                         Price: ${item.price?.toFixed(2) ?? "0.00"}
                       </div>

@@ -68,34 +68,34 @@ const Orders = () => {
     [-1]: "Cancelled",
     0: "Pending",
     1: "Shipped",
-    2: "Shipped"
+    2: "Shipped",
   };
 
   const renderStatus = (status) => {
-    switch(status) {
+    switch (status) {
       case -1:
-        return( 
+        return (
           <span className="bg-gray-300 p-2 rounded mr-2 text-md font-bold">
             {statusMap[status]}
           </span>
         );
         break;
       case 0:
-        return ( 
+        return (
           <span className="bg-green-200 p-2 rounded mr-2 text-md font-bold">
             {statusMap[status]}
           </span>
         );
         break;
       case 1:
-        return ( 
+        return (
           <span className="bg-gray-300 p-2 rounded mr-2 text-md font-bold">
             {statusMap[status]}
           </span>
         );
         break;
     }
-  }
+  };
 
   return (
     <div>
@@ -132,10 +132,14 @@ const Orders = () => {
               <tr>
                 <th className="py-2 px-4 border border-black">ID</th>
                 <th className="py-2 px-4 border border-black">Customer ID</th>
-                <th className="py-2 px-4 border border-black">Customer Email</th>
+                <th className="py-2 px-4 border border-black">
+                  Customer Email
+                </th>
                 <th className="py-2 px-4 border border-black">Tracking</th>
                 <th className="py-2 px-4 border border-black">Status</th>
-                <th className="py-2 px-4 border border-black">Shipping Address</th>
+                <th className="py-2 px-4 border border-black">
+                  Shipping Address
+                </th>
                 <th className="py-2 px-4 border border-black">Total Final</th>
                 <th className="py-2 px-4 border border-black">Actions</th>
               </tr>
@@ -166,10 +170,10 @@ const Orders = () => {
                       {order.tracking ?? "N/A"}
                     </td>
                     <td className="py-2 px-4 border border-black">
-                      { renderStatus(order.status) }
+                      {renderStatus(order.status)}
                     </td>
                     <td className="py-2 px-4 border border-black">
-                      {`${order.shipping_address_1 ?? ""}${order.shipping_address_2 ? ', ' + order.shipping_address_2 : ''}, ${order.shipping_address_city ?? ""}, ${order.shipping_address_state ?? ""} ${order.shipping_address_zip ?? ""}`}
+                      {`${order.shipping_address_1 ?? ""}${order.shipping_address_2 ? ", " + order.shipping_address_2 : ""}, ${order.shipping_address_city ?? ""}, ${order.shipping_address_state ?? ""} ${order.shipping_address_zip ?? ""}`}
                     </td>
                     <td className="py-2 px-4 border border-black">
                       ${order.total_final?.toFixed(2) ?? "0.00"}

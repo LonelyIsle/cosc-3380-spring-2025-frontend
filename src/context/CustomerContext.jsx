@@ -58,7 +58,11 @@ export function CustomerProvider({ children }) {
   // Login a customer (POST login)
   const loginCustomer = async (email, password) => {
     try {
-      const res = await axios.post(`${URL_PATH}/login`, { email, password }, authHeader);
+      const res = await axios.post(
+        `${URL_PATH}/login`,
+        { email, password },
+        authHeader,
+      );
       // If the response contains an auth token, store it in localStorage
       const token = res.data.data?.token;
       if (token) {
@@ -74,7 +78,11 @@ export function CustomerProvider({ children }) {
   // Get the reset password question for a given customer (POST forget/question)
   const forgetQuestion = async (email) => {
     try {
-      const res = await axios.post(`${URL_PATH}/forget/question`, { email }, authHeader);
+      const res = await axios.post(
+        `${URL_PATH}/forget/question`,
+        { email },
+        authHeader,
+      );
       return res.data.data;
     } catch (err) {
       console.error("Failed to get password reset question:", err);

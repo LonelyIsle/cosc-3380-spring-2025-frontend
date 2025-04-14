@@ -4,36 +4,33 @@ import axios from "axios";
 const Config = () => {
   const [config, setConfig] = useState({
     shippingFee: 0,
-		saleTax: 0,
-		subscriptionPrice: 0,
-    subscriptionDiscountPercentage: 0
+    saleTax: 0,
+    subscriptionPrice: 0,
+    subscriptionDiscountPercentage: 0,
   });
 
   const getConfig = async () => {
     try {
-      let res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/config`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      let res = await axios.get(`${import.meta.env.VITE_API_URL}/config`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       let data = res.data.data;
       setConfig({
         shippingFee: data.shipping_fee,
         saleTax: data.sale_tax,
         subscriptionPrice: data.subscription_price,
-        subscriptionDiscountPercentage: data.subscription_discount_percentage
+        subscriptionDiscountPercentage: data.subscription_discount_percentage,
       });
-    } catch(err) {
+    } catch (err) {
       if (err.response) {
         alert(err.response.data.message || "Error getting config");
       } else {
         alert("Network error. Please try again.");
       }
     }
-  }
+  };
 
   useEffect(() => {
     getConfig();
@@ -43,26 +40,29 @@ const Config = () => {
     const { name, value } = e.target;
     setConfig((prev) => ({
       ...prev,
-      [name]: value
-    }))
-  }
+      [name]: value,
+    }));
+  };
 
   const handleSaveConfig = async () => {
     const token = localStorage.getItem("token");
 
     try {
       const response = await axios.patch(
-        `${import.meta.env.VITE_API_URL}/config`, {
+        `${import.meta.env.VITE_API_URL}/config`,
+        {
           shipping_fee: config.shippingFee,
           sale_tax: config.saleTax,
           subscription_price: config.subscriptionPrice,
-          subscription_discount_percentage: config.subscriptionDiscountPercentage
-        }, {
+          subscription_discount_percentage:
+            config.subscriptionDiscountPercentage,
+        },
+        {
           headers: {
             "Content-Type": "application/json",
             Authorization: token,
           },
-        }
+        },
       );
       alert("✅ Saved!");
     } catch (err) {
@@ -72,7 +72,7 @@ const Config = () => {
         alert("Network error. Please try again.");
       }
     }
-  }
+  };
 
   return (
     <div className="p-4">

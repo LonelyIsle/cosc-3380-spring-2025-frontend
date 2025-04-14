@@ -19,7 +19,10 @@ export function CouponProvider({ children }) {
   // Fetch an active coupon by its code (GET coupon/:code/active)
   const fetchActiveCoupon = async (code) => {
     try {
-      const res = await axios.get(`${URL_PATH}/coupon/${code}/active`, authHeader);
+      const res = await axios.get(
+        `${URL_PATH}/coupon/${code}/active`,
+        authHeader,
+      );
       setActiveCoupon(res.data.data);
     } catch (err) {
       console.error("Failed to fetch active coupon for code:", code, err);

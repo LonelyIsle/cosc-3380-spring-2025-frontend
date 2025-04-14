@@ -3,7 +3,9 @@ import { useEffect, useState } from "react";
 import { useCart } from "@context/CartContext";
 import logo from "@assets/navbar-logo.svg";
 
-const svgs = import.meta.glob("../../assets/cart-assets/*.svg", { eager: true });
+const svgs = import.meta.glob("../../assets/cart-assets/*.svg", {
+  eager: true,
+});
 const cartSvgs = Object.entries(svgs).reduce((acc, [path, module]) => {
   const key = path.split("/").pop().replace(".svg", "");
   acc[key] = module.default;
@@ -22,11 +24,10 @@ function Navbar({ isLoggedIn, handleLogout }) {
       ? cartSvgs["cart-overflow"]
       : cartSvgs[`cart-${cartQuantity}`];
 
-      const user = JSON.parse(localStorage.getItem("user"));
-      console.log("This is navbar User",user)
-      const userRole = user?.role;
-      console.log("This is navbar User",userRole)
-    
+  const user = JSON.parse(localStorage.getItem("user"));
+  console.log("This is navbar User", user);
+  const userRole = user?.role;
+  console.log("This is navbar User", userRole);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -46,10 +47,13 @@ function Navbar({ isLoggedIn, handleLogout }) {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+  
 
+  
   const handleLogoutAndNavigate = () => {
     handleLogout(); // Call the logout function
     navigate("/login"); // Navigate to the login page
+    window.location.reload();
   };
 
   return (
@@ -61,7 +65,7 @@ function Navbar({ isLoggedIn, handleLogout }) {
         <img src={logo} alt="Navbar Logo" className="header-box h-20" />
       </Link>
       <ul className="flex gap-4 justify-center items-center">
-      {isLoggedIn ? (
+        {isLoggedIn ? (
           userRole === 1 || userRole === 0 ? (
             // 🛠 Admin view
             <>

@@ -24,7 +24,7 @@ const EmployeePasswordModal = ({ employee, onCancel, onConfirm }) => {
     } catch (err) {
       console.error("Failed to update password:", err);
       if (err.response) {
-        alert(err.response.data.message); 
+        alert(err.response.data.message);
       } else {
         alert("Failed to update password.");
       }
