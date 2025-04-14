@@ -2,14 +2,18 @@ import React, { useState, useEffect } from "react";
 import CancelOrderModal from "src/components/modal/CancelOrderModal";
 
 export default function OrderModal({ order, onClose, onSave }) {
-  if (!order) return null;
-
-  const [editableOrder, setEditableOrder] = useState({ ...order });
+  const [editableOrder, setEditableOrder] = useState(order ? { ...order } : {});
   const [showCancelModal, setShowCancelModal] = useState(false);
 
   useEffect(() => {
-    setEditableOrder({ ...order });
+    if (order) {
+      setEditableOrder({ ...order });
+    }
   }, [order]);
+
+  if (!order) {
+    return null;
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
