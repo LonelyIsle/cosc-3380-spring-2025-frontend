@@ -10,11 +10,15 @@ export function NotificationProvider({ children }) {
   const [notifications, setNotifications] = useState([]);
   const [notificationsLoaded, setNotificationsLoaded] = useState(false);
 
+  // Authorization header for requests that require auth
+  const token = getToken();
+  const authHeader = { headers: { Authorization: token } };
+
   // Fetch all notifications (GET notification)
   const fetchNotifications = async () => {
     setNotificationsLoaded(false);
     try {
-      const res = await axios.get(`${URL_PATH}/notification`);
+      const res = await axios.get(`${URL_PATH}/notification`, authHeader);
       const mappedNotifications = res.data.data.rows.map((notification) => ({
         id: notification.id,
         employee_id: notification.employee_id,
@@ -38,17 +42,13 @@ export function NotificationProvider({ children }) {
   // Fetch a single notification by ID (GET notification/:id)
   const fetchNotificationById = async (id) => {
     try {
-      const res = await axios.get(`${URL_PATH}/notification/${id}`);
+      const res = await axios.get(`${URL_PATH}/notification/${id}`, authHeader);
       return res.data.data;
     } catch (err) {
       console.error(`Failed to fetch notification with id ${id}:`, err);
       throw err;
     }
   };
-
-  // Prepare the authorization header for authenticated endpoints
-  const token = getToken();
-  const authHeader = { headers: { Authorization: token } };
 
   // Update a notification (PATCH notification/:id)
   // For example, to update the notification's status.

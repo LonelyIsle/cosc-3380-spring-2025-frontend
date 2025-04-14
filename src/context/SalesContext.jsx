@@ -14,10 +14,14 @@ export function SaleProvider({ children }) {
   const [sales, setSales] = useState([]);
   const [salesLoaded, setSalesLoaded] = useState(false);
 
+  // Prepare the authorization header using the stored token
+  const token = getToken();
+  const authHeader = { headers: { Authorization: token } };
+
   // Fetch the active sale event (GET sale-event/one/active)
   const fetchActiveSale = async () => {
     try {
-      const res = await axios.get(`${URL_PATH}/sale-event/one/active`);
+      const res = await axios.get(`${URL_PATH}/sale-event/one/active`, authHeader);
       setActiveSale(res.data.data);
     } catch (err) {
       console.error("Failed to fetch active sale event:", err);
@@ -29,7 +33,7 @@ export function SaleProvider({ children }) {
   const fetchSales = async () => {
     setSalesLoaded(false);
     try {
-      const res = await axios.get(`${URL_PATH}/sale-event`);
+      const res = await axios.get(`${URL_PATH}/sale-event`, authHeader);
       // Map over rows to format the sale event data
       const mappedSales = res.data.data.rows.map((sale) => ({
         id: sale.id,
@@ -55,7 +59,7 @@ export function SaleProvider({ children }) {
   // Fetch a single sale event by ID (GET sale-event/:id)
   const fetchSaleById = async (id) => {
     try {
-      const res = await axios.get(`${URL_PATH}/sale-event/${id}`);
+      const res = await axios.get(`${URL_PATH}/sale-event/${id}`, authHeader);
       return res.data.data;
     } catch (err) {
       console.error(`Failed to fetch sale event with id ${id}:`, err);
@@ -63,9 +67,6 @@ export function SaleProvider({ children }) {
     }
   };
 
-  // Prepare the authorization header using the stored token
-  const token = getToken();
-  const authHeader = { headers: { Authorization: token } };
 
   // Create a new sale event (POST /sale-event)
   const createSaleEvent = async (data) => {

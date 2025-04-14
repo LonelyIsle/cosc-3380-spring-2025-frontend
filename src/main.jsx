@@ -9,7 +9,7 @@ import { ProductProvider } from "@context/ProductContext.jsx";
 import { CartProvider } from "@context/CartContext.jsx";
 import { SaleProvider } from "@context/SalesContext";
 import { CouponProvider } from "@context/CouponContext.jsx";
-import { CustomerContextProvider } from "@context/CustomerContext.jsx";
+import { CustomerProvider } from "@context/CustomerContext.jsx";
 import { ConfigProvider } from "@context/ConfigContext.jsx";
 import { OrderProvider } from "@context/OrderContext.jsx";
 import { NotificationProvider } from "@context/NotificationContext.jsx";
@@ -23,7 +23,7 @@ createRoot(document.getElementById("root")).render(
             <SaleProvider>
               <EmployeeProvider>
                 <CouponProvider>
-                  <CustomerContextProvider>
+                  <CustomerProvider>
                     <ConfigProvider>
                       <OrderProvider>
                         <NotificationProvider>
@@ -31,7 +31,7 @@ createRoot(document.getElementById("root")).render(
                         </NotificationProvider>
                       </OrderProvider>
                     </ConfigProvider>
-                  </CustomerContextProvider>
+                  </CustomerProvider>
                 </CouponProvider>
               </EmployeeProvider>
             </SaleProvider>

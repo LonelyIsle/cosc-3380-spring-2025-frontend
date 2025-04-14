@@ -10,11 +10,15 @@ export function OrderProvider({ children }) {
   const [orders, setOrders] = useState([]);
   const [ordersLoaded, setOrdersLoaded] = useState(false);
 
+  // Prepare authorization header for endpoints that require authentication
+  const token = getToken();
+  const authHeader = { headers: { Authorization: token } };
+
   // Fetch all orders (GET order)
   const fetchOrders = async () => {
     setOrdersLoaded(false);
     try {
-      const res = await axios.get(`${URL_PATH}/order`);
+      const res = await axios.get(`${URL_PATH}/order`, authHeader);
       // Map the returned rows; adjust mapping if you need to transform the order data.
       const mappedOrders = res.data.data.rows.map((order) => ({
         id: order.id,
@@ -24,7 +28,8 @@ export function OrderProvider({ children }) {
         customer_last_name: order.customer_last_name,
         customer_email: order.customer_email,
         subscription_id: order.subscription_id,
-        subscription_discount_percentage: order.subscription_discount_percentage,
+        subscription_discount_percentage:
+          order.subscription_discount_percentage,
         coupon_id: order.coupon_id,
         coupon_value: order.coupon_value,
         coupon_type: order.coupon_type,
@@ -67,17 +72,13 @@ export function OrderProvider({ children }) {
   // Fetch a single order by id (GET order/:id)
   const fetchOrderById = async (id) => {
     try {
-      const res = await axios.get(`${URL_PATH}/order/${id}`);
+      const res = await axios.get(`${URL_PATH}/order/${id}`, authHeader);
       return res.data.data;
     } catch (err) {
       console.error(`Failed to fetch order with id ${id}:`, err);
       throw err;
     }
   };
-
-  // Prepare authorization header for endpoints that require authentication
-  const token = getToken();
-  const authHeader = { headers: { Authorization: token } };
 
   // Create a new order (POST order)
   const createOrder = async (data) => {
@@ -96,7 +97,11 @@ export function OrderProvider({ children }) {
   // For example, updating the tracking number.
   const updateOrder = async (id, data) => {
     try {
-      const res = await axios.patch(`${URL_PATH}/order/${id}`, data, authHeader);
+      const res = await axios.patch(
+        `${URL_PATH}/order/${id}`,
+        data,
+        authHeader,
+      );
       fetchOrders(); // Refresh the orders list after updating
       return res.data.data;
     } catch (err) {
@@ -112,7 +117,7 @@ export function OrderProvider({ children }) {
       const res = await axios.patch(
         `${URL_PATH}/order/${id}/cancel`,
         {},
-        authHeader
+        authHeader,
       );
       fetchOrders(); // Refresh the orders list after cancellation
       return res.data.data;

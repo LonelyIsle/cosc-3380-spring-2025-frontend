@@ -12,10 +12,14 @@ export function CouponProvider({ children }) {
   const [couponsLoaded, setCouponsLoaded] = useState(false);
   const [activeCoupon, setActiveCoupon] = useState(null);
 
+  // Prepare authorization header using the token
+  const token = getToken();
+  const authHeader = { headers: { Authorization: token } };
+
   // Fetch an active coupon by its code (GET coupon/:code/active)
   const fetchActiveCoupon = async (code) => {
     try {
-      const res = await axios.get(`${URL_PATH}/coupon/${code}/active`);
+      const res = await axios.get(`${URL_PATH}/coupon/${code}/active`, authHeader);
       setActiveCoupon(res.data.data);
     } catch (err) {
       console.error("Failed to fetch active coupon for code:", code, err);
@@ -27,7 +31,7 @@ export function CouponProvider({ children }) {
   const fetchCoupons = async () => {
     setCouponsLoaded(false);
     try {
-      const res = await axios.get(`${URL_PATH}/coupon`);
+      const res = await axios.get(`${URL_PATH}/coupon`, authHeader);
       const mappedCoupons = res.data.data.rows.map((coupon) => ({
         id: coupon.id,
         code: coupon.code,
@@ -52,17 +56,13 @@ export function CouponProvider({ children }) {
   // Fetch a coupon by its id (GET coupon/:id)
   const fetchCouponById = async (id) => {
     try {
-      const res = await axios.get(`${URL_PATH}/coupon/${id}`);
+      const res = await axios.get(`${URL_PATH}/coupon/${id}`, authHeader);
       return res.data.data;
     } catch (err) {
       console.error(`Failed to fetch coupon with id ${id}:`, err);
       throw err;
     }
   };
-
-  // Prepare authorization header using the token
-  const token = getToken();
-  const authHeader = { headers: { Authorization: token } };
 
   // Create a new coupon (POST coupon)
   const createCoupon = async (data) => {

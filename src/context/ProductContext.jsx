@@ -10,6 +10,9 @@ export function ProductProvider({ children }) {
   const [products, setProducts] = useState([]);
   const [productsLoaded, setProductsLoaded] = useState(false);
 
+  const token = getToken();
+  const authHeader = { headers: { Authorization: token } };
+
   const fetchProducts = async (categoryIds = []) => {
     setProductsLoaded(false);
     let url = `${URL_PATH}/product`;
@@ -18,7 +21,7 @@ export function ProductProvider({ children }) {
     }
 
     try {
-      const res = await axios.get(url);
+      const res = await axios.get(url, authHeader);
       const mapped = res.data.data.rows.map((p) => ({
         ...p,
         price: parseFloat(p.price),
@@ -42,9 +45,6 @@ export function ProductProvider({ children }) {
   const getProduct = (id) => products.find((p) => p.id === parseInt(id));
   const getProductArray = () => products;
 
-  const token = getToken();
-  const authHeader = { headers: { Authorization: token } };
-
   const addProduct = async (data) => {
     const res = await axios.post(`${URL_PATH}/product`, data, authHeader);
     fetchProducts(); // refresh after add
@@ -52,7 +52,11 @@ export function ProductProvider({ children }) {
   };
 
   const updateProduct = async (id, data) => {
-    const res = await axios.patch(`${URL_PATH}/product/${id}`, data, authHeader);
+    const res = await axios.patch(
+      `${URL_PATH}/product/${id}`,
+      data,
+      authHeader,
+    );
     fetchProducts(); // refresh after update
     return res.data.data;
   };
@@ -76,7 +80,7 @@ export function ProductProvider({ children }) {
     await axios.patch(
       `${URL_PATH}/product/${id}/restock`,
       { quantity },
-      authHeader
+      authHeader,
     );
     fetchProducts();
   };
