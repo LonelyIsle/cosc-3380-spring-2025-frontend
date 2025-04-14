@@ -16,86 +16,104 @@ export default function OrderModal({ order, onClose, onSave }) {
     setEditableOrder((prev) => ({ ...prev, [name]: value }));
   };
 
+  const statusMap = {
+    [-1]: "Cancelled",
+    0: "Pending",
+    1: "Shipped",
+    2: "Shipped"
+  };
+
+  const renderStatus = (status) => {
+    switch(status) {
+      case -1:
+        return( 
+          <span className="bg-gray-300 p-1 rounded mr-2 text-sm text-black">
+            {statusMap[status]}
+          </span>
+        );
+        break;
+      case 0:
+        return ( 
+          <span className="bg-green-200 p-1 rounded mr-2 text-sm text-black">
+            {statusMap[status]}
+          </span>
+        );
+        break;
+      case 1:
+        return ( 
+          <span className="bg-gray-300 p-1 rounded mr-2 text-sm text-black">
+            {statusMap[status]}
+          </span>
+        );
+        break;
+    }
+  }
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-gray-900 text-white rounded shadow-md w-full max-w-2xl p-6 overflow-y-auto max-h-[90vh] relative">
         <h2 className="text-xl font-bold mb-4">Order #{order.id}</h2>
 
         <div className="space-y-3 text-sm">
-          <div>
-            <strong>Customer ID:</strong> {order.customer_id ?? "Guest"}
-          </div>
-          <div>
-            <strong>Email:</strong> {order.customer_email}
-          </div>
-          <div>
-            <strong>Shipping Fee:</strong> ${order.shipping_fee?.toFixed(2)}
-          </div>
-          <div>
-            <strong>Tax:</strong> ${(order.total_sale_tax ?? 0).toFixed(2)}
-          </div>
-          <div>
-            <strong>Total (Original):</strong> $
-            {(order.total_origin ?? 0).toFixed(2)}
-          </div>
-          <div>
-            <strong>Total (Final):</strong> $
-            {(order.total_final ?? 0).toFixed(2)}
-          </div>
-          <div>
-            <strong>Coupon Used:</strong> {order.coupon_value ?? 0}
+          <div className="grid grid-cols-2">
+            <div>
+              <div className="mb-2">
+                <strong>Subtotal:</strong> $
+                {(order.total_origin ?? 0).toFixed(2)}
+              </div>
+              <div className="mb-2">
+                <strong>Subscription:</strong> $
+                {(order.total_subscription ?? 0).toFixed(2)}
+              </div>
+              <div className="mb-2">
+                <strong>Coupon:</strong> $
+                {(order.total_coupon ?? 0).toFixed(2)}
+              </div>
+              <div className="mb-2">
+                <strong>Shipping Fee:</strong> ${order.shipping_fee?.toFixed(2)}
+              </div>
+              <div className="mb-2">
+                <strong>Tax:</strong> ${(order.total_sale_tax ?? 0).toFixed(2)}
+              </div>
+              <div className="mb-2">
+                <strong>Total final:</strong> $
+                {(order.total_final ?? 0).toFixed(2)}
+              </div>
+            </div>
+            <div>
+              <div className="mb-2">
+                <strong>Customer ID:</strong> {order.customer_id ?? "Guest"}
+              </div>
+              <div className="mb-2">
+                <strong>Email:</strong> {order.customer_email}
+              </div>
+              <div>
+              <strong>Status:</strong>{" "}
+                {renderStatus(editableOrder.status)}
+              </div>
+              <div className="mt-4">
+                <h3 className="font-semibold text-lg text-gray-300">
+                  Shipping Address
+                </h3>
+                <div>{order.shipping_address_1}</div>
+                <div>{order.shipping_address_2}</div>
+                <div>
+                  {order.shipping_address_city}, {order.shipping_address_state}{" "}
+                  {order.shipping_address_zip}
+                </div>
+              </div>
+            </div>
           </div>
           <div>
             <strong>Tracking:</strong>
             <input
               name="tracking"
               value={editableOrder.tracking ?? ""}
+              disabled={editableOrder.status !== 0}
               onChange={handleChange}
               className="ml-2 border border-gray-700 bg-gray-800 text-white p-2 rounded"
             />
           </div>
-          <div>
-            <strong>Status:</strong>{" "}
-            {editableOrder.status === 0
-              ? "Pending"
-              : editableOrder.status === 1
-                ? "Processing"
-                : editableOrder.status === 2
-                  ? "Shipped"
-                  : editableOrder.status === 3
-                    ? "Delivered"
-                    : editableOrder.status === -1
-                      ? "Cancelled"
-                      : "Unknown"}
-          </div>
-          {editableOrder.status === 1 && (
-            <div className="mt-2">
-              <button
-                onClick={() =>
-                  setEditableOrder((prev) => ({
-                    ...prev,
-                    status: 2,
-                  }))
-                }
-                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-              >
-                Mark as Shipped
-              </button>
-            </div>
-          )}
-
-          <div className="mt-4">
-            <h3 className="font-semibold text-lg text-gray-300">
-              Shipping Address
-            </h3>
-            <div>{order.shipping_address_1}</div>
-            <div>{order.shipping_address_2}</div>
-            <div>
-              {order.shipping_address_city}, {order.shipping_address_state}{" "}
-              {order.shipping_address_zip}
-            </div>
-          </div>
-
           {order.items?.length > 0 && (
             <div className="mt-4">
               <h3 className="font-semibold text-lg text-gray-300">
@@ -108,7 +126,7 @@ export default function OrderModal({ order, onClose, onSave }) {
                     className="bg-gray-800 p-3 rounded shadow text-white"
                   >
                     <div>
-                      <div className="font-semibold">{item.product.name}</div>
+                      <div className="font-semibold">{item.product ? item.product.name : "N/A"}</div>
                       <div className="text-sm text-gray-400">
                         Price: ${item.price?.toFixed(2) ?? "0.00"}
                       </div>
