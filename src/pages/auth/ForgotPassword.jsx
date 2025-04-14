@@ -21,7 +21,7 @@ function Fpassword() {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/customer/forget/question`,
-        { email },
+        { email }
       );
       if (response.data.message === "success") {
         console.log(response.data.data.reset_password_question);
@@ -32,7 +32,7 @@ function Fpassword() {
       }
     } catch (error) {
       setErrorMessage(
-        "Email is incorrect, or An error occurred. Please try again later.",
+        "Email is incorrect, or An error occurred. Please try again later."
       );
     }
   };
@@ -51,13 +51,13 @@ function Fpassword() {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/customer/forget`,
-        { email, reset_password_answer, password },
+        { email, reset_password_answer, password }
       );
 
       console.log("Response from answer submit:", response.data);
       console.log(response, "Secret Answer");
       if (response.data.message === "success") {
-        setSuccessMessage("Answer correct. Redirecting to reset page...");
+        setSuccessMessage("Answer correct. Redirecting...");
         setTimeout(() => {
           navigate(`/reset-password?email=${encodeURIComponent(email)}`);
         }, 2000);
