@@ -22,6 +22,12 @@ function Navbar({ isLoggedIn, handleLogout }) {
       ? cartSvgs["cart-overflow"]
       : cartSvgs[`cart-${cartQuantity}`];
 
+      const user = JSON.parse(localStorage.getItem("user"));
+      console.log("This is navbar User",user)
+      const userRole = user?.role;
+      console.log("This is navbar User",userRole)
+    
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -55,39 +61,55 @@ function Navbar({ isLoggedIn, handleLogout }) {
         <img src={logo} alt="Navbar Logo" className="header-box h-20" />
       </Link>
       <ul className="flex gap-4 justify-center items-center">
-        {isLoggedIn ? (
-          <>
-            <li>
-              <Link
-                to="/shop"
-                className="header-box text-mantle bg-gradient-to-r from-blue to-sapphire"
-              >
-                Shop
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/profile"
-                className="header-box text-mantle bg-gradient-to-r from-blue to-sapphire"
-              >
-                Profile
-              </Link>
-            </li>
-            <li>
-              <button
-                onClick={handleLogoutAndNavigate} // Use the combined function
-                className="header-box text-mantle bg-gradient-to-r from-maroon to-peach"
-              >
-                Logout
-              </button>
-            </li>
-            <li>
-              <Link to="/cart">
-                <img src={cartIcon} alt="Cart" className="header-box h-20" />
-              </Link>
-            </li>
-          </>
+      {isLoggedIn ? (
+          userRole === 1 || userRole === 0 ? (
+            // 🛠 Admin view
+            <>
+              <li>
+                <button
+                  onClick={handleLogoutAndNavigate}
+                  className="header-box text-mantle bg-gradient-to-r from-maroon to-peach"
+                >
+                  Logout
+                </button>
+              </li>
+            </>
+          ) : (
+            // 🛒 Customer view
+            <>
+              <li>
+                <Link
+                  to="/shop"
+                  className="header-box text-mantle bg-gradient-to-r from-blue to-sapphire"
+                >
+                  Shop
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/profile"
+                  className="header-box text-mantle bg-gradient-to-r from-blue to-sapphire"
+                >
+                  Profile
+                </Link>
+              </li>
+              <li>
+                <button
+                  onClick={handleLogoutAndNavigate}
+                  className="header-box text-mantle bg-gradient-to-r from-maroon to-peach"
+                >
+                  Logout
+                </button>
+              </li>
+              <li>
+                <Link to="/cart">
+                  <img src={cartIcon} alt="Cart" className="header-box h-20" />
+                </Link>
+              </li>
+            </>
+          )
         ) : (
+          // 👥 Not logged in
           <>
             <li>
               <Link
