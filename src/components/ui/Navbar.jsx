@@ -3,7 +3,9 @@ import { useEffect, useState } from "react";
 import { useCart } from "@context/CartContext";
 import logo from "@assets/navbar-logo.svg";
 
-const svgs = import.meta.glob("../../assets/cart-assets/*.svg", { eager: true });
+const svgs = import.meta.glob("../../assets/cart-assets/*.svg", {
+  eager: true,
+});
 const cartSvgs = Object.entries(svgs).reduce((acc, [path, module]) => {
   const key = path.split("/").pop().replace(".svg", "");
   acc[key] = module.default;
@@ -11,7 +13,6 @@ const cartSvgs = Object.entries(svgs).reduce((acc, [path, module]) => {
 }, {});
 
 function Navbar({ isLoggedIn, handleLogout }) {
-  const [opacity, setOpacity] = useState(100);
   const { getCartQuantity } = useCart();
   const navigate = useNavigate(); // Initialize useNavigate
 
@@ -22,30 +23,10 @@ function Navbar({ isLoggedIn, handleLogout }) {
       ? cartSvgs["cart-overflow"]
       : cartSvgs[`cart-${cartQuantity}`];
 
-      const user = JSON.parse(localStorage.getItem("user"));
-      console.log("This is navbar User",user)
-      const userRole = user?.role;
-      console.log("This is navbar User",userRole)
-    
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const pxDelimeter = 100;
-
-      setOpacity((prevOpacity) => {
-        if (scrollY > pxDelimeter && prevOpacity !== 80) {
-          return 80;
-        } else if (scrollY <= pxDelimeter && prevOpacity !== pxDelimeter) {
-          return pxDelimeter;
-        }
-        return prevOpacity;
-      });
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const user = JSON.parse(localStorage.getItem("user"));
+  console.log("This is navbar User", user);
+  const userRole = user?.role;
+  console.log("This is navbar User", userRole);
 
   const handleLogoutAndNavigate = () => {
     handleLogout(); // Call the logout function
@@ -53,15 +34,12 @@ function Navbar({ isLoggedIn, handleLogout }) {
   };
 
   return (
-    <nav
-      className="h-20 bg-mantle flex justify-between items-center px-28 sticky top-0 z-10 transition-all duration-300"
-      style={{ backgroundColor: `rgba(24, 24, 37, ${opacity / 100})` }}
-    >
+    <nav className="h-20 bg-mantle flex justify-between items-center px-28 sticky top-0 z-10 transition-all duration-300">
       <Link to="/" className="text-3xl text-text">
         <img src={logo} alt="Navbar Logo" className="header-box h-20" />
       </Link>
       <ul className="flex gap-4 justify-center items-center">
-      {isLoggedIn ? (
+        {isLoggedIn ? (
           userRole === 1 || userRole === 0 ? (
             // 🛠 Admin view
             <>
