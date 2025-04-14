@@ -67,7 +67,11 @@ const SaleEventModalUpsert = ({ saleId = null, onClose }) => {
       onClose();
     } catch (err) {
       console.error("Submit failed:", err);
-      alert("Failed to save sale event.");
+      if (err.response) {
+        alert(err.response.data.message); 
+      } else {
+        alert("Failed to save sale event.");
+      }
     }
   };
 
