@@ -4,20 +4,24 @@ import axios from "axios";
 const ProductContext = createContext();
 export const useProduct = () => useContext(ProductContext);
 const getToken = () => localStorage.getItem("token");
+const URL_PATH = `${import.meta.env.VITE_API_URL}`;
 
 export function ProductProvider({ children }) {
   const [products, setProducts] = useState([]);
   const [productsLoaded, setProductsLoaded] = useState(false);
 
+  const token = getToken();
+  const authHeader = { headers: { Authorization: token } };
+
   const fetchProducts = async (categoryIds = []) => {
     setProductsLoaded(false);
-    let url = `${import.meta.env.VITE_API_URL}/product`;
+    let url = `${URL_PATH}/product`;
     if (categoryIds.length > 0) {
       url += `?category_id=[${categoryIds.join(",")}]`;
     }
 
     try {
-      const res = await axios.get(url);
+      const res = await axios.get(url, authHeader);
       const mapped = res.data.data.rows.map((p) => ({
         ...p,
         price: parseFloat(p.price),
@@ -41,30 +45,31 @@ export function ProductProvider({ children }) {
   const getProduct = (id) => products.find((p) => p.id === parseInt(id));
   const getProductArray = () => products;
 
-  const token = getToken();
-  const authHeader = { headers: { Authorization: token } };
-
   const addProduct = async (data) => {
-    const res = await axios.post(`${import.meta.env.VITE_API_URL}/product`, data, authHeader);
+    const res = await axios.post(`${URL_PATH}/product`, data, authHeader);
     fetchProducts(); // refresh after add
     return res.data.data;
   };
 
   const updateProduct = async (id, data) => {
-    const res = await axios.patch(`${import.meta.env.VITE_API_URL}/product/${id}`, data, authHeader);
+    const res = await axios.patch(
+      `${URL_PATH}/product/${id}`,
+      data,
+      authHeader,
+    );
     fetchProducts(); // refresh after update
     return res.data.data;
   };
 
   const deleteProduct = async (id) => {
-    await axios.delete(`${import.meta.env.VITE_API_URL}/product/${id}`, authHeader);
+    await axios.delete(`${URL_PATH}/product/${id}`, authHeader);
     fetchProducts();
   };
 
   const uploadProductImage = async (id, file) => {
     const formData = new FormData();
     formData.append("image", file);
-    await axios.patch(`${import.meta.env.VITE_API_URL}/product/${id}/image`, formData, {
+    await axios.patch(`${URL_PATH}/product/${id}/image`, formData, {
       ...authHeader,
       "Content-Type": "multipart/form-data",
     });
@@ -73,9 +78,9 @@ export function ProductProvider({ children }) {
 
   const restockProduct = async (id, quantity) => {
     await axios.patch(
-      `${import.meta.env.VITE_API_URL}/product/${id}/restock`,
+      `${URL_PATH}/product/${id}/restock`,
       { quantity },
-      authHeader
+      authHeader,
     );
     fetchProducts();
   };
