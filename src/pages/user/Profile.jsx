@@ -189,8 +189,6 @@ function Profile() {
   };
 
   const handleChangePassword = async () => {
-    setLoading(true);
-    setError(null);
     try {
       const token = localStorage.getItem("token");
       const userData = localStorage.getItem("user");
@@ -218,16 +216,13 @@ function Profile() {
       alert("✅ Saved!");
       navigate("/login");
     } catch (err) {
-      setError(err.message || "Failed to fetch order data");
+      alert(err.message || "Failed to fetch order data");
       console.error("Error fetching order data:", err);
     } finally {
-      setLoading(false);
     }
   }
 
   const handleChangeQA = async () => {
-    setLoading(true);
-    setError(null);
     try {
       const token = localStorage.getItem("token");
       const userData = localStorage.getItem("user");
@@ -257,16 +252,13 @@ function Profile() {
       setSecretModalOpen(false);
       alert("✅ Saved!");
     } catch (err) {
-      setError(err.message || "Failed to fetch order data");
+      alert(err.message || "Failed to fetch order data");
       console.error("Error fetching order data:", err);
     } finally {
-      setLoading(false);
     }
   }
 
   const handleUpdateInfo = async () => {
-    setLoading(true);
-    setError(null);
     try {
       const token = localStorage.getItem("token");
       const userData = localStorage.getItem("user");
@@ -293,7 +285,7 @@ function Profile() {
         billing_address_state: basicInfo.state,
         billing_address_zip: basicInfo.zipCode,
         card_name: paymentInfo.cardHolder,
-        card_number: paymentInfo.cardNumber.replace(/\s/g, ""),
+        card_number: paymentInfo.cardNumber?.replace(/\s/g, ""),
         card_expire_month: expMonth,
         card_expire_year: expYear,
         card_code: paymentInfo.cvv
@@ -313,10 +305,9 @@ function Profile() {
       alert("✅ Saved!");
       window.location.reload();
     } catch (err) {
-      setError(err.message || "Failed to fetch order data");
+      alert(err.message || "Failed to fetch order data");
       console.error("Error fetching order data:", err);
     } finally {
-      setLoading(false);
     }
   }
 
