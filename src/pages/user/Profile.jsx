@@ -144,7 +144,7 @@ function Profile() {
             </div>
             <div>
               <strong className="block mb-1 text-gray-700">
-                Member Status:
+                Subscribed :
               </strong>
               <span className="text-gray-600">
                 {profileData.subscription &&
