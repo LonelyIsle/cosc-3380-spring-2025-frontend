@@ -57,7 +57,7 @@ function Fpassword() {
       console.log("Response from answer submit:", response.data);
       console.log(response, "Secret Answer");
       if (response.data.message === "success") {
-        setSuccessMessage("Answer correct. Redirecting to reset page...");
+        setSuccessMessage("Answer correct. Redirecting...");
         setTimeout(() => {
           navigate(`/reset-password?email=${encodeURIComponent(email)}`);
         }, 2000);
