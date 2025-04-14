@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import OrderModal from "src/components/modal/OrderModal";
 import CancelOrderModal from "src/components/modal/CancelOrderModal";
 
@@ -12,7 +12,7 @@ const Orders = () => {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [orderToCancel, setOrderToCancel] = useState(null);
 
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
       const fetchPage = async (pageNum) => {
@@ -58,11 +58,14 @@ const Orders = () => {
     } catch (error) {
       console.error("Error fetching orders:", error);
     }
-  };
+  }, [limit, page, search, sort]);
 
   useEffect(() => {
-    fetchOrders();
-  }, [page, search, sort]);
+    const load = async () => {
+      await fetchOrders();
+    };
+    load();
+  }, [page, search, sort, fetchOrders]);
 
   const statusMap = {
     [-1]: "Cancelled",
