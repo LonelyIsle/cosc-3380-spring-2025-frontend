@@ -10,6 +10,8 @@ export const useEmployee = () => useContext(EmployeeContext);
 // Helper function to get the token from localStorage
 const getToken = () => localStorage.getItem("token");
 
+const URL_PATH = `${import.meta.env.VITE_API_URL}`;
+
 // Provider component
 export function EmployeeProvider({ children }) {
   const [employees, setEmployees] = useState([]);
@@ -22,7 +24,7 @@ export function EmployeeProvider({ children }) {
   // 1. GET /employee - Fetch list of employees
   const fetchEmployees = async () => {
     try {
-      const url = `${import.meta.env.VITE_API_URL}/employee`;
+      const url = `${URL_PATH}/employee`;
       const token = getToken();
       const res = await axios.get(url, {
         headers: {
@@ -61,7 +63,7 @@ export function EmployeeProvider({ children }) {
   // 2. GET /employee/:id - Get a single employee's details
   const getEmployeeById = async (id) => {
     try {
-      // const url = `${import.meta.env.VITE_API_URL}/employee/${id}`;
+      // const url = `${URL_PATH}/employee/${id}`;
       // const token = getToken();
       // const res = await axios.get(url, {
       //   headers: {
@@ -82,7 +84,7 @@ export function EmployeeProvider({ children }) {
   // 3. POST /employee/login - Employee authentication
   const loginEmployee = async (email, password) => {
     try {
-      const url = `${import.meta.env.VITE_API_URL}/employee/login`;
+      const url = `${URL_PATH}/employee/login`;
       const res = await axios.post(url, { email, password });
 
       // If the response contains an auth token, store it in localStorage
@@ -103,7 +105,7 @@ export function EmployeeProvider({ children }) {
   // 4. POST /employee - Create a new employee
   const createEmployee = async (employeeData) => {
     try {
-      const url = `${import.meta.env.VITE_API_URL}/employee`;
+      const url = `${URL_PATH}/employee`;
       const token = getToken();
       const res = await axios.post(url, employeeData, {
         headers: {
@@ -144,7 +146,7 @@ export function EmployeeProvider({ children }) {
   // 5. PATCH /employee/:id - Update employee details
   const updateEmployee = async (id, employeeData) => {
     try {
-      const url = `${import.meta.env.VITE_API_URL}/employee/${id}`;
+      const url = `${URL_PATH}/employee/${id}`;
       const token = getToken();
       const res = await axios.patch(url, employeeData, {
         headers: {
@@ -171,7 +173,7 @@ export function EmployeeProvider({ children }) {
   // 6. PATCH /employee/:id/password - Update employee password
   const updateEmployeePassword = async (id, password) => {
     try {
-      const url = `${import.meta.env.VITE_API_URL}/employee/${id}/password`;
+      const url = `${URL_PATH}/employee/${id}/password`;
       const token = getToken();
       const res = await axios.patch(
         url,
@@ -195,7 +197,7 @@ export function EmployeeProvider({ children }) {
   // 7. DELETE /employee/:id - Remove an employee
   const deleteEmployee = async (id) => {
     try {
-      const url = `${import.meta.env.VITE_API_URL}/employee/${id}`;
+      const url = `${URL_PATH}/employee/${id}`;
       const token = getToken();
       await axios.delete(url, {
         headers: {

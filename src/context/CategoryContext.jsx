@@ -4,6 +4,7 @@ import axios from "axios";
 const CategoryContext = createContext();
 export const useCategory = () => useContext(CategoryContext);
 const getToken = () => localStorage.getItem("token");
+const URL_PATH = `${import.meta.env.VITE_API_URL}`;
 
 export function CategoryProvider({ children }) {
   const [categories, setCategories] = useState([]);
@@ -12,7 +13,7 @@ export function CategoryProvider({ children }) {
 
   const fetchCategories = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/category`);
+      const res = await axios.get(`${URL_PATH}/category`);
       const mapped = res.data.data.rows
         .filter((c) => c.is_deleted !== 1)
         .map((c) => ({
@@ -43,7 +44,7 @@ export function CategoryProvider({ children }) {
 
   const addCategory = async (data) => {
     const res = await axios.post(
-      `${import.meta.env.VITE_API_URL}/category`,
+      `${URL_PATH}/category`,
       data,
       authHeader,
     );
@@ -53,7 +54,7 @@ export function CategoryProvider({ children }) {
 
   const updateCategory = async (id, data) => {
     const res = await axios.patch(
-      `${import.meta.env.VITE_API_URL}/category/${id}`,
+      `${URL_PATH}/category/${id}`,
       data,
       authHeader,
     );
@@ -63,7 +64,7 @@ export function CategoryProvider({ children }) {
 
   const deleteCategory = async (id) => {
     await axios.delete(
-      `${import.meta.env.VITE_API_URL}/category/${id}`,
+      `${URL_PATH}/category/${id}`,
       authHeader,
     );
     fetchCategories();
