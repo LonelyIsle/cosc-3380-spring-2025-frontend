@@ -24,7 +24,7 @@ const CancelOrderModal = ({ order, onCancel, onConfirm }) => {
             <button
               onClick={() => {
                 if (typeof onConfirm === "function") {
-                  onConfirm(); // Could navigate or show confirmation modal
+                  onConfirm();
                 }
               }}
               className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded"
