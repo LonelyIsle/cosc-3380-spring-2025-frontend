@@ -45,29 +45,44 @@ export function ProductProvider({ children }) {
   const authHeader = { headers: { Authorization: token } };
 
   const addProduct = async (data) => {
-    const res = await axios.post(`${import.meta.env.VITE_API_URL}/product`, data, authHeader);
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_URL}/product`,
+      data,
+      authHeader,
+    );
     fetchProducts(); // refresh after add
     return res.data.data;
   };
 
   const updateProduct = async (id, data) => {
-    const res = await axios.patch(`${import.meta.env.VITE_API_URL}/product/${id}`, data, authHeader);
+    const res = await axios.patch(
+      `${import.meta.env.VITE_API_URL}/product/${id}`,
+      data,
+      authHeader,
+    );
     fetchProducts(); // refresh after update
     return res.data.data;
   };
 
   const deleteProduct = async (id) => {
-    await axios.delete(`${import.meta.env.VITE_API_URL}/product/${id}`, authHeader);
+    await axios.delete(
+      `${import.meta.env.VITE_API_URL}/product/${id}`,
+      authHeader,
+    );
     fetchProducts();
   };
 
   const uploadProductImage = async (id, file) => {
     const formData = new FormData();
     formData.append("image", file);
-    await axios.patch(`${import.meta.env.VITE_API_URL}/product/${id}/image`, formData, {
-      ...authHeader,
-      "Content-Type": "multipart/form-data",
-    });
+    await axios.patch(
+      `${import.meta.env.VITE_API_URL}/product/${id}/image`,
+      formData,
+      {
+        ...authHeader,
+        "Content-Type": "multipart/form-data",
+      },
+    );
     fetchProducts();
   };
 
@@ -75,7 +90,7 @@ export function ProductProvider({ children }) {
     await axios.patch(
       `${import.meta.env.VITE_API_URL}/product/${id}/restock`,
       { quantity },
-      authHeader
+      authHeader,
     );
     fetchProducts();
   };

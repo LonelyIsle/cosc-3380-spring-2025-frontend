@@ -28,7 +28,6 @@ function Login() {
         console.log("✅ Response:", response);
         console.log("✅ Response:", data);
 
-
         // Store token and user info
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data));

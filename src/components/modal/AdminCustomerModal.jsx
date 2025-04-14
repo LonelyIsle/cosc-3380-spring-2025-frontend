@@ -6,23 +6,23 @@ const AdminCustomerModal = ({ customerId, onClose }) => {
 
   const getData = async (id) => {
     try {
-        let url = `${import.meta.env.VITE_API_URL}/customer/${customerId}`;
-        const token = localStorage.getItem("token");
-        const res = await axios.get(url, {
-            headers: {
-                Authorization: token,
-            }
-        });
-        let data = res.data.data;
-        setData(data);
-    } catch(e) {
-        alert(e.message);
+      let url = `${import.meta.env.VITE_API_URL}/customer/${customerId}`;
+      const token = localStorage.getItem("token");
+      const res = await axios.get(url, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      let data = res.data.data;
+      setData(data);
+    } catch (e) {
+      alert(e.message);
     }
   };
 
   useEffect(() => {
     if (customerId) {
-      getData()
+      getData();
     }
   }, [customerId]);
 
@@ -84,14 +84,15 @@ const AdminCustomerModal = ({ customerId, onClose }) => {
           <div className="">
             <label className="font-semibold bl">Subscription</label>
             <div className="mt-2 text-center">
-              { data.subscription  
-                  ? <span className="bg-green-200 p-2 rounded mr-2 text-md font-bold text-black">
-                      yes
-                  </span>
-                  :<span className="bg-gray-200 p-2 rounded mr-2 text-md font-bold text-black">
-                      no
-                  </span>
-              }
+              {data.subscription ? (
+                <span className="bg-green-200 p-2 rounded mr-2 text-md font-bold text-black">
+                  yes
+                </span>
+              ) : (
+                <span className="bg-gray-200 p-2 rounded mr-2 text-md font-bold text-black">
+                  no
+                </span>
+              )}
             </div>
           </div>
           <div className="ml-3">
@@ -99,7 +100,13 @@ const AdminCustomerModal = ({ customerId, onClose }) => {
             <input
               type="text"
               placeholder="Start At"
-              value={data.subscription ? new Date(data.subscription.start_at).toLocaleDateString("en-us") : "N/A"}
+              value={
+                data.subscription
+                  ? new Date(data.subscription.start_at).toLocaleDateString(
+                      "en-us",
+                    )
+                  : "N/A"
+              }
               disabled={true}
               className="w-full p-2 rounded bg-surface1 text-text"
             />
@@ -109,7 +116,13 @@ const AdminCustomerModal = ({ customerId, onClose }) => {
             <input
               type="text"
               placeholder="End At"
-              value={data.subscription ? new Date(data.subscription.end_at).toLocaleDateString("en-us") : "N/A"}
+              value={
+                data.subscription
+                  ? new Date(data.subscription.end_at).toLocaleDateString(
+                      "en-us",
+                    )
+                  : "N/A"
+              }
               disabled={true}
               className="w-full p-2 rounded bg-surface1 text-text"
             />
@@ -143,7 +156,9 @@ const AdminCustomerModal = ({ customerId, onClose }) => {
             <input
               type="text"
               placeholder="City"
-              value={data.shipping_address_city ? data.shipping_address_city : "N/A"}
+              value={
+                data.shipping_address_city ? data.shipping_address_city : "N/A"
+              }
               disabled={true}
               className="w-full p-2 rounded bg-surface1 text-text"
             />
@@ -153,7 +168,11 @@ const AdminCustomerModal = ({ customerId, onClose }) => {
             <input
               type="text"
               placeholder="State"
-              value={data.shipping_address_state ? data.shipping_address_state : "N/A"}
+              value={
+                data.shipping_address_state
+                  ? data.shipping_address_state
+                  : "N/A"
+              }
               disabled={true}
               className="w-full p-2 rounded bg-surface1 text-text"
             />
@@ -163,7 +182,9 @@ const AdminCustomerModal = ({ customerId, onClose }) => {
             <input
               type="text"
               placeholder="Zip Code"
-              value={data.shipping_address_zip ? data.shipping_address_zip : "N/A"}
+              value={
+                data.shipping_address_zip ? data.shipping_address_zip : "N/A"
+              }
               disabled={true}
               className="w-full p-2 rounded bg-surface1 text-text"
             />

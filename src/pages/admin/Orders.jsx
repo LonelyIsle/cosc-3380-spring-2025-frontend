@@ -93,7 +93,9 @@ const Orders = () => {
                   Customer Email
                 </th>
                 <th className="py-2 px-4 border border-black">Customer ID</th>
-                <th className="py-2 px-4 border border-black">Tracking Number</th>
+                <th className="py-2 px-4 border border-black">
+                  Tracking Number
+                </th>
                 <th className="py-2 px-4 border border-black">Total Final</th>
                 <th className="py-2 px-4 border border-black">
                   Shipping Address
@@ -205,13 +207,13 @@ const Orders = () => {
                       Authorization: localStorage.getItem("token"),
                     },
                     credentials: "include",
-                  }
+                  },
                 );
                 if (!response.ok) {
                   throw new Error("Failed to cancel order");
                 }
-                setOrders(prevOrders =>
-                  prevOrders.filter(o => o.id !== orderToCancel.id)
+                setOrders((prevOrders) =>
+                  prevOrders.filter((o) => o.id !== orderToCancel.id),
                 );
                 setOrderToCancel(null);
                 setShowCancelModal(false);
