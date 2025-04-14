@@ -608,7 +608,7 @@ function Profile() {
                   </div>
                 </div>
               </div>
-              <div className="space-y-4">
+              <div className="space-y-4 mt-2">
                 <div>
                   <label
                     htmlFor="cardNumber"

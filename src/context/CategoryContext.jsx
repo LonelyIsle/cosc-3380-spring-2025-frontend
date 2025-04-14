@@ -14,6 +14,7 @@ export function CategoryProvider({ children }) {
   const fetchCategories = async () => {
     try {
       const res = await axios.get(`${URL_PATH}/category`);
+      console.log(res)
       const mapped = res.data.data.rows
         .filter((c) => c.is_deleted !== 1)
         .map((c) => ({
@@ -24,6 +25,7 @@ export function CategoryProvider({ children }) {
           updated_at: c.updated_at,
         }));
       setCategories(mapped);
+      console.log(mapped)
     } catch (err) {
       console.error("Failed to fetch categories:", err);
     } finally {
@@ -43,11 +45,7 @@ export function CategoryProvider({ children }) {
   };
 
   const addCategory = async (data) => {
-    const res = await axios.post(
-      `${URL_PATH}/category`,
-      data,
-      authHeader,
-    );
+    const res = await axios.post(`${URL_PATH}/category`, data, authHeader);
     fetchCategories();
     return res.data.data;
   };
@@ -63,10 +61,7 @@ export function CategoryProvider({ children }) {
   };
 
   const deleteCategory = async (id) => {
-    await axios.delete(
-      `${URL_PATH}/category/${id}`,
-      authHeader,
-    );
+    await axios.delete(`${URL_PATH}/category/${id}`, authHeader);
     fetchCategories();
   };
 

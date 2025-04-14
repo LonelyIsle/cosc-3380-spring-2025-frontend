@@ -46,9 +46,14 @@ export function ProductProvider({ children }) {
   const getProductArray = () => products;
 
   const addProduct = async (data) => {
-    const res = await axios.post(`${URL_PATH}/product`, data, authHeader);
-    fetchProducts(); // refresh after add
-    return res.data.data;
+    try {
+      const res = await axios.post(`${URL_PATH}/product`, data, authHeader);
+      fetchProducts(); // refresh after add
+      return res.data.data;
+    } catch (err) {
+      console.error("Failed to add product:", err.response?.data || err);
+      throw err;
+    }
   };
 
   const updateProduct = async (id, data) => {
@@ -69,9 +74,12 @@ export function ProductProvider({ children }) {
   const uploadProductImage = async (id, file) => {
     const formData = new FormData();
     formData.append("image", file);
+    const token = getToken(); // re-read in case it's changed
     await axios.patch(`${URL_PATH}/product/${id}/image`, formData, {
-      ...authHeader,
-      "Content-Type": "multipart/form-data",
+      headers: {
+        Authorization: token,
+        "Content-Type": "multipart/form-data",
+      },
     });
     fetchProducts();
   };

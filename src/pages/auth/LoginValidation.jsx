@@ -27,5 +27,3 @@ function Validation(email, password) {
 }
 
 export default Validation;
-
-

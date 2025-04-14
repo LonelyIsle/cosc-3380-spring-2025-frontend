@@ -51,10 +51,7 @@ const CancelOrderModal = ({ order, onCancel, onConfirm }) => {
         <h2 className="text-xl font-bold text-gray-200 mb-4">Cancel Order</h2>
         <p className="text-gray-300 mb-6">
           Are you sure you want to cancel{" "}
-          <span className="font-semibold">
-            {`Order #${order.id}`}
-          </span>
-          ?
+          <span className="font-semibold">{`Order #${order.id}`}</span>?
         </p>
         <div className="flex justify-between">
           <button

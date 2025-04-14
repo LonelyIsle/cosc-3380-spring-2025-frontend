@@ -35,7 +35,9 @@ const Employee = () => {
     };
 
     const shouldListen =
-      modalOpen || deleteEmployeeTarget !== null || passwordModalTarget !== null;
+      modalOpen ||
+      deleteEmployeeTarget !== null ||
+      passwordModalTarget !== null;
 
     if (shouldListen) {
       window.addEventListener("keydown", handleKeyDown);
@@ -48,10 +50,11 @@ const Employee = () => {
 
   // Filter and sort the employee list.
   const filteredEmployees = employees
-    .filter((emp) =>
-      emp.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      emp.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      emp.email.toLowerCase().includes(searchTerm.toLowerCase())
+    .filter(
+      (emp) =>
+        emp.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        emp.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        emp.email.toLowerCase().includes(searchTerm.toLowerCase()),
     )
     .sort((a, b) => {
       if (!sortKey) return 0;
@@ -103,13 +106,20 @@ const Employee = () => {
         </thead>
         <tbody>
           {filteredEmployees.map((emp, index) => (
-            <tr key={emp.id} className={index % 2 === 0 ? "bg-gray-300" : "bg-gray-100"}>
+            <tr
+              key={emp.id}
+              className={index % 2 === 0 ? "bg-gray-300" : "bg-gray-100"}
+            >
               <td className="p-2 text-center border">{emp.id}</td>
               <td className="p-2 text-center border">{emp.first_name}</td>
-              <td className="p-2 text-center border">{emp.middle_name || '-'}</td>
+              <td className="p-2 text-center border">
+                {emp.middle_name || "-"}
+              </td>
               <td className="p-2 text-center border">{emp.last_name}</td>
               <td className="p-2 text-center border">{emp.email}</td>
-              <td className="p-2 text-center border">${parseFloat(emp.hourly_rate).toFixed(2)}</td>
+              <td className="p-2 text-center border">
+                ${parseFloat(emp.hourly_rate).toFixed(2)}
+              </td>
               <td className="p-2 text-center border">
                 <button
                   className="ml-2 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"

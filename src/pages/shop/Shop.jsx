@@ -95,13 +95,26 @@ function Shop() {
     // Filter by price
     result = result.filter((product) => product.price <= priceRange);
 
+    // *** New: Filter by selected categories (case insensitive) ***
+    const activeCategories = Object.keys(selectedCategories)
+      .filter((catName) => selectedCategories[catName])
+      .map((name) => name.toLowerCase());
+
+    if (activeCategories.length > 0) {
+      // Keep only products whose category array includes at least one active category
+      result = result.filter((product) =>
+        product.category.some((cat) =>
+          activeCategories.includes(cat.toLowerCase()),
+        ),
+      );
+    }
+
     // Apply sort
     const sorted = [...result].sort((a, b) =>
       sortOrder === "asc" ? a.price - b.price : b.price - a.price,
     );
 
     setFilteredProducts(sorted);
-    // Reset to first page when filters change
     setPage(1);
   }, [
     searchTerm,
@@ -110,6 +123,7 @@ function Shop() {
     productsLoaded,
     categoriesLoaded,
     products,
+    selectedCategories,
   ]);
 
   // Calculate selectedCategoryIds when selectedCategories change

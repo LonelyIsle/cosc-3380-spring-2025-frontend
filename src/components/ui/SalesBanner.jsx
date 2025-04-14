@@ -24,7 +24,7 @@ const SalesBanner = () => {
       .catch((err) => {
         console.error(
           "Failed to Load Sale Event:",
-          err.response?.data || err.message
+          err.response?.data || err.message,
         );
         setError(err);
       })

@@ -43,22 +43,25 @@ const Category = () => {
   }, [upsertModalOpen, deleteModalOpen]);
 
   const filteredCategories = categories.filter((cat) =>
-    cat.name.toLowerCase().includes(searchTerm.toLowerCase())
+    cat.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const selectedCategory = categories.find(
-    (cat) => cat.id === selectedCategoryId
+    (cat) => cat.id === selectedCategoryId,
   );
 
   // Helper function to format date and time
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
-    const optionsDate = { month: 'short', day: 'numeric', year: 'numeric' };
-    const optionsTime = { hour: 'numeric', minute: 'numeric', hour12: true };
-    
-    const datePart = date.toLocaleDateString('en-US', optionsDate);
+    const optionsDate = { month: "short", day: "numeric", year: "numeric" };
+    const optionsTime = { hour: "numeric", minute: "numeric", hour12: true };
+
+    const datePart = date.toLocaleDateString("en-US", optionsDate);
     // Formats the time (e.g., "7:51 PM") and converts it to lowercase (e.g., "7:51pm")
-    const timePart = date.toLocaleTimeString('en-US', optionsTime).replace(' ', '').toLowerCase();
+    const timePart = date
+      .toLocaleTimeString("en-US", optionsTime)
+      .replace(" ", "")
+      .toLowerCase();
     return `${datePart} - ${timePart}`;
   };
 

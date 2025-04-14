@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const AdminProfile = () => {
-	const navigate = useNavigate();
+  const navigate = useNavigate();
   const [employee, setEmployee] = useState({
     id: 0,
     firstName: "",
@@ -11,25 +11,25 @@ const AdminProfile = () => {
     lastName: "",
     email: "",
     role: 0,
-    hourlyRate: 0
+    hourlyRate: 0,
   });
 
-	const [password, setPassword] = useState("");
+  const [password, setPassword] = useState("");
 
   const getEmployee = async () => {
     try {
-			const token = localStorage.getItem("token");
-			const userData = localStorage.getItem("user");
-			const parsedUserData = JSON.parse(userData);
+      const token = localStorage.getItem("token");
+      const userData = localStorage.getItem("user");
+      const parsedUserData = JSON.parse(userData);
 
       let res = await axios.get(
         `${import.meta.env.VITE_API_URL}/employee/${parsedUserData.id}`,
         {
           headers: {
             "Content-Type": "application/json",
-						"Authorization": token
+            Authorization: token,
           },
-        }
+        },
       );
       let data = res.data.data;
       setEmployee({
@@ -37,46 +37,46 @@ const AdminProfile = () => {
         firstName: data.first_name,
         middleName: data.middle_name,
         lastName: data.last_name,
-				email: data.email,
-				role: data.role,
-				hourlyRate: data.hourly_rate
+        email: data.email,
+        role: data.role,
+        hourlyRate: data.hourly_rate,
       });
 
-			// set user
+      // set user
       localStorage.setItem("user", JSON.stringify(data));
-      
-    } catch(err) {
+    } catch (err) {
       if (err.response) {
         alert(err.response.data.message || "Error getting employee");
       } else {
         alert("Network error. Please try again.");
       }
     }
-  }
+  };
 
   useEffect(() => {
     getEmployee();
   }, []);
 
-
   const handleChangePassword = async () => {
     const token = localStorage.getItem("token");
-		const userData = localStorage.getItem("user");
-		const parsedUserData = JSON.parse(userData);
+    const userData = localStorage.getItem("user");
+    const parsedUserData = JSON.parse(userData);
 
     try {
       const response = await axios.patch(
-        `${import.meta.env.VITE_API_URL}/employee/${parsedUserData.id}/password`, {
-          password: password
-        }, {
+        `${import.meta.env.VITE_API_URL}/employee/${parsedUserData.id}/password`,
+        {
+          password: password,
+        },
+        {
           headers: {
             "Content-Type": "application/json",
             Authorization: token,
           },
-        }
+        },
       );
       alert("✅ Saved!");
-			navigate("/admin/login");
+      navigate("/admin/login");
     } catch (err) {
       if (err.response) {
         alert(err.response.data.message || "Error saving config.");
@@ -84,7 +84,7 @@ const AdminProfile = () => {
         alert("Network error. Please try again.");
       }
     }
-  }
+  };
 
   return (
     <div className="p-4">
@@ -95,35 +95,35 @@ const AdminProfile = () => {
         <div className="mt-4 col-span-2">
           <div className="flex">
             <div>
-							<label className="font-semibold bl">First Name</label>
-							<input
-								type="text"
-								placeholder="First Name"
-								value={employee.firstName}
-								disabled={true}
-								className="w-full p-2 border border-black rounded bg-white text-black mt-2 mb-2"
-							/>
-						</div>
-						<div className="ml-2">
-							<label className="font-semibold bl">Middle Name</label>
-							<input
-								type="text"
-								placeholder="Middle Name"
-								value={employee.middleName}
-								disabled={true}
-								className="w-full p-2 border border-black rounded bg-white text-black mt-2 mb-2"
-							/>
-						</div>
-						<div className="ml-2">
-							<label className="font-semibold bl">Last Name</label>
-							<input
-								type="text"
-								placeholder="Last Name"
-								value={employee.lastName}
-								disabled={true}
-								className="w-full p-2 border border-black rounded bg-white text-black mt-2 mb-2"
-							/>
-						</div>
+              <label className="font-semibold bl">First Name</label>
+              <input
+                type="text"
+                placeholder="First Name"
+                value={employee.firstName}
+                disabled={true}
+                className="w-full p-2 border border-black rounded bg-white text-black mt-2 mb-2"
+              />
+            </div>
+            <div className="ml-2">
+              <label className="font-semibold bl">Middle Name</label>
+              <input
+                type="text"
+                placeholder="Middle Name"
+                value={employee.middleName}
+                disabled={true}
+                className="w-full p-2 border border-black rounded bg-white text-black mt-2 mb-2"
+              />
+            </div>
+            <div className="ml-2">
+              <label className="font-semibold bl">Last Name</label>
+              <input
+                type="text"
+                placeholder="Last Name"
+                value={employee.lastName}
+                disabled={true}
+                className="w-full p-2 border border-black rounded bg-white text-black mt-2 mb-2"
+              />
+            </div>
           </div>
           <div>
             <label className="font-semibold bl">Email</label>
@@ -131,7 +131,7 @@ const AdminProfile = () => {
               type="text"
               placeholder="Email"
               value={employee.email}
-							disabled={true}
+              disabled={true}
               className="w-full p-2 border border-black rounded bg-white text-black mt-2 mb-2"
             />
           </div>
@@ -141,7 +141,7 @@ const AdminProfile = () => {
               type="text"
               placeholder="Hourly Rate"
               value={`$${employee.hourlyRate.toFixed(2)}`}
-							disabled={true}
+              disabled={true}
               className="w-full p-2 border border-black rounded bg-white text-black mt-2 mb-2"
             />
           </div>
