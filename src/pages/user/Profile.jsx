@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import OrderHistory from "@ui/OrderHistory";
 import { useNavigate } from "react-router-dom";
 import { Dialog } from "@headlessui/react";
-import { axios } from "axios";
+import axios from "axios";
 
 function Profile() {
   const navigate = useNavigate();
@@ -86,7 +86,7 @@ function Profile() {
             },
           }
         );
-        console.log(res)
+        console.log(res);
         setProfileData(res.data.data); // Assuming the API returns the profile data
       } catch (err) {
         setError(err.message || "Failed to fetch profile data");
@@ -100,7 +100,11 @@ function Profile() {
   }, []);
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Loading...
+      </div>
+    );
   }
 
   if (error) {
@@ -139,19 +143,30 @@ function Profile() {
               <span className="text-gray-600">{profileData.email}</span>
             </div>
             <div>
-              <strong className="block mb-1 text-gray-700">Phone:</strong>
-              <span className="text-gray-600">{profileData.phone}</span>
-            </div>
-            <div>
-              <strong className="block mb-1 text-gray-700">Address:</strong>
-              <span className="text-gray-600">{profileData.address}</span>
-            </div>
-            <div>
               <strong className="block mb-1 text-gray-700">
                 Member Status:
               </strong>
-              <span className="text-gray-600">{profileData.memberStatus}</span>
+              <span className="text-gray-600">
+                {profileData.subscription &&
+                Object.keys(profileData.subscription).length > 0
+                  ? "Active Member"
+                  : "Not a member"}
+              </span>
             </div>
+            {profileData.subscription &&
+              Object.keys(profileData.subscription).length > 0 && (
+                <div>
+                  <strong className="block mb-1 text-gray-700">
+                    Billing Address:
+                  </strong>
+                  <span className="text-gray-600">
+                    {profileData.subscription.billing_address_1},{" "}
+                    {profileData.subscription.billing_address_city},{" "}
+                    {profileData.subscription.billing_address_state}{" "}
+                    {profileData.subscription.billing_address_zip}
+                  </span>
+                </div>
+              )}
           </div>
 
           <h3 className="text-xl font-semibold mt-6 mb-4 text-gray-800">
