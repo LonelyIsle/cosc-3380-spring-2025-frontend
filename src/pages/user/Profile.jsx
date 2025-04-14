@@ -46,7 +46,7 @@ function Profile() {
       ],
     },
     {
-      id: "123457",
+      id: "123458", // Modified ID to be unique
       date: "2025-03-15",
       total: "29.99",
       items: [
@@ -205,12 +205,36 @@ function Profile() {
         </div>
       </div>
 
-      {/* Change Password Modal */}
       <Dialog
         open={isPasswordModalOpen}
         onClose={() => setPasswordModalOpen(false)}
       >
-        {/* ... (Modal content remains the same) */}
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-400 bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow-lg w-96">
+            <h2 className="text-xl font-semibold mb-4">Change Password</h2>
+            <input
+              type="password"
+              placeholder="New Password"
+              className="w-full p-2 border rounded mb-4"
+            />
+            <input
+              type="password"
+              placeholder="Confirm Password"
+              className="w-full p-2 border rounded mb-4"
+            />
+            <div className="flex justify-end space-x-2">
+              <button
+                className="px-4 py-2 bg-gray-300 rounded"
+                onClick={() => setPasswordModalOpen(false)}
+              >
+                Cancel
+              </button>
+              <button className="px-4 py-2 bg-blue-500 text-white rounded">
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
       </Dialog>
 
       {/* Change Secret Question Modal */}
@@ -218,7 +242,34 @@ function Profile() {
         open={isSecretModalOpen}
         onClose={() => setSecretModalOpen(false)}
       >
-        {/* ... (Modal content remains the same) */}
+        <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow-lg w-96">
+            <h2 className="text-xl font-semibold mb-4">
+              Change Secret Question
+            </h2>
+            <input
+              type="text"
+              placeholder="Your New Question"
+              className="w-full p-2 border rounded mb-4"
+            />
+            <input
+              type="text"
+              placeholder="Your Answer"
+              className="w-full p-2 border rounded mb-4"
+            />
+            <div className="flex justify-end space-x-2">
+              <button
+                className="px-4 py-2 bg-gray-300 rounded"
+                onClick={() => setSecretModalOpen(false)}
+              >
+                Cancel
+              </button>
+              <button className="px-4 py-2 bg-green-500 text-white rounded">
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
       </Dialog>
       {showSavedMessage && (
         <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded shadow-lg transition-opacity duration-300">
