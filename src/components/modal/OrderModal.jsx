@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import CancelOrderModal from "src/components/modal/CancelOrderModal";
 
-export default function OrderModal({ order, onClose }) {
+export default function OrderModal({ order, onClose, onSave }) {
   if (!order) return null;
 
   const [editableOrder, setEditableOrder] = useState({ ...order });
@@ -19,7 +19,6 @@ export default function OrderModal({ order, onClose }) {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-gray-900 text-white rounded shadow-md w-full max-w-2xl p-6 overflow-y-auto max-h-[90vh] relative">
-
         <h2 className="text-xl font-bold mb-4">Order #{order.id}</h2>
 
         <div className="space-y-3 text-sm">
@@ -56,21 +55,39 @@ export default function OrderModal({ order, onClose }) {
             />
           </div>
           <div>
-            <strong>Status:</strong> {editableOrder.status === 0
+            <strong>Status:</strong>{" "}
+            {editableOrder.status === 0
               ? "Pending"
               : editableOrder.status === 1
-              ? "Processing"
-              : editableOrder.status === 2
-              ? "Shipped"
-              : editableOrder.status === 3
-              ? "Delivered"
-              : editableOrder.status === 4
-              ? "Cancelled"
-              : "Unknown"}
+                ? "Processing"
+                : editableOrder.status === 2
+                  ? "Shipped"
+                  : editableOrder.status === 3
+                    ? "Delivered"
+                    : editableOrder.status === -1
+                      ? "Cancelled"
+                      : "Unknown"}
           </div>
+          {editableOrder.status === 1 && (
+            <div className="mt-2">
+              <button
+                onClick={() =>
+                  setEditableOrder((prev) => ({
+                    ...prev,
+                    status: 2,
+                  }))
+                }
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+              >
+                Mark as Shipped
+              </button>
+            </div>
+          )}
 
           <div className="mt-4">
-            <h3 className="font-semibold text-lg text-gray-300">Shipping Address</h3>
+            <h3 className="font-semibold text-lg text-gray-300">
+              Shipping Address
+            </h3>
             <div>{order.shipping_address_1}</div>
             <div>{order.shipping_address_2}</div>
             <div>
@@ -81,7 +98,9 @@ export default function OrderModal({ order, onClose }) {
 
           {order.items?.length > 0 && (
             <div className="mt-4">
-              <h3 className="font-semibold text-lg text-gray-300">Products Ordered</h3>
+              <h3 className="font-semibold text-lg text-gray-300">
+                Products Ordered
+              </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
                 {order.items.map((item, index) => (
                   <div
@@ -111,9 +130,9 @@ export default function OrderModal({ order, onClose }) {
         <div className="mt-6 flex justify-between items-center">
           <button
             onClick={onClose}
-            className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded"
+            className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded"
           >
-            Exit
+            Close
           </button>
 
           <div className="flex gap-3">
@@ -129,10 +148,7 @@ export default function OrderModal({ order, onClose }) {
                         Authorization: localStorage.getItem("token"),
                       },
                       credentials: "include",
-                      body: JSON.stringify({
-                        tracking: editableOrder.tracking,
-                        status: Number(editableOrder.status),
-                      }),
+                      body: JSON.stringify(editableOrder),
                     },
                   );
 
@@ -140,6 +156,13 @@ export default function OrderModal({ order, onClose }) {
                     throw new Error("Failed to update order");
                   }
 
+                  const updatedOrder = await response.json();
+                  setEditableOrder(updatedOrder.data);
+                  console.log("Updated order data:", updatedOrder.data);
+                  if (typeof onSave === "function") {
+                    console.log("Calling onSave...");
+                    onSave(updatedOrder.data);
+                  }
                   onClose();
                 } catch (error) {
                   console.error("Error saving order:", error);
