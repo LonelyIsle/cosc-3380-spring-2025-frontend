@@ -21,7 +21,10 @@ export function SaleProvider({ children }) {
   // Fetch the active sale event (GET sale-event/one/active)
   const fetchActiveSale = async () => {
     try {
-      const res = await axios.get(`${URL_PATH}/sale-event/one/active`, authHeader);
+      const res = await axios.get(
+        `${URL_PATH}/sale-event/one/active`,
+        authHeader,
+      );
       setActiveSale(res.data.data);
     } catch (err) {
       console.error("Failed to fetch active sale event:", err);
@@ -67,17 +70,17 @@ export function SaleProvider({ children }) {
     }
   };
 
-
   // Create a new sale event (POST /sale-event)
   const createSaleEvent = async (data) => {
     try {
       // data should include: coupon_id, start_at, end_at, title, description.
       const res = await axios.post(`${URL_PATH}/sale-event`, data, authHeader);
+      console.log(res);
       // Refresh the list of sale events after creation
       fetchSales();
       return res.data.data;
     } catch (err) {
-      console.error("Failed to create sale event:", err);
+      console.error("Failed to create sale event:", err.response?.data || err);
       throw err;
     }
   };
