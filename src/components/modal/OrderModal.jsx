@@ -147,7 +147,6 @@ export default function OrderModal({ order, onClose, onSave }) {
                         "Content-Type": "application/json",
                         Authorization: localStorage.getItem("token"),
                       },
-                      credentials: "include",
                       body: JSON.stringify(editableOrder),
                     },
                   );
@@ -188,7 +187,6 @@ export default function OrderModal({ order, onClose, onSave }) {
                     "Content-Type": "application/json",
                     Authorization: localStorage.getItem("token"),
                   },
-                  credentials: "include",
                 },
               );
               setShowCancelModal(false);

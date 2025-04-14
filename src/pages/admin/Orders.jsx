@@ -204,7 +204,6 @@ const Orders = () => {
                       "Content-Type": "application/json",
                       Authorization: localStorage.getItem("token"),
                     },
-                    credentials: "include",
                     body: JSON.stringify({
                       ...updatedOrder,
                       status: newStatus,
@@ -247,7 +246,6 @@ const Orders = () => {
                       "Content-Type": "application/json",
                       Authorization: localStorage.getItem("token"),
                     },
-                    credentials: "include",
                     body: JSON.stringify({ id: orderToCancel.id, status: -1 }), // Pass ID and status
                   },
                 );
