@@ -192,6 +192,9 @@ const ProductReport = () => {
           />
         </div>
       </div>
+      <div className="mb-3">
+        <i>*Totals represent revenue per product</i>
+      </div>
       <table className="w-full border border-black bg-gray-200">
         <thead>
           <tr className="bg-gray-400 border-black text-black">
