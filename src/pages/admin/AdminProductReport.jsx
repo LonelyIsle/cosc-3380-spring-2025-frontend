@@ -90,13 +90,13 @@ const ProductReport = () => {
     labels: filteredData.map((d) => d.product_name),
     datasets: [
       {
-        label: "Total Quantity",
-        data: filteredData.map((d) => d.product_total_quantity),
+        label: "Product Subtotal",
+        data: filteredData.map((d) => d.product_total_price),
         backgroundColor: "rgba(53, 162, 235, 1)",
       },
       {
-        label: "Total Sale",
-        data: filteredData.map((d) => d.product_total_price),
+        label: "Total Final",
+        data: filteredData.map((d) => d.product_order_total_final),
         backgroundColor: "rgba(255, 99, 132, 1)",
       },
     ],
@@ -149,18 +149,28 @@ const ProductReport = () => {
             <option value="">Sort By</option>
             <option value="product_price-asc">Price Asc</option>
             <option value="product_price-desc">Price Desc</option>
-            <option value="product_quantity-asc">Quantity Asc</option>
-            <option value="product_quantity-desc">Quantity Desc</option>
-            <option value="product_order_count-asc">Total Order Asc</option>
-            <option value="product_order_count-desc">Total Order Desc</option>
+            <option value="product_order_count-asc">Order Count Asc</option>
+            <option value="product_order_count-desc">Order Count Desc</option>
             <option value="product_total_quantity-asc">
               Total Quantity Asc
             </option>
             <option value="product_total_quantity-desc">
               Total Quantity Desc
             </option>
-            <option value="product_total_price-asc">Total Sale Asc</option>
-            <option value="product_total_price-desc">Total Sale Desc</option>
+            <option value="product_total_price-asc">Product Subtotal Asc</option>
+            <option value="product_total_price-desc">Product Subtotal Desc</option>
+            <option value="product_order_total_origin-asc">Subtotal Asc</option>
+            <option value="product_order_total_origin-desc">Subtotal Desc</option>
+            <option value="product_order_total_subscription-asc">Subscription Asc</option>
+            <option value="product_order_total_subscription-desc">Subscription Desc</option>
+            <option value="product_order_total_coupon-asc">Coupon Asc</option>
+            <option value="product_order_total_coupon-desc">Coupon Desc</option>
+            <option value="product_order_total_shipping-asc">Shipping Asc</option>
+            <option value="product_order_total_shipping-desc">Shipping Desc</option>
+            <option value="product_order_total_sale_tax-asc">Sale Tax Asc</option>
+            <option value="product_order_total_sale_tax-desc">Sale Tax Desc</option>
+            <option value="product_order_total_final-asc">Total Final Asc</option>
+            <option value="product_order_total_final-desc">Total Final Desc</option>
           </select>
         </div>
       </div>
@@ -206,11 +216,15 @@ const ProductReport = () => {
             <th className="p-2 text-center border">SKU</th>
             <th className="p-2 text-center border">Name</th>
             <th className="p-2 text-center border">Price</th>
-            <th className="p-2 text-center border">Quantity</th>
-            <th className="p-2 text-center border">Threshold</th>
-            <th className="p-2 text-center border">Total Order</th>
+            <th className="p-2 text-center border">Order Count</th>
             <th className="p-2 text-center border">Total Quantity</th>
-            <th className="p-2 text-center border">Total Sale</th>
+            <th className="p-2 text-center border">Product Subtotal</th>
+            <th className="p-2 text-center border">Subtotal</th>
+            <th className="p-2 text-center border">Subscription</th>
+            <th className="p-2 text-center border">Coupon</th>
+            <th className="p-2 text-center border">Shipping</th>
+            <th className="p-2 text-center border">Sale Tax</th>
+            <th className="p-2 text-center border">Total Final</th>
             <th className="p-2 text-center border">Category</th>
           </tr>
         </thead>
@@ -222,17 +236,21 @@ const ProductReport = () => {
                 <td className="p-2 text-center border">{d.product_sku}</td>
                 <td className="p-2 text-center border">{d.product_name}</td>
                 <td className="p-2 text-center border">{`$${d.product_price.toFixed(2)}`}</td>
-                <td className="p-2 text-center border">{d.product_quantity}</td>
-                <td className="p-2 text-center border">
-                  {d.product_threshold}
-                </td>
                 <td className="p-2 text-center border">
                   {d.product_order_count}
                 </td>
                 <td className="p-2 text-center border">
                   {d.product_total_quantity}
                 </td>
-                <td className="p-2 text-center border">{`$${d.product_total_price.toFixed(2)}`}</td>
+                <td className="p-2 text-center border">
+                  {`$${d.product_total_price.toFixed(2)}`}
+                </td>
+                <td className="p-2 text-center border">{`$${d.product_order_total_origin.toFixed(2)}`}</td>
+                <td className="p-2 text-center border">{`-$${d.product_order_total_subscription.toFixed(2)}`}</td>
+                <td className="p-2 text-center border">{`-$${d.product_order_total_coupon.toFixed(2)}`}</td>
+                <td className="p-2 text-center border">{`$${d.product_order_total_shipping.toFixed(2)}`}</td>
+                <td className="p-2 text-center border">{`$${d.product_order_total_sale_tax.toFixed(2)}`}</td>
+                <td className="p-2 text-center border">{`$${d.product_order_total_final.toFixed(2)}`}</td>
                 <td className="p-2 text-center border">
                   {d.product_category.map((c) => c.name).join(", ")}
                 </td>
@@ -240,7 +258,7 @@ const ProductReport = () => {
             ))
           ) : (
             <tr>
-              <td colSpan="10" className="p-2 text-center text-gray-500">
+              <td colSpan="14" className="p-2 text-center text-gray-500">
                 No Data
               </td>
             </tr>

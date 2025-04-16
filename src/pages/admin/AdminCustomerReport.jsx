@@ -133,20 +133,20 @@ const CustomerReport = () => {
             className="block border pt-2 pb-2 rounded bg-white"
           >
             <option value="">Sort By</option>
-            <option value="customer_order_count-asc">Total Order Asc</option>
-            <option value="customer_order_count-desc">Total Order Desc</option>
-            <option value="customer_order_total_origin-asc">Total Subtotal Asc</option>
-            <option value="customer_order_total_origin-desc">Total Subtotal Desc</option>
-            <option value="customer_order_total_subscription-asc">Total Subscription Asc</option>
-            <option value="customer_order_total_subscription-desc">Total Subscription Desc</option>
-            <option value="customer_order_total_coupon-asc">Total Coupon Asc</option>
-            <option value="customer_order_total_coupon-desc">Total Coupon Desc</option>
-            <option value="customer_order_total_shipping-asc">Total Shipping Asc</option>
-            <option value="customer_order_total_shipping-desc">Total Shipping Desc</option>
-            <option value="customer_order_total_sale_tax-asc">Total Sale Tax Asc</option>
-            <option value="customer_order_total_sale_tax-desc">Total Sale Tax Desc</option>
-            <option value="customer_order_total_final-asc">Total Sale Asc</option>
-            <option value="customer_order_total_final-desc">Total Sale Desc</option>
+            <option value="customer_order_count-asc">Order Count Asc</option>
+            <option value="customer_order_count-desc">Order Count Desc</option>
+            <option value="customer_order_total_origin-asc">Subtotal Asc</option>
+            <option value="customer_order_total_origin-desc">Subtotal Desc</option>
+            <option value="customer_order_total_subscription-asc">Subscription Asc</option>
+            <option value="customer_order_total_subscription-desc">Subscription Desc</option>
+            <option value="customer_order_total_coupon-asc">Coupon Asc</option>
+            <option value="customer_order_total_coupon-desc">Coupon Desc</option>
+            <option value="customer_order_total_shipping-asc">Shipping Asc</option>
+            <option value="customer_order_total_shipping-desc">Shipping Desc</option>
+            <option value="customer_order_total_sale_tax-asc">Sale Tax Asc</option>
+            <option value="customer_order_total_sale_tax-desc">Sale Tax Desc</option>
+            <option value="customer_order_total_final-asc">Total Final Asc</option>
+            <option value="customer_order_total_final-desc">Total Final Desc</option>
           </select>
         </div>
       </div>
