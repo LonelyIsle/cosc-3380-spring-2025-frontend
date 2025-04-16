@@ -81,12 +81,12 @@ const CouponReport = () => {
     datasets: [
       {
         label: "Total Coupon",
-        data: filteredData.map((d) => d.coupon_total_coupon),
+        data: filteredData.map((d) => d.coupon_order_total_coupon),
         backgroundColor: "rgba(53, 162, 235, 1)",
       },
       {
         label: "Total Sale",
-        data: filteredData.map((d) => d.coupon_total_final),
+        data: filteredData.map((d) => d.coupon_order_total_final),
         backgroundColor: "rgba(255, 99, 132, 1)",
       },
     ],
@@ -141,18 +141,18 @@ const CouponReport = () => {
             <option value="coupon_value-desc">Value Desc</option>
             <option value="coupon_order_count-asc">Total Order Asc</option>
             <option value="coupon_order_count-desc">Total Order Desc</option>
-            <option value="coupon_total_origin-asc">Total Subtotal Asc</option>
-            <option value="coupon_total_origin-desc">Total Subtotal Desc</option>
-            <option value="coupon_total_subscription-asc">Total Subscription Asc</option>
-            <option value="coupon_total_subscription-desc">Total Subscription Desc</option>
-            <option value="coupon_total_coupon-asc">Total Coupon Asc</option>
-            <option value="coupon_total_coupon-desc">Total Coupon Desc</option>
-            <option value="coupon_total_shipping-asc">Total Shipping Asc</option>
-            <option value="coupon_total_shipping-desc">Total Shipping Desc</option>
-            <option value="coupon_total_sale_tax-asc">Total Sale Tax Asc</option>
-            <option value="coupon_total_sale_tax-desc">Total Sale Tax Desc</option>
-            <option value="coupon_total_final-asc">Total Sale Asc</option>
-            <option value="coupon_total_final-desc">Total Sale Desc</option>
+            <option value="coupon_order_total_origin-asc">Total Subtotal Asc</option>
+            <option value="coupon_order_total_origin-desc">Total Subtotal Desc</option>
+            <option value="coupon_order_total_subscription-asc">Total Subscription Asc</option>
+            <option value="coupon_order_total_subscription-desc">Total Subscription Desc</option>
+            <option value="coupon_order_total_coupon-asc">Total Coupon Asc</option>
+            <option value="coupon_order_total_coupon-desc">Total Coupon Desc</option>
+            <option value="coupon_order_total_shipping-asc">Total Shipping Asc</option>
+            <option value="coupon_order_total_shipping-desc">Total Shipping Desc</option>
+            <option value="coupon_order_total_sale_tax-asc">Total Sale Tax Asc</option>
+            <option value="coupon_order_total_sale_tax-desc">Total Sale Tax Desc</option>
+            <option value="coupon_order_total_final-asc">Total Sale Asc</option>
+            <option value="coupon_order_total_final-desc">Total Sale Desc</option>
           </select>
         </div>
       </div>
@@ -187,13 +187,13 @@ const CouponReport = () => {
             <th className="p-2 text-center border">Code</th>
             <th className="p-2 text-center border">Value</th>
             <th className="p-2 text-center border">Type</th>
-            <th className="p-2 text-center border">Total Order</th>
-            <th className="p-2 text-center border">Total Subtotal</th>
-            <th className="p-2 text-center border">Total Subscription</th>
-            <th className="p-2 text-center border">Total Coupon</th>
-            <th className="p-2 text-center border">Total Shipping</th>
-            <th className="p-2 text-center border">Total Sale Tax</th>
-            <th className="p-2 text-center border">Total Sale</th>
+            <th className="p-2 text-center border">Order Count</th>
+            <th className="p-2 text-center border">Subtotal</th>
+            <th className="p-2 text-center border">Subscription</th>
+            <th className="p-2 text-center border">Coupon</th>
+            <th className="p-2 text-center border">Shipping</th>
+            <th className="p-2 text-center border">Sale Tax</th>
+            <th className="p-2 text-center border">Total Final</th>
           </tr>
         </thead>
         <tbody>
@@ -213,12 +213,12 @@ const CouponReport = () => {
                 <td className="p-2 text-center border">
                   {d.coupon_order_count}
                 </td>
-                <td className="p-2 text-center border">{`$${d.coupon_total_origin.toFixed(2)}`}</td>
-                <td className="p-2 text-center border">{`-$${d.coupon_total_subscription.toFixed(2)}`}</td>
-                <td className="p-2 text-center border">{`-$${d.coupon_total_coupon.toFixed(2)}`}</td>
-                <td className="p-2 text-center border">{`$${d.coupon_total_shipping.toFixed(2)}`}</td>
-                <td className="p-2 text-center border">{`$${d.coupon_total_sale_tax.toFixed(2)}`}</td>
-                <td className="p-2 text-center border">{`$${d.coupon_total_final.toFixed(2)}`}</td>
+                <td className="p-2 text-center border">{`$${d.coupon_order_total_origin.toFixed(2)}`}</td>
+                <td className="p-2 text-center border">{`-$${d.coupon_order_total_subscription.toFixed(2)}`}</td>
+                <td className="p-2 text-center border">{`-$${d.coupon_order_total_coupon.toFixed(2)}`}</td>
+                <td className="p-2 text-center border">{`$${d.coupon_order_total_shipping.toFixed(2)}`}</td>
+                <td className="p-2 text-center border">{`$${d.coupon_order_total_sale_tax.toFixed(2)}`}</td>
+                <td className="p-2 text-center border">{`$${d.coupon_order_total_final.toFixed(2)}`}</td>
               </tr>
             ))
           ) : (
