@@ -66,11 +66,11 @@ export default function OrderModal({ order, onClose, onSave }) {
                 {(order.total_origin ?? 0).toFixed(2)}
               </div>
               <div className="mb-2">
-                <strong>Subscription:</strong> $
+                <strong>Subscription:</strong> -$
                 {(order.total_subscription ?? 0).toFixed(2)}
               </div>
               <div className="mb-2">
-                <strong>Coupon:</strong> ${(order.total_coupon ?? 0).toFixed(2)}
+                <strong>Coupon:</strong> -${(order.total_coupon ?? 0).toFixed(2)}
               </div>
               <div className="mb-2">
                 <strong>Shipping Fee:</strong> ${order.shipping_fee?.toFixed(2)}

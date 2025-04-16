@@ -358,16 +358,16 @@ const Checkout = () => {
               <>
                 {renderCartItems()}
                 <div className="flex justify-between mt-4 font-bold">
-                  <span>Total</span>
+                  <span>Subtotal</span>
                   <span>${total.origin.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between mt-4 font-bold">
                   <span>Subscription</span>
-                  <span>${total.subscription.toFixed(2)}</span>
+                  <span>-${total.subscription.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between mt-4 font-bold">
                   <span>Coupon</span>
-                  <span>${total.coupon.toFixed(2)}</span>
+                  <span>-${total.coupon.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between mt-4 font-bold">
                   <span>Shipping Fee</span>

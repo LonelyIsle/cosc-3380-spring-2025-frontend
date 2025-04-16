@@ -72,11 +72,11 @@ function OrderHistory({ orders }) {
                     {(selectedOrder?.total_origin ?? 0).toFixed(2)}
                   </div>
                   <div className="mb-2">
-                    <strong>Subscription:</strong> $
+                    <strong>Subscription:</strong> -$
                     {(selectedOrder?.total_subscription ?? 0).toFixed(2)}
                   </div>
                   <div className="mb-2">
-                    <strong>Coupon:</strong> $
+                    <strong>Coupon:</strong> -$
                     {(selectedOrder?.total_coupon ?? 0).toFixed(2)}
                   </div>
                   <div className="mb-2">
