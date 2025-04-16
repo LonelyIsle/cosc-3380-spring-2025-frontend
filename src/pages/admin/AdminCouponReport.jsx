@@ -26,10 +26,6 @@ const CouponReport = () => {
   const [endDate, setEndDate] = useState(1745989200000); // 04/30/2025
   const [codeSearch, setCodeSearch] = useState("");
   const [typeSearch, setTypeSearch] = useState("");
-  const [startAtSearch, setStartAtSearch] = useState(1743483600000); // 04/01/2025
-  const [endAtSearch, setEndAtSearch] = useState(
-    1745989200000 + 30 * 24 * 60 * 60 * 1000,
-  ); // 05/30/2025
   const [sortKey, setSortKey] = useState("");
 
   useEffect(() => {
@@ -49,14 +45,6 @@ const CouponReport = () => {
         },
       });
       let _data = res.data.data;
-      setStartAtSearch(
-        Math.min(..._data.map((d) => new Date(d.coupon_start_at).getTime())) -
-          24 * 60 * 60 * 1000,
-      );
-      setEndAtSearch(
-        Math.max(..._data.map((d) => new Date(d.coupon_end_at).getTime())) +
-          24 * 60 * 60 * 1000,
-      );
       setData(_data);
     } catch (e) {
       alert(e.message);
@@ -65,17 +53,13 @@ const CouponReport = () => {
 
   const filteredData = data
     .filter((d) => {
-      let _startAt = new Date(d.coupon_start_at).getTime();
-      let _endAt = new Date(d.coupon_end_at).getTime();
       return (
         (codeSearch.trim() === ""
           ? true
           : d.coupon_code.toLowerCase().includes(codeSearch.toLowerCase())) &&
         (typeSearch.trim() === ""
           ? true
-          : d.coupon_type === parseInt(typeSearch)) &&
-        _endAt <= endAtSearch &&
-        startAtSearch <= _startAt
+          : d.coupon_type === parseInt(typeSearch))
       );
     })
     .sort((a, b) => {
@@ -96,7 +80,7 @@ const CouponReport = () => {
     labels: filteredData.map((d) => d.coupon_code),
     datasets: [
       {
-        label: "Total Value",
+        label: "Total Coupon",
         data: filteredData.map((d) => d.coupon_total_coupon),
         backgroundColor: "rgba(53, 162, 235, 1)",
       },
@@ -157,8 +141,16 @@ const CouponReport = () => {
             <option value="coupon_value-desc">Value Desc</option>
             <option value="coupon_order_count-asc">Total Order Asc</option>
             <option value="coupon_order_count-desc">Total Order Desc</option>
-            <option value="coupon_total_coupon-asc">Total Value Asc</option>
-            <option value="coupon_total_coupon-desc">Total Value Desc</option>
+            <option value="coupon_total_origin-asc">Total Subtotal Asc</option>
+            <option value="coupon_total_origin-desc">Total Subtotal Desc</option>
+            <option value="coupon_total_subscription-asc">Total Subscription Asc</option>
+            <option value="coupon_total_subscription-desc">Total Subscription Desc</option>
+            <option value="coupon_total_coupon-asc">Total Coupon Asc</option>
+            <option value="coupon_total_coupon-desc">Total Coupon Desc</option>
+            <option value="coupon_total_shipping-asc">Total Shipping Asc</option>
+            <option value="coupon_total_shipping-desc">Total Shipping Desc</option>
+            <option value="coupon_total_sale_tax-asc">Total Sale Tax Asc</option>
+            <option value="coupon_total_sale_tax-desc">Total Sale Tax Desc</option>
             <option value="coupon_total_final-asc">Total Sale Asc</option>
             <option value="coupon_total_final-desc">Total Sale Desc</option>
           </select>
@@ -187,28 +179,6 @@ const CouponReport = () => {
             <option value="1">$</option>
           </select>
         </div>
-        <div className="ml-4">
-          <label className="block font-semibold">Start At</label>
-          <input
-            className="block p-2 border rounded bg-white text-black"
-            type="date"
-            name="start-at"
-            placeholder="Start At"
-            value={new Date(startAtSearch).toISOString().substring(0, 10)}
-            onChange={(e) => setStartAtSearch(e.target.valueAsNumber)}
-          />
-        </div>
-        <div className="ml-4">
-          <label className="block font-semibold">End At</label>
-          <input
-            className="block p-2 border rounded bg-white text-black"
-            type="date"
-            name="end-at"
-            placeholder="End At"
-            value={new Date(endAtSearch).toISOString().substring(0, 10)}
-            onChange={(e) => setEndAtSearch(e.target.valueAsNumber)}
-          />
-        </div>
       </div>
       <table className="w-full border border-black bg-gray-200">
         <thead>
@@ -217,10 +187,12 @@ const CouponReport = () => {
             <th className="p-2 text-center border">Code</th>
             <th className="p-2 text-center border">Value</th>
             <th className="p-2 text-center border">Type</th>
-            <th className="p-2 text-center border">Start At</th>
-            <th className="p-2 text-center border">End At</th>
             <th className="p-2 text-center border">Total Order</th>
-            <th className="p-2 text-center border">Total Value</th>
+            <th className="p-2 text-center border">Total Subtotal</th>
+            <th className="p-2 text-center border">Total Subscription</th>
+            <th className="p-2 text-center border">Total Coupon</th>
+            <th className="p-2 text-center border">Total Shipping</th>
+            <th className="p-2 text-center border">Total Sale Tax</th>
             <th className="p-2 text-center border">Total Sale</th>
           </tr>
         </thead>
@@ -239,21 +211,19 @@ const CouponReport = () => {
                   {d.coupon_type === 0 ? "%" : "$"}
                 </td>
                 <td className="p-2 text-center border">
-                  {new Date(d.coupon_start_at).toLocaleDateString("en-US")}
-                </td>
-                <td className="p-2 text-center border">
-                  {new Date(d.coupon_end_at).toLocaleDateString("en-US")}
-                </td>
-                <td className="p-2 text-center border">
                   {d.coupon_order_count}
                 </td>
-                <td className="p-2 text-center border">{`$${d.coupon_total_coupon.toFixed(2)}`}</td>
+                <td className="p-2 text-center border">{`$${d.coupon_total_origin.toFixed(2)}`}</td>
+                <td className="p-2 text-center border">{`-$${d.coupon_total_subscription.toFixed(2)}`}</td>
+                <td className="p-2 text-center border">{`-$${d.coupon_total_coupon.toFixed(2)}`}</td>
+                <td className="p-2 text-center border">{`$${d.coupon_total_shipping.toFixed(2)}`}</td>
+                <td className="p-2 text-center border">{`$${d.coupon_total_sale_tax.toFixed(2)}`}</td>
                 <td className="p-2 text-center border">{`$${d.coupon_total_final.toFixed(2)}`}</td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="9" className="p-2 text-center text-gray-500">
+              <td colSpan="11" className="p-2 text-center text-gray-500">
                 No Data
               </td>
             </tr>
