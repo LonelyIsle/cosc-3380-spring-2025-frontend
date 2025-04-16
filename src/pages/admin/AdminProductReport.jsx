@@ -147,10 +147,10 @@ const ProductReport = () => {
             <option value="product_order_count-asc">Order Count Asc</option>
             <option value="product_order_count-desc">Order Count Desc</option>
             <option value="product_total_quantity-asc">
-              Total Quantity Asc
+              Products Sold Asc
             </option>
             <option value="product_total_quantity-desc">
-              Total Quantity Desc
+              Products Sold Desc
             </option>
             <option value="product_total_price-asc">Product Revenue Asc</option>
             <option value="product_total_price-desc">Product Revenue Desc</option>
@@ -200,7 +200,7 @@ const ProductReport = () => {
             <th className="p-2 text-center border">Name</th>
             <th className="p-2 text-center border">Price</th>
             <th className="p-2 text-center border">Order Count</th>
-            <th className="p-2 text-center border">Total Quantity</th>
+            <th className="p-2 text-center border">Products Sold</th>
             <th className="p-2 text-center border">Product Revenue</th>
             <th className="p-2 text-center border">Category</th>
           </tr>

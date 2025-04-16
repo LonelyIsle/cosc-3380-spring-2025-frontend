@@ -80,7 +80,7 @@ const CouponReport = () => {
     labels: filteredData.map((d) => d.coupon_code),
     datasets: [
       {
-        label: "Coupon",
+        label: "Coupon Saving",
         data: filteredData.map((d) => d.coupon_order_total_coupon),
         backgroundColor: "rgba(53, 162, 235, 1)",
       },
@@ -143,10 +143,10 @@ const CouponReport = () => {
             <option value="coupon_order_count-desc">Order Count Desc</option>
             <option value="coupon_order_total_origin-asc">Subtotal Asc</option>
             <option value="coupon_order_total_origin-desc">Subtotal Desc</option>
-            <option value="coupon_order_total_subscription-asc">Subscription Asc</option>
-            <option value="coupon_order_total_subscription-desc">Subscription Desc</option>
-            <option value="coupon_order_total_coupon-asc">Coupon Asc</option>
-            <option value="coupon_order_total_coupon-desc">Coupon Desc</option>
+            <option value="coupon_order_total_subscription-asc">Subscription Saving Asc</option>
+            <option value="coupon_order_total_subscription-desc">Subscription Saving Desc</option>
+            <option value="coupon_order_total_coupon-asc">Coupon Saving Asc</option>
+            <option value="coupon_order_total_coupon-desc">Coupon Saving Desc</option>
             <option value="coupon_order_total_shipping-asc">Shipping Asc</option>
             <option value="coupon_order_total_shipping-desc">Shipping Desc</option>
             <option value="coupon_order_total_sale_tax-asc">Sale Tax Asc</option>
@@ -180,6 +180,9 @@ const CouponReport = () => {
           </select>
         </div>
       </div>
+      <div className="mb-3">
+        <i>*Totals represent revenue from sales with coupons used</i>
+      </div>
       <table className="w-full border border-black bg-gray-200">
         <thead>
           <tr className="bg-gray-400 border-black text-black">
@@ -189,8 +192,8 @@ const CouponReport = () => {
             <th className="p-2 text-center border">Type</th>
             <th className="p-2 text-center border">Order Count</th>
             <th className="p-2 text-center border">Subtotal</th>
-            <th className="p-2 text-center border">Subscription</th>
-            <th className="p-2 text-center border">Coupon</th>
+            <th className="p-2 text-center border">Subscription Saving</th>
+            <th className="p-2 text-center border">Coupon Saving</th>
             <th className="p-2 text-center border">Shipping</th>
             <th className="p-2 text-center border">Sale Tax</th>
             <th className="p-2 text-center border">Total Final</th>
