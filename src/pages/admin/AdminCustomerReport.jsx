@@ -62,41 +62,10 @@ const CustomerReport = () => {
         return result;
       }
       let [attr, order] = sortKey.split("-");
-      switch (attr) {
-        case "customer_order_no_subscription_count":
-          result =
-            a.customer_order_no_subscription_count -
-            b.customer_order_no_subscription_count;
-          break;
-        case "customer_order_subscription_count":
-          result =
-            a.customer_order_subscription_count -
-            b.customer_order_subscription_count;
-          break;
-        case "customer_order_count":
-          result = a.customer_order_count - b.customer_order_count;
-          break;
-        case "customer_order_subscription_total_subscription":
-          result =
-            a.customer_order_subscription_total_subscription -
-            b.customer_order_subscription_total_subscription;
-          break;
-        case "customer_order_no_subscription_total_final":
-          result =
-            a.customer_order_no_subscription_total_final -
-            b.customer_order_no_subscription_total_final;
-          break;
-        case "customer_order_subscription_total_final":
-          result =
-            a.customer_order_subscription_total_final -
-            b.customer_order_subscription_total_final;
-          break;
-        case "customer_order_total_final":
-          result = a.customer_order_total_final - b.customer_order_total_final;
-          break;
-        default:
-          order = "asc";
-          break;
+      if (!isNaN(a[attr])) {
+        result = a[attr] - b[attr];
+      } else {
+        order = "asc";
       }
       return order === "desc" ? -result : result;
     });

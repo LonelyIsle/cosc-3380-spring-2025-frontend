@@ -84,22 +84,10 @@ const CouponReport = () => {
         return result;
       }
       let [attr, order] = sortKey.split("-");
-      switch (attr) {
-        case "coupon_value":
-          result = a.coupon_value - b.coupon_value;
-          break;
-        case "coupon_order_count":
-          result = a.coupon_order_count - b.coupon_order_count;
-          break;
-        case "coupon_total_coupon":
-          result = a.coupon_total_coupon - b.coupon_total_coupon;
-          break;
-        case "coupon_total_final":
-          result = a.coupon_total_final - b.coupon_total_final;
-          break;
-        default:
-          order = "asc";
-          break;
+      if (!isNaN(a[attr])) {
+        result = a[attr] - b[attr];
+      } else {
+        order = "asc";
       }
       return order === "desc" ? -result : result;
     });

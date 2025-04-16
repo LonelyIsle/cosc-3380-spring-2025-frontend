@@ -78,25 +78,10 @@ const ProductReport = () => {
         return result;
       }
       let [attr, order] = sortKey.split("-");
-      switch (attr) {
-        case "product_price":
-          result = a.product_price - b.product_price;
-          break;
-        case "product_quantity":
-          result = a.product_quantity - b.product_quantity;
-          break;
-        case "product_order_count":
-          result = a.product_order_count - b.product_order_count;
-          break;
-        case "product_total_quantity":
-          result = a.product_total_quantity - b.product_total_quantity;
-          break;
-        case "product_total_price":
-          result = a.product_total_price - b.product_total_price;
-          break;
-        default:
-          order = "asc";
-          break;
+      if (!isNaN(a[attr])) {
+        result = a[attr] - b[attr];
+      } else {
+        order = "asc";
       }
       return order === "desc" ? -result : result;
     });
