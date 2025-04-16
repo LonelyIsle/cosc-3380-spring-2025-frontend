@@ -90,7 +90,7 @@ const ProductReport = () => {
     labels: filteredData.map((d) => d.product_name),
     datasets: [
       {
-        label: "Product Revenue",
+        label: "Product Total",
         data: filteredData.map((d) => d.product_total_price),
         backgroundColor: "rgba(255, 99, 132, 1)"
       }
@@ -152,8 +152,8 @@ const ProductReport = () => {
             <option value="product_total_quantity-desc">
               Products Sold Desc
             </option>
-            <option value="product_total_price-asc">Product Revenue Asc</option>
-            <option value="product_total_price-desc">Product Revenue Desc</option>
+            <option value="product_total_price-asc">Product Total Asc</option>
+            <option value="product_total_price-desc">Product Total Desc</option>
           </select>
         </div>
       </div>
@@ -204,7 +204,7 @@ const ProductReport = () => {
             <th className="p-2 text-center border">Price</th>
             <th className="p-2 text-center border">Order Count</th>
             <th className="p-2 text-center border">Products Sold</th>
-            <th className="p-2 text-center border">Product Revenue</th>
+            <th className="p-2 text-center border">Product Total</th>
             <th className="p-2 text-center border">Category</th>
           </tr>
         </thead>
