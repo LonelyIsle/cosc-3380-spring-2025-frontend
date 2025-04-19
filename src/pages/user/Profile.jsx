@@ -355,7 +355,7 @@ function Profile() {
               <span className="text-gray-600">{profileData.email}</span>
               <div className="mt-3">
                 <strong className="block mb-1 text-gray-700">
-                  Subscribed :
+                  Subscription :
                 </strong>
                 <span className="text-gray-600">
                   {profileData.subscription

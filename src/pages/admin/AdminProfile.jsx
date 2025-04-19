@@ -146,7 +146,7 @@ const AdminProfile = () => {
             />
           </div>
           <div>
-            <label className="font-semibold bl">Change Passwordt</label>
+            <label className="font-semibold bl">Change Password</label>
             <input
               type="password"
               placeholder="New Password"
