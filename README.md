@@ -4,7 +4,7 @@
 
 This is the official **frontend** github for Team 4 for COSC3380 Database Systems for the Monday Wednesday section with Dr. Uma Ramamurthy.
 
-### Contributors :tools:
+### Contributors :toolbox:
 
 - Ozgel, Yusuf Burhan
 - Santos, Jester Gutierrez
@@ -14,19 +14,9 @@ This is the official **frontend** github for Team 4 for COSC3380 Database System
 
 ### Tech Stack :screwdriver:
 
-- **Frontend:** React (JSX) + Vite
-- **Backend:** Node.js (no clue what framework going to have to ask tomorrow)
-- **Database:** MySQL
+- [React](https://react.dev/)
 
-### How do I deploy? :eyes:
-
-> [!NOTE]
-> This only applies to the frontend. The database will not be accessible.
-
-Make sure you have the following installed on your machine.
-
-- Node.js (LTS recommended)
-- npm/yarn
+### How do I run? :eyes:
 
 1. **Clone the repository:**
 
@@ -41,13 +31,19 @@ cd cosc-3380-spring-2025-frontend
 npm install
 ```
 
-3. **Run the development server:**
+3. **Copy environment config:**
+
+```sh
+cp .env.development.example .env.development
+```
+
+4. **Run the development server:**
 
 ```sh
 npm run dev
 ```
 
-4. **Access the app:**
+5. **Access the app:**
 
 ```sh
 http://localhost:5173
