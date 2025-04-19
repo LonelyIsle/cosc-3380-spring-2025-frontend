@@ -18,33 +18,28 @@ This is the official **frontend** github for Team 4 for COSC3380 Database System
 
 ### How do I run? :eyes:
 
-1. **Clone the repository:**
+In project directory, execute the following commands.
 
-```sh
-git clone https://github.com/sebvu/cosc-3380-spring-2025-frontend
-cd cosc-3380-spring-2025-frontend
-```
+1. **Install dependencies:**
 
-2. **Install dependencies:**
+    ```sh
+    npm install
+    ```
 
-```sh
-npm install
-```
+2. **Copy environment config:**
 
-3. **Copy environment config:**
+    ```sh
+    cp .env.development.example .env.development
+    ```
 
-```sh
-cp .env.development.example .env.development
-```
+3. **Run the development server:**
 
-4. **Run the development server:**
+    ```sh
+    npm run dev
+    ```
 
-```sh
-npm run dev
-```
+4. **Access the app:**
 
-5. **Access the app:**
-
-```sh
-http://localhost:5173
-```
+    ```sh
+    http://localhost:5173
+    ```
